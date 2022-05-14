@@ -12,19 +12,19 @@ let metadata;
 pullTest(); */
 
 //---------------------Test Push Queries-------------------
-/* const pushTest = async () => {
+const pushTest = async () => {
     metadata = await client.push('SELECT * FROM usersStream EMIT CHANGES LIMIT 1;', (row) => console.log(row));
     console.log('this is the metadata returned ', metadata);
 };
 
-pushTest(); */
+pushTest();
 
 //---------------------Test Termination of Queries-------------------
-/* const terminateTest = async () => {
+const terminateTest = async () => {
     client.terminate(metadata);
 };
 
-setTimeout(() => terminateTest(metadata), 2000); */
+setTimeout(() => terminateTest(metadata), 2000);
 
 //---------------------Test List Queries-------------------
 /* const listQueries = async () => {
