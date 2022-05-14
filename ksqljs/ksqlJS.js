@@ -18,38 +18,35 @@ class ksqljs {
 
   //---------------------Push queries (continue to receive updates to stream)-----------------
   push = (query, cb) => {
-    let sentQueryId = false;
-    let queryMetadata;
-    const session = http2.connect(this.ksqldbURL);
-
-    session.on("error", (err) => console.error(err));
-
-    const req = session.request({
-      ":path": "/query-stream",
-      ":method": "POST",
-    });
-
-    const reqBody = {
-      sql: query,
-      Accept: "application/json, application/vnd.ksqlapi.delimited.v1",
-    };
-
-    req.write(JSON.stringify(reqBody), "utf8");
-    req.end();
-    req.setEncoding("utf8");
-
-    req.on("data", (chunk) => {
-      if (!sentQueryId) {
-        sentQueryId = true;
-        queryMetadata = chunk;
-      }
-      cb(chunk);
-    });
-
-    req.on("end", () => session.close());
-
     return new Promise((resolve, reject) => {
-      setTimeout(() => resolve(JSON.parse(queryMetadata)?.queryId), 1000);
+      let sentQueryId = false;
+      const session = http2.connect(this.ksqldbURL);
+  
+      session.on("error", (err) => console.error(err));
+  
+      const req = session.request({
+        ":path": "/query-stream",
+        ":method": "POST",
+      });
+  
+      const reqBody = {
+        sql: query,
+        Accept: "application/json, application/vnd.ksqlapi.delimited.v1",
+      };
+  
+      req.write(JSON.stringify(reqBody), "utf8");
+      req.end();
+      req.setEncoding("utf8");
+  
+      req.on("data", (chunk) => {
+        if (!sentQueryId) {
+          sentQueryId = true;
+          resolve(JSON.parse(chunk)?.queryId)
+        }
+        cb(chunk);
+      });
+  
+      req.on("end", () => session.close());
     })
   }
 
@@ -85,8 +82,7 @@ class ksqljs {
       .catch(error => console.log(error));
     }
 
-
-  
+  //---------------------Insert Rows Into Existing Streams-----------------
   insertStream = (stream, rows) => {
     let msgOutput = [];
 
