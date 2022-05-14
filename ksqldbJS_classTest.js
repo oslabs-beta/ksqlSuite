@@ -46,3 +46,15 @@ createStreamTest(); */
 /* const createTableTest = () => {
     client.createTable();
 } */
+
+
+//---------------------Test Insert Stream-------------------
+/* const insertStreamTest = () => {
+    client.insertStream('AnotherTestStream', [
+        { "name": "matty", "email": "123@mail.com", "age": 100 },
+        { "name": "jonathan", "email": "234@mail.com", "age": 99 }
+    ]);
+};
+
+insertStreamTest();
+*/
