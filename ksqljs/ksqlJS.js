@@ -69,7 +69,11 @@ const ksqljs = (ksqldbURL) => {
     },
     //---------------------Create tables-----------------
     createTable: (name, columnsType, topic, value_format = 'json') => {
+      const columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
+      const query = `CREATE TABLE ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}');`
 
+      axios.post(ksqldbURL + '/ksql', {ksql: query})
+      .catch(error => console.log(error));
     }
   };
 };
