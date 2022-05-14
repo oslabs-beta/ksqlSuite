@@ -46,3 +46,10 @@ createStreamTest(); */
 /* const createTableTest = () => {
     client.createTable();
 } */
+
+//---------------------Test Table Creation-------------------
+const createJestTest = () => {
+    client.jestTests();
+}
+
+createJestTest();
