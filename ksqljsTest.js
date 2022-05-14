@@ -1,4 +1,4 @@
-const ksqljs = require('./ksqljs/ksqljs');
+const ksqljs = require('./ksqljs/ksqljs.js');
 
 const client = new ksqljs('http://localhost:8088');
 let metadata;
@@ -45,8 +45,19 @@ listQueries(); */
 createStreamTest(); */
 
 //---------------------Test Table Creation-------------------
-const createTableTest = () => {
+/* const createTableTest = () => {
     client.createTable('AnotherTestTable', ['name VARCHAR PRIMARY KEY', 'email VARCHAR', 'age INTEGER'], 'users');
 };
 
-createTableTest();
+createTableTest(); */
+
+//---------------------Test Insert Stream-------------------
+/* const insertStreamTest = () => {
+    client.insertStream('AnotherTestStream', [
+        { "name": "matt", "email": "123@mail.com", "age": 1000 },
+        { "name": "jonathan", "email": "234@mail.com", "age": 99 }
+    ]);
+};
+
+insertStreamTest();
+*/
