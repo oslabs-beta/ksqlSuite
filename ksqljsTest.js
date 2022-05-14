@@ -1,19 +1,20 @@
-const ksqljs = require('./ksqlJS/ksqlJS.js');
+const ksqljs = require('./ksqljs/ksqljs');
 
-const client = ksqljs('http://localhost:8088');
+const client = new ksqljs('http://localhost:8088');
 let metadata;
 
 //---------------------Test PUll Queries-------------------
 /* const pullTest = async () => {
-    const result = await client.pull('SELECT * FROM usersStream;');
+    const result = await client.pull('SELECT * FROM riderlocations;');
     console.log('this is the result', result);
 }
 
 pullTest(); */
 
 //---------------------Test Push Queries-------------------
+
 /* const pushTest = async () => {
-    metadata = await client.push('SELECT * FROM usersStream EMIT CHANGES LIMIT 1;', (row) => console.log(row));
+    metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
     console.log('this is the metadata returned ', metadata);
 };
 
@@ -38,14 +39,14 @@ listQueries(); */
 
 //---------------------Test Stream Creation-------------------
 /* const createStreamTest = () => {
-    client.createStream('AnotherTestStream', ['name VARCHAR','email varchar','age INTEGER'], 'testTopic', 'json', 1);
+    client.createStream('TestStream', ['name VARCHAR','email varchar','age INTEGER'], 'testTopic', 'json', 1);
 }
 
 createStreamTest(); */
 
 //---------------------Test Table Creation-------------------
 const createTableTest = () => {
-    client.createTable('TestTable', ['name VARCHAR PRIMARY KEY', 'email VARCHAR', 'age INTEGER'], 'users');
+    client.createTable('AnotherTestTable', ['name VARCHAR PRIMARY KEY', 'email VARCHAR', 'age INTEGER'], 'users');
 };
 
 createTableTest();
