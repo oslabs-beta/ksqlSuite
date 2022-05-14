@@ -97,7 +97,6 @@ const ksqljs = (ksqldbURL) => {
         reqBody += `\n${JSON.stringify(row)}`;
       }
 
-      // console.log(reqBody);
       req.write(reqBody, "utf8");
       req.end();
       req.setEncoding("utf8");
@@ -108,7 +107,7 @@ const ksqljs = (ksqldbURL) => {
 
       req.on("end", () => {
         session.close();
-        // console.log(msgOutput);
+        console.log(msgOutput);
       });
 
       return msgOutput;

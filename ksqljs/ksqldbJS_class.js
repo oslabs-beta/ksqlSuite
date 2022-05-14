@@ -103,6 +103,7 @@ class ksqljs {
 
     req.on("end", () => {
       session.close();
+      console.log(msgOutput);
     });
 
     return msgOutput;
