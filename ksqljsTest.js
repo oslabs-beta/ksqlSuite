@@ -45,11 +45,11 @@ listQueries(); */
 createStreamTest(); */
 
 //---------------------Test Table Creation-------------------
-/* const createTableTest = () => {
-    client.createTable('AnotherTestTable', ['name VARCHAR PRIMARY KEY', 'email VARCHAR', 'age INTEGER'], 'users');
+const createTableTest = () => {
+    client.createTable('AnotherTestTable', ['name VARCHAR PRIMARY KEY', 'email VARCHAR', 'age INTEGER'], 'users', 'json', 1);
 };
 
-createTableTest(); */
+createTableTest();
 
 //---------------------Test Insert Stream-------------------
 /* const insertStreamTest = () => {
@@ -61,3 +61,4 @@ createTableTest(); */
 
 insertStreamTest();
 */
+
