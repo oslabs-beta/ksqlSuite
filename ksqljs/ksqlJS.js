@@ -111,7 +111,6 @@ class ksqljs {
     });
 
     return msgOutput;
-
   }
 };
 
