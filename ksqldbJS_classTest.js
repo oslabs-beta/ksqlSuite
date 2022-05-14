@@ -49,7 +49,7 @@ createStreamTest(); */
 
 
 //---------------------Test Insert Stream-------------------
-/* const insertStreamTest = () => {
+/*const insertStreamTest = () => {
     client.insertStream('AnotherTestStream', [
         { "name": "matty", "email": "123@mail.com", "age": 100 },
         { "name": "jonathan", "email": "234@mail.com", "age": 99 }
