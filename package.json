@@ -1,0 +1,17 @@
+{
+  "name": "ksqldb-test-setup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ksqljsTest.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "http2": "^3.3.7",
+    "node-fetch": "^3.2.4"
+  }
+}
