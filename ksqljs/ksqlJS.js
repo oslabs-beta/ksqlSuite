@@ -14,39 +14,38 @@ const ksqljs = (ksqldbURL) => {
     },
     //---------------------Push queries (continue to receive updates to stream-----------------
     push: (query, cb) => {
-      let sentQueryId = false;
-      let queryMetadata;
-      const session = http2.connect(ksqldbURL);
-
-      session.on("error", (err) => console.error(err));
-
-      const req = session.request({
-        ":path": "/query-stream",
-        ":method": "POST",
+      return new Promise((resolve, reject) => {
+        let sentQueryId = false;
+        let queryMetadata;
+        const session = http2.connect(ksqldbURL);
+  
+        session.on("error", (err) => console.error(err));
+  
+        const req = session.request({
+          ":path": "/query-stream",
+          ":method": "POST",
+        });
+  
+        const reqBody = {
+          sql: query,
+          Accept: "application/json, application/vnd.ksqlapi.delimited.v1",
+        };
+  
+        req.write(JSON.stringify(reqBody), "utf8");
+        req.end();
+        req.setEncoding("utf8");
+  
+        req.on("data", (chunk) => {
+          if (!sentQueryId) {
+            sentQueryId = true;
+            queryMetadata = chunk;
+            resolve(JSON.parse(chunk)?.queryId);
+          }
+          cb(chunk);
+        });
+  
+        req.on("end", () => session.close());
       });
-
-      const reqBody = {
-        sql: query,
-        Accept: "application/json, application/vnd.ksqlapi.delimited.v1",
-      };
-
-      req.write(JSON.stringify(reqBody), "utf8");
-      req.end();
-      req.setEncoding("utf8");
-
-      req.on("data", (chunk) => {
-        if (!sentQueryId) {
-          sentQueryId = true;
-          queryMetadata = chunk;
-        }
-        cb(chunk);
-      });
-
-      req.on("end", () => session.close());
-
-        return new Promise((resolve, reject) => {
-            setTimeout(() => resolve(JSON.parse(queryMetadata)?.queryId), 1000);
-        })
     },
     //---------------------Terminate existing push queries-----------------
     terminate: (queryId) => {
