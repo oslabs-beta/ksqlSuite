@@ -12,7 +12,6 @@ let metadata;
 pullTest(); */
 
 //---------------------Test Push Queries-------------------
-
 /* const pushTest = async () => {
     metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
     console.log('this is the metadata returned ', metadata);
@@ -45,20 +44,18 @@ listQueries(); */
 createStreamTest(); */
 
 //---------------------Test Table Creation-------------------
-const createTableTest = () => {
+/* const createTableTest = () => {
     client.createTable('AnotherTestTable', ['name VARCHAR PRIMARY KEY', 'email VARCHAR', 'age INTEGER'], 'users', 'json', 1);
 };
 
-createTableTest();
+createTableTest(); */
 
 //---------------------Test Insert Stream-------------------
 /* const insertStreamTest = () => {
-    client.insertStream('AnotherTestStream', [
+    client.insertStream('TestStream', [
         { "name": "matt", "email": "123@mail.com", "age": 1000 },
         { "name": "jonathan", "email": "234@mail.com", "age": 99 }
     ]);
 };
 
-insertStreamTest();
-*/
-
+insertStreamTest(); */
