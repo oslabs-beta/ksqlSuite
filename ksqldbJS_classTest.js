@@ -26,14 +26,14 @@ const terminateTest = async () => {
 setTimeout(() => terminateTest(metadata), 2000); */
 
 //---------------------Test List Queries-------------------
-/* const listQueries = async () => {
-    console.log(await client.ksql('LIST QUERIES;'));
-    console.log(await client.ksql('LIST STREAMS;'));
-    console.log(await client.ksql('LIST TABLES;'));
-    console.log(await client.ksql('LIST TOPICS;'));
-}
+/* // const listQueries = async () => {
+    // console.log(await client.ksql('LIST QUERIES;'));
+    // console.log(await client.ksql('LIST STREAMS;'));
+    // console.log(await client.ksql('LIST TABLES;'));
+    // console.log(await client.ksql('LIST TOPICS;'));
+// }
 
-listQueries(); */
+// listQueries(); */
 
 //---------------------Test Stream Creation-------------------
 /* const createStreamTest = () => {
