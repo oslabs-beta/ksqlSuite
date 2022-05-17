@@ -3,12 +3,22 @@ const ksqljs = require('./ksqljs/ksqldbJS_class');
 const client = new ksqljs('http://localhost:8088');
 
 //---------------------Test PUll Queries-------------------
-/* const pullTest = async () => {
-    const result = await client.pull('SELECT * FROM riderlocations;');
-    console.log('this is the result', result);
+const pullTest = async () => {
+  // try {
+  //   const result = await client.pull(1);
+  //   console.log('this is the result', result);
+  // }
+  // catch (error) {
+  //   // console.log(error);
+  // }
+
+  client.pull('SELECT * FROM riderlocations;', (res, err) => {
+    if (err) return console.log(error);
+    console.log(res);
+  })
 }
 
-pullTest(); */
+pullTest();
 
 //---------------------Test Push Queries-------------------
 /* const pushTest = async () => {

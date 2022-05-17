@@ -3,19 +3,19 @@ const http2 = require("http2");
 
 class ksqljs {
   constructor(ksqldbURL) {
-    this.ksqldbURL = ksqldbURL;
+    this.ksqldbURL = typeof ksqldbURL === 'string' ? ksqldbURL : null ;
   }
 
-  pull = (query) => {
+  pull = (query, onComplete) => {
     return axios
       .post(this.ksqldbURL + "/query-stream", {
         sql: query,
       })
-      .then((res) => res.data)
-      .catch((error) => console.log(error));
+      .then((res) => onComplete ? onComplete(res.data) : res.data)
+      .catch((error) => {throw error});
   }
 
-  push = (query, cb) => {
+  push = (query, onNext) => {
     let sentQueryId = false;
     let queryMetadata;
     const session = http2.connect(this.ksqldbURL);
@@ -41,7 +41,7 @@ class ksqljs {
         sentQueryId = true;
         queryMetadata = chunk;
       }
-      cb(chunk);
+      onNext(chunk);
     });
 
     req.on("end", () => session.close());
