@@ -51,11 +51,12 @@ createStreamTest(); */
 createTableTest(); */
 
 //---------------------Test Insert Stream-------------------
-/* const insertStreamTest = () => {
-    client.insertStream('TestStream', [
+/* const insertStreamTest = async () => {
+    const test = await client.insertStream('TestStream', [
         { "name": "matt", "email": "123@mail.com", "age": 1000 },
         { "name": "jonathan", "email": "234@mail.com", "age": 99 }
     ]);
+    console.log('returned array: ', test);
 };
 
 insertStreamTest(); */
