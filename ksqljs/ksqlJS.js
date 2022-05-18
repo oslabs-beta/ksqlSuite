@@ -1,5 +1,5 @@
-const axios = require("axios");
-const http2 = require("http2");
+// const axios = require("axios");
+// const http2 = require("http2");
 
 class ksqljs {
   constructor(ksqldbURL) {
@@ -52,9 +52,9 @@ class ksqljs {
 
   //---------------------Terminate existing push queries-----------------
   terminate = (queryId) => {
-    return axios.post(this.ksqldbURL + '/close-query', { queryId: queryId })
-      .then(res => res)
-      .catch(error => console.log(error));
+    return axios.post(this.ksqldbURL + '/ksql', { ksql: `TERMINATE ${queryId};` })
+      .then(res => res.data[0])
+      .catch(error => {throw error});
   }
 
   //---------------------List existing streams, tables, topics, and queries-----------------
