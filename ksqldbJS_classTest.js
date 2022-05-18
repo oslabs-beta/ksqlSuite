@@ -11,11 +11,23 @@ const client = new ksqljs('http://localhost:8088');
 pullTest(); */
 
 //---------------------Test Push Queries-------------------
-/* const pushTest = async () => {
-    metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
-    console.log('this is the metadata returned ', metadata);
+const pushTest = async () => {
+    // metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
+    // console.log('this is the metadata returned ', metadata);
+    let pushId;
+    let pushIdExists = false;
+    await client.createStream('TESTJESTSTREAM', ['name VARCHAR','email varchar','age INTEGER'], 'testJestTopic', 'json', 1);
+    pushId = await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 3;', () => {});
+    await client.terminate(pushId);
+    const result = await client.ksql("LIST QUERIES;");
+    const resultQueries = result.queries;
+    console.log("HERE ARE THE" , result.queries);
+    for(let i = 0; i < resultQueries.length; i++){
+      if(resultQueries[i].id === pushId){
+        pushIdExists = true;
+      }
+    }
 };
-
 pushTest();
 
 //---------------------Test Termination of Queries-------------------
@@ -23,7 +35,7 @@ const terminateTest = async () => {
     client.terminate(metadata);
 };
 
-setTimeout(() => terminateTest(metadata), 2000); */
+// setTimeout(() => terminateTest(metadata), 2000);
 
 //---------------------Test List Queries-------------------
 /* const listQueries = async () => {
