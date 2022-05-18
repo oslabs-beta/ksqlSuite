@@ -69,7 +69,8 @@ class ksqljs {
     const query = `CREATE STREAM ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`;
 
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
-      .catch(error => console.log(error));
+    .then(res => res)
+    .catch(error => console.log(error));
   }
 
   //---------------------Create tables-----------------
