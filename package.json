@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.27.2",
+    "dotenv": "^16.0.1",
     "http2": "^3.3.7",
     "node-fetch": "^3.2.4"
   }
