@@ -2,18 +2,26 @@ const axios = require("axios");
 const http2 = require("http2");
 
 class ksqljs {
-  constructor(ksqldbURL) {
-    this.ksqldbURL = ksqldbURL;
+  constructor(config) {
+    this.ksqldbURL = config.ksqldbURL;
+    this.API = config.API ? config.API : null;
+    this.secret = config.secret ? config.secret : null;
   }
 
   //---------------------Pull queries (fetch a single batch of existing rows)-----------------
   pull = (query) => {
     return axios
-      .post(this.ksqldbURL + "/query-stream", {
-        sql: query,
-      })
+      .post(this.ksqldbURL + "/query-stream",
+        {
+          sql: query,
+        },
+        {
+          headers: {
+            Authorization: `Basic ${Buffer.from(this.API + ":" + this.secret, 'utf8').toString('base64')}`
+          }
+        })
       .then((res) => res.data)
-      .catch((error) => console.log(error));
+      .catch((error) => { throw error });
   }
 
   //---------------------Push queries (continue to receive updates to stream)-----------------
