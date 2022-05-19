@@ -1,5 +1,5 @@
-const axios = require("axios");
-const http2 = require("http2");
+// const axios = require("axios");
+// const http2 = require("http2");
 
 class ksqljs {
   constructor(ksqldbURL) {
@@ -52,9 +52,9 @@ class ksqljs {
 
   //---------------------Terminate existing push queries-----------------
   terminate = (queryId) => {
-    return axios.post(this.ksqldbURL + '/close-query', { queryId: queryId })
-      .then(res => res)
-      .catch(error => console.log(error));
+    return axios.post(this.ksqldbURL + '/ksql', { ksql: `TERMINATE ${queryId};` })
+      .then(res => res.data[0])
+      .catch(error => {throw error});
   }
 
   //---------------------List existing streams, tables, topics, and queries-----------------
@@ -64,7 +64,7 @@ class ksqljs {
       .catch(error => console.log(error));
   }
 
-  //---------------------Create tables-----------------
+  //---------------------Create streams-----------------
   createStream = (name, columnsType, topic, value_format = 'json', partitions = 1, key) => {
     const columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
     const query = `CREATE STREAM ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`;
