@@ -1,6 +1,6 @@
 const ksqljs = require('./ksqljs/ksqljs.js');
 
-const client = new ksqljs('http://localhost:8088');
+const client = new ksqljs({ksqldbURL: 'http://localhost:8088'});
 let metadata;
 
 //---------------------Test PUll Queries-------------------
@@ -65,11 +65,11 @@ setTimeout(() => terminateTest(metadata), 2000); */
 listQueries(); */
 
 //---------------------Test Stream Creation-------------------
-/* const createStreamTest = () => {
+const createStreamTest = () => {
     client.createStream('TestStream', ['name VARCHAR','email varchar','age INTEGER'], 'testTopic', 'json', 1);
 }
 
-createStreamTest(); */
+// createStreamTest();
 
 //---------------------Test Table Creation-------------------
 /* const createTableTest = () => {
@@ -85,14 +85,13 @@ createTableTest(); */
         { "name": "matt", "email": "123@mail.com", "age": 1000 },
         { "name": "jonathan", "email": "234@mail.com", "age": 99 }
     ]);
-=======
-/* const insertStreamTest = async () => {
+======= */
+const insertStreamTest = async () => {
     const test = await client.insertStream('TestStream', [
         { "name": "matt", "email": "123@mail.com", "age": 1000 },
         { "name": "jonathan", "email": "234@mail.com", "age": 99 }
     ]);
-    console.log('returned array: ', test);
->>>>>>> 2db32346a93724a19ca44525e3e148e3ac3c487a
+    // console.log('returned array: ', test);
 };
 
-insertStreamTest(); */
+insertStreamTest();

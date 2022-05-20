@@ -16,9 +16,9 @@ class ksqljs {
           sql: query,
         },
         {
-          headers: {
-            Authorization: `Basic ${Buffer.from(this.API + ":" + this.secret, 'utf8').toString('base64')}`
-          }
+          // headers: {
+          //   Authorization: `Basic ${Buffer.from(this.API + ":" + this.secret, 'utf8').toString('base64')}`
+          // }
         })
       .then((res) => res.data)
       .catch((error) => { throw error });
@@ -130,6 +130,7 @@ class ksqljs {
   }
 
   createStream(name, columnsType, topic, value_format = 'json', partitions = 1, key) {
+    console.log(this.ksqldbURL);
     if(typeof name !== 'string' || typeof columnsType !== 'object' || typeof topic !== 'string' || typeof partitions !== 'number'){
       return console.log("invalid input(s)")
     }
