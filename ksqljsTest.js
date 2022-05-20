@@ -1,6 +1,13 @@
-const ksqljs = require('./ksqljs/ksqljs.js');
+const ksqljs = require('./ksqljs/ksqlJS');
+require('dotenv').config();
 
-const client = new ksqljs({ksqldbURL: 'http://localhost:8088'});
+// const client = new ksqljs({
+//     ksqldbURL: 'https://pksqlc-755v2.us-east-2.aws.confluent.cloud:443',
+//     API: process.env.KSQL_API_KEY,
+//     secret: process.env.KSQL_API_SECRET
+// });
+
+const client = new ksqljs({ ksqldbURL: 'http://localhost:8088' })
 let metadata;
 
 //---------------------Test PUll Queries-------------------
@@ -12,7 +19,6 @@ let metadata;
 pullTest();
 
 //---------------------Test Push Queries-------------------
-<<<<<<< HEAD
 const pushTest = async () => {
     // metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
     // console.log('this is the metadata returned ', metadata);
@@ -28,9 +34,8 @@ const pushTest = async () => {
     //   client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
     // });
     // await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
-=======
-/* const pushTest = async () => {
-<<<<<<< HEAD
+
+    /* const pushTest = async () => {
     try {
         metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
         console.log('this is the metadata returned ', metadata);
@@ -38,11 +43,11 @@ const pushTest = async () => {
         console.log(error);
     }
 
-=======
     metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
     console.log('this is the metadata returned ', metadata);
->>>>>>> 2db32346a93724a19ca44525e3e148e3ac3c487a
->>>>>>> 6403158e7850d91b02f8fed38909bdb5ed59ec00
+
+    metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
+    console.log('this is the metadata returned ', metadata);
 };
 
 pushTest();
@@ -66,7 +71,7 @@ listQueries(); */
 
 //---------------------Test Stream Creation-------------------
 const createStreamTest = () => {
-    client.createStream('TestStream', ['name VARCHAR','email varchar','age INTEGER'], 'testTopic', 'json', 1);
+    client.createStream('TestStream', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testTopic', 'json', 1);
 }
 
 // createStreamTest();
@@ -79,13 +84,19 @@ const createStreamTest = () => {
 createTableTest(); */
 
 //---------------------Test Insert Stream-------------------
-
 /* const insertStreamTest = () => {
     client.insertStream('TestStream', [
         { "name": "matt", "email": "123@mail.com", "age": 1000 },
         { "name": "jonathan", "email": "234@mail.com", "age": 99 }
     ]);
-======= */
+/* const insertStreamTest = async () => {
+    const test = await client.insertStream('TestStream', [
+        { "name": "matt", "email": "123@mail.com", "age": 1000 },
+        { "name": "jonathan", "email": "234@mail.com", "age": 99 }
+    ]);
+    console.log('returned array: ', test);
+*/
+
 const insertStreamTest = async () => {
     const test = await client.insertStream('TestStream', [
         { "name": "matt", "email": "123@mail.com", "age": 1000 },
