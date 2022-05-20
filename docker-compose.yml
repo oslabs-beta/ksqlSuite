@@ -43,6 +43,11 @@ services:
       KSQL_BOOTSTRAP_SERVERS: broker:9092
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
+      KSQL_SSL_TRUSTSTORE_LOCATION: /var/private/ssl/ksql.server.truststore.jks
+      KSQL_SSL_TRUSTSTORE_PASSWORD: zzzz
+      KSQL_SSL_KEYSTORE_LOCATION: /var/private/ssl/ksql.server.keystore.jks
+      KSQL_SSL_KEYSTORE_PASSWORD: xxxx
+      KSQL_SSL_KEY_PASSWORD: yyyy
 
   ksqldb-cli:
     image: confluentinc/ksqldb-cli:0.25.1
