@@ -1,13 +1,12 @@
-const ksqljs = require('../ksqljs/ksqldbJS_class.js');
+const ksqljs = require('../ksqljs/ksqlJS.js');
 
 describe('Integration Tests', () => {
   beforeAll(() => {
     return client = new ksqljs('http://localhost:8088');
   })
 
-  afterEach(async () => {
+  afterAll(async () => {
     await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
-    setTimeout(() => {}, 5000)
   })
 
   it('properly creates a stream', async () => {
@@ -24,49 +23,39 @@ describe('Integration Tests', () => {
     expect(streamExists).toEqual(true);
   })
 
-  it('properly creates a push query', async () => {
+  it('properly creates a push query', () => {
     let pushActive = false;
-    await client.createStream('TESTJESTSTREAM', ['name VARCHAR','email varchar','age INTEGER'], 'testJestTopic', 'json', 1);
-    await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
+    client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
       if(JSON.parse(data).queryId){
         pushActive = true;
       }
-      await client.terminate(JSON.parse(data).queryId);
-      expect(pushActive).toEqual(true);
+      expect(pushActive).toEqual(true)
     });
   })
 
-  it('properly terminates a push query', async () => {
-    let pushId;
-    let pushIdExists = false;
-    await client.createStream('TESTJESTSTREAM', ['name VARCHAR','email varchar','age INTEGER'], 'testJestTopic', 'json', 1);
-    pushId = await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 3;', () => {});
-    await client.terminate(pushId);
-    const result = await client.ksql("LIST QUERIES;");
-    const resultQueries = result.queries;
-    for(let i = 0; i < resultQueries.length; i++){
-      if(resultQueries[i].id === pushId){
-        pushIdExists = true;
-      }
-    }
-    expect(pushIdExists).toEqual(false);
-  })
-  
-  it('receives the correct data from a pull query', async () => {
-    await client.createStream('TESTJESTSTREAM', ['name VARCHAR','email varchar','age INTEGER'], 'testJestTopic', 'json', 1);
-    await client.ksql("INSERT INTO TESTJESTSTREAM (name, email, age) VALUES ('jestName', 'jestName@jestEmail.com', 9);");
-    const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
-    expect(pullData[1]).toEqual(['jestName', 'jestName@jestEmail.com', 9]);
+  it('properly terminates a push query', () => {
+    client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 3;', async (data) => {
+      const terminateRes = await client.terminate(JSON.parse(data).queryId);
+      expect(terminateRes.wasTerminated).toEqual(true);
+    })
   })
 
   it('properly inserts a row into a stream', async () => {
-    await client.createStream('TESTJESTSTREAM', ['name VARCHAR','email varchar','age INTEGER'], 'testJestTopic', 'json', 1);
     await client.insertStream('TESTJESTSTREAM', [
-      { "name": "matty", "email": "123@mail.com", "age": 100 }
+      { "name": "stab-rabbit", "email": "123@mail.com", "age": 100 }
     ]);
     const data = [];
-    await client.push('SELECT * FROM TESTJESTSTREAM;', (chunk) => {data.push(chunk)});
-    expect(data[1]).toEqual('["matty","123@mail.com",100]\n');
+    await client.push('SELECT * FROM TESTJESTSTREAM;', async (chunk) => {
+      data.push(JSON.parse(chunk));
+      if(data[1]){
+        client.terminate(data[0].queryId);
+        expect(data[1]).toEqual(["stab-rabbit","123@mail.com",100])
+      }
+    });
   })
 
+  it('receives the correct data from a pull query', async () => {
+    const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
+    expect(pullData[1]).toEqual('["stab-rabbit","123@mail.com",100]\n');
+  })
 })

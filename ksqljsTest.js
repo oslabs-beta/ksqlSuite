@@ -12,12 +12,24 @@ let metadata;
 pullTest(); */
 
 //---------------------Test Push Queries-------------------
-/* const pushTest = async () => {
-    metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
-    console.log('this is the metadata returned ', metadata);
+const pushTest = async () => {
+    // metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
+    // console.log('this is the metadata returned ', metadata);
+    let pushActive = false;
+    await client.createStream('TESTJESTSTREAM', ['age INTEGER'], 'testJestTopic', 'json', 1);
+    // await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;', (data) => {
+    //   console.log(data);
+    //   console.log('HERE IS DATA ', JSON.parse(data).queryId)
+    //   if(JSON.parse(data).queryId){
+    //     pushActive = true;
+    //   }
+    //   client.ksql(`TERMINATE ${JSON.parse(data).queryId};`)
+    //   client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
+    // });
+    // await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
 };
 
-pushTest(); */
+pushTest();
 
 //---------------------Test Termination of Queries-------------------
 /* const terminateTest = async () => {
