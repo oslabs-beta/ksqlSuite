@@ -1,9 +1,14 @@
 const ksqljs = require('../ksqljs/ksqlJS.js');
 
 describe('Integration Tests', () => {
-  beforeAll(() => {
-    return client = new ksqljs('http://localhost:8088');
-  })
+  beforeAll((done) => {
+    client = new ksqljs('http://localhost:8088');
+    done();
+  });
+
+  beforeEach(async () => {
+    await client.createStream('TESTJESTSTREAM', ['name VARCHAR','email varchar','age INTEGER'], 'testJestTopic', 'json', 1);
+  });
 
   afterAll(async () => {
     await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');

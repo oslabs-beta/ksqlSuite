@@ -2,17 +2,30 @@ const axios = require("axios");
 const http2 = require("http2");
 
 class ksqljs {
-  constructor(ksqldbURL) {
-    this.ksqldbURL = ksqldbURL;
+  constructor(config) {
+    this.ksqldbURL = config.ksqldbURL;
+    this.API = config.API ? config.API : null;
+    this.secret = config.secret ? config.secret : null;
   }
 
-  pull(query) {
-    // return axios
-    //   .post(this.ksqldbURL + "/query-stream", {
-    //     sql: query,
-    //   })
-    //   .then((res) => res.data)
-    //   .catch((error) => console.log(error));
+  //---------------------Pull queries (fetch a single batch of existing rows)-----------------
+  pull = (query) => {
+    return axios
+      .post(this.ksqldbURL + "/query-stream",
+        {
+          sql: query,
+        },
+        {
+          headers: {
+            Authorization: `Basic ${Buffer.from(this.API + ":" + this.secret, 'utf8').toString('base64')}`
+          }
+        })
+      .then((res) => res.data)
+      .catch((error) => { throw error });
+  }
+
+  //---------------------Push queries (continue to receive updates to stream)-----------------
+  push = (query, cb) => {
     return new Promise((resolve, reject) => {
       const session = http2.connect(this.ksqldbURL);
       let dataRes = [];
@@ -124,47 +137,48 @@ class ksqljs {
     const query = `CREATE STREAM ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`;
 
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
-      .catch(error => console.log(error));
+    .then(res => res)
+    .catch(error => console.log(error));
   }
 
-  //---------------------Insert row into a stream-----------------
-  /* @stream - target stream to insert into
-     @rows - rows of data to insert, e.g. [
-      { "name": "a", "email": "123@mail.com", "age": 25 },
-      { "name": "b", "email": "234@mail.com", "age": 43 }
-  ]
-  */
+  //---------------------Create tables-----------------
+  createTable = (name, columnsType, topic, value_format = 'json', partitions) => {
+      const columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
+      const query = `CREATE TABLE ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`
+
+      axios.post(this.ksqldbURL + '/ksql', {ksql: query})
+      .catch(error => console.log(error));
+    }
+
+  //---------------------Insert Rows Into Existing Streams-----------------
   insertStream = (stream, rows) => {
     return new Promise((resolve, reject) => {
-      let msgOutput = [];
+      const msgOutput = [];
 
       const session = http2.connect(this.ksqldbURL);
       const req = session.request({
         ":path": "/inserts-stream",
         ":method": "POST",
       });
-
+  
       let reqBody = `{ "target": "${stream}" }`;
-
+  
       for (let row of rows) {
         reqBody += `\n${JSON.stringify(row)}`;
       }
-
+  
       req.write(reqBody, "utf8");
       req.end();
       req.setEncoding("utf8");
-
+  
       req.on("data", (chunk) => {
         msgOutput.push(JSON.parse(chunk));
       });
-
+  
       req.on("end", () => {
-        session.close();
         resolve(msgOutput);
-        // console.log(msgOutput);
+        session.close();
       });
-
-
     })
   }
 

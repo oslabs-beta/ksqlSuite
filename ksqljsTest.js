@@ -9,9 +9,10 @@ let metadata;
     console.log('this is the result', result);
 }
 
-pullTest(); */
+pullTest();
 
 //---------------------Test Push Queries-------------------
+<<<<<<< HEAD
 const pushTest = async () => {
     // metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
     // console.log('this is the metadata returned ', metadata);
@@ -27,6 +28,21 @@ const pushTest = async () => {
     //   client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
     // });
     // await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
+=======
+/* const pushTest = async () => {
+<<<<<<< HEAD
+    try {
+        metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
+        console.log('this is the metadata returned ', metadata);
+    } catch (error) {
+        console.log(error);
+    }
+
+=======
+    metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
+    console.log('this is the metadata returned ', metadata);
+>>>>>>> 2db32346a93724a19ca44525e3e148e3ac3c487a
+>>>>>>> 6403158e7850d91b02f8fed38909bdb5ed59ec00
 };
 
 pushTest();
@@ -63,11 +79,20 @@ createStreamTest(); */
 createTableTest(); */
 
 //---------------------Test Insert Stream-------------------
+
 /* const insertStreamTest = () => {
     client.insertStream('TestStream', [
         { "name": "matt", "email": "123@mail.com", "age": 1000 },
         { "name": "jonathan", "email": "234@mail.com", "age": 99 }
     ]);
+=======
+/* const insertStreamTest = async () => {
+    const test = await client.insertStream('TestStream', [
+        { "name": "matt", "email": "123@mail.com", "age": 1000 },
+        { "name": "jonathan", "email": "234@mail.com", "age": 99 }
+    ]);
+    console.log('returned array: ', test);
+>>>>>>> 2db32346a93724a19ca44525e3e148e3ac3c487a
 };
 
 insertStreamTest(); */
