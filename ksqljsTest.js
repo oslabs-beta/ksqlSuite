@@ -9,7 +9,7 @@ let metadata;
     console.log('this is the result', result);
 }
 
-pullTest(); */
+pullTest();
 
 //---------------------Test Push Queries-------------------
 /* const pushTest = async () => {
