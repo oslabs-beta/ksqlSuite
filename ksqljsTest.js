@@ -11,7 +11,7 @@ const client = new ksqljs({ ksqldbURL: 'http://localhost:8088' })
 let metadata;
 
 //---------------------Test PUll Queries-------------------
-const pullTest = async () => {
+/* const pullTest = async () => {
     const result = await client.pull('SELECT * FROM riderlocations;');
     console.log('this is the result', result);
 }
@@ -19,7 +19,23 @@ const pullTest = async () => {
 pullTest();
 
 //---------------------Test Push Queries-------------------
-/* const pushTest = async () => {
+const pushTest = async () => {
+    // metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
+    // console.log('this is the metadata returned ', metadata);
+    let pushActive = false;
+    await client.createStream('TESTJESTSTREAM', ['age INTEGER'], 'testJestTopic', 'json', 1);
+    // await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;', (data) => {
+    //   console.log(data);
+    //   console.log('HERE IS DATA ', JSON.parse(data).queryId)
+    //   if(JSON.parse(data).queryId){
+    //     pushActive = true;
+    //   }
+    //   client.ksql(`TERMINATE ${JSON.parse(data).queryId};`)
+    //   client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
+    // });
+    // await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
+
+    /* const pushTest = async () => {
     try {
         metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
         console.log('this is the metadata returned ', metadata);
@@ -27,9 +43,14 @@ pullTest();
         console.log(error);
     }
 
+    metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
+    console.log('this is the metadata returned ', metadata);
+
+    metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
+    console.log('this is the metadata returned ', metadata);
 };
 
-pushTest(); */
+pushTest();
 
 //---------------------Test Termination of Queries-------------------
 /* const terminateTest = async () => {
@@ -49,11 +70,11 @@ setTimeout(() => terminateTest(metadata), 2000); */
 listQueries(); */
 
 //---------------------Test Stream Creation-------------------
-/* const createStreamTest = () => {
-    client.createStream('TestStream', ['name VARCHAR','email varchar','age INTEGER'], 'testTopic', 'json', 1);
+const createStreamTest = () => {
+    client.createStream('TestStream', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testTopic', 'json', 1);
 }
 
-createStreamTest(); */
+// createStreamTest();
 
 //---------------------Test Table Creation-------------------
 /* const createTableTest = () => {
@@ -68,6 +89,20 @@ createTableTest(); */
         { "name": "matt", "email": "123@mail.com", "age": 1000 },
         { "name": "jonathan", "email": "234@mail.com", "age": 99 }
     ]);
+/* const insertStreamTest = async () => {
+    const test = await client.insertStream('TestStream', [
+        { "name": "matt", "email": "123@mail.com", "age": 1000 },
+        { "name": "jonathan", "email": "234@mail.com", "age": 99 }
+    ]);
+    console.log('returned array: ', test);
+*/
+
+const insertStreamTest = async () => {
+    const test = await client.insertStream('TestStream', [
+        { "name": "matt", "email": "123@mail.com", "age": 1000 },
+        { "name": "jonathan", "email": "234@mail.com", "age": 99 }
+    ]);
+    // console.log('returned array: ', test);
 };
 
-insertStreamTest(); */
+insertStreamTest();

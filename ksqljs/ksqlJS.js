@@ -16,9 +16,9 @@ class ksqljs {
           sql: query,
         },
         {
-          headers: {
-            Authorization: `Basic ${Buffer.from(this.API + ":" + this.secret, 'utf8').toString('base64')}`
-          }
+          // headers: {
+          //   Authorization: `Basic ${Buffer.from(this.API + ":" + this.secret, 'utf8').toString('base64')}`
+          // }
         })
       .then((res) => res.data)
       .catch((error) => { throw error });
@@ -27,52 +27,113 @@ class ksqljs {
   //---------------------Push queries (continue to receive updates to stream)-----------------
   push = (query, cb) => {
     return new Promise((resolve, reject) => {
-      let sentQueryId = false;
       const session = http2.connect(this.ksqldbURL);
-  
-      session.on("error", (err) => console.error(err));
+      let dataRes = [];
+
+      session.on("error", (err) => reject(err));
 
       const req = session.request({
         ":path": "/query-stream",
         ":method": "POST",
       });
-  
+
+      const reqBody = {
+        sql: query,
+        Accept: "application/json"
+      }
+
+      req.write(JSON.stringify(reqBody), "utf8");
+      req.end();
+      req.setEncoding("utf8");
+
+      req.on("data", (data) => {
+        dataRes.push(data);
+      })
+      req.on("end", () => {
+        resolve(dataRes);
+        session.close()
+      });
+    })
+  }
+
+  push(query, cb) {
+    return new Promise((resolve, reject) => {
+      let sentQueryId = false;
+      const session = http2.connect(this.ksqldbURL);
+
+      session.on("error", (err) => reject(err));
+
+      const req = session.request({
+        ":path": "/query-stream",
+        ":method": "POST",
+      });
+
       const reqBody = {
         sql: query,
         Accept: "application/json, application/vnd.ksqlapi.delimited.v1",
       };
-  
+
       req.write(JSON.stringify(reqBody), "utf8");
       req.end();
       req.setEncoding("utf8");
-  
+
       req.on("data", (chunk) => {
         if (!sentQueryId) {
           sentQueryId = true;
+          cb(chunk);
           resolve(JSON.parse(chunk)?.queryId)
-        } else cb(chunk);
+        }
+        else {
+          cb(chunk);
+        }
       });
-  
+
       req.on("end", () => session.close());
     })
   }
 
-  //---------------------Terminate existing push queries-----------------
-  terminate = (queryId) => {
+  terminate(queryId) {
     return axios.post(this.ksqldbURL + '/ksql', { ksql: `TERMINATE ${queryId};` })
       .then(res => res.data[0])
-      .catch(error => {throw error});
+      .catch(error => { return error });
+    // return new Promise((resolve, reject) => {
+    // const session = http2.connect(this.ksqldbURL);
+    // session.on("error", (err) => console.error(err));
+
+    // const req = session.request({
+    //   ":path": "/close-query",
+    //   ":method": "POST",
+    // });
+
+    // const reqBody = {
+    //   queryId: queryId,
+    //   Accept: "application/json, application/vnd.ksqlapi.delimited.v1",
+    // };
+
+    // req.write(JSON.stringify(reqBody), "utf8");
+    // req.end();
+    // req.setEncoding("utf8");
+
+    // req.on("data", (response) => {
+    //   console.log(response);
+    //   resolve(response);
+    // })
+
+    // req.on("end", () => session.close());
+    // })
   }
 
-  //---------------------List existing streams, tables, topics, and queries-----------------
-  ksql = (query) => {
+  ksql(query) {
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
       .then(res => res.data[0])
       .catch(error => console.log(error));
   }
 
-  //---------------------Create tables-----------------
-  createStream = (name, columnsType, topic, value_format = 'json', partitions = 1, key) => {
+  createStream(name, columnsType, topic, value_format = 'json', partitions = 1, key) {
+    console.log(this.ksqldbURL);
+    if(typeof name !== 'string' || typeof columnsType !== 'object' || typeof topic !== 'string' || typeof partitions !== 'number'){
+      return console.log("invalid input(s)")
+    }
     const columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
     const query = `CREATE STREAM ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`;
 
