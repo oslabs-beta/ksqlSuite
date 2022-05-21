@@ -83,12 +83,11 @@ class ksqljs {
     }
 
   //---------------------Create tables as select-----------------
-  createTableAs = (name, columnsArr, topic, value_format = 'json', partitions=1, fromName) => {
+  createTableAs = (name, fromName, columnsArr, topic, value_format = 'json', partitions=1) => {
     const selectColStr = columnsArr.reduce((result, current) => result + ', ' + current);
     const query = `CREATE TABLE ${name} WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions}) AS SELECT ${selectColStr} FROM ${fromName} EMIT CHANGES;`
 
-    return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
-    .then(res => res)
+    axios.post(this.ksqldbURL + '/ksql', { ksql: query })
     .catch(error => console.log(error));
   }
   //---------------------Insert Rows Into Existing Streams-----------------

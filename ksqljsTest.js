@@ -1,4 +1,4 @@
-const ksqljs = require('./ksqljs/ksqljs.js');
+const ksqljs = require('./ksqljs/ksqlJS');
 
 const client = new ksqljs('http://localhost:8088');
 let metadata;
@@ -49,6 +49,16 @@ createStreamTest(); */
 };
 
 createTableTest(); */
+
+//---------------------Test Table Create As-------------------
+const createTableAsTest = () => {
+    // create table
+    // client.createTable('AnotherTestTable', ['name VARCHAR PRIMARY KEY', 'email VARCHAR', 'age INTEGER'], 'users', 'json', 1);
+    // create derived table
+    client.createTableAs('tableAsTest', 'AnotherTestTable', ['name','email','age'], 'NEWTOPIC');
+}
+
+createTableAsTest()
 
 //---------------------Test Insert Stream-------------------
 /* const insertStreamTest = async () => {
