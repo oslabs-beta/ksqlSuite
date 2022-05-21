@@ -1,5 +1,7 @@
 const ksqljs = require('../ksqljs/ksqlJS.js');
 
+// Pre-requisite: start a docker container
+
 describe('Integration Tests', () => {
   beforeAll((done) => {
     client = new ksqljs({ksqldbURL: 'http://localhost:8088'});
