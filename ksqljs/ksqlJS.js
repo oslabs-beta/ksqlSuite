@@ -1,5 +1,6 @@
 const axios = require("axios");
 const http2 = require("http2");
+const queryBuilder = require('./queryBuilder.js');
 
 class ksqljs {
   constructor(config) {
@@ -25,36 +26,36 @@ class ksqljs {
   }
 
   //---------------------Push queries (continue to receive updates to stream)-----------------
-  push = (query, cb) => {
-    return new Promise((resolve, reject) => {
-      const session = http2.connect(this.ksqldbURL);
-      let dataRes = [];
+  // push = (query, cb) => {
+  //   return new Promise((resolve, reject) => {
+  //     const session = http2.connect(this.ksqldbURL);
+  //     let dataRes = [];
 
-      session.on("error", (err) => reject(err));
+  //     session.on("error", (err) => reject(err));
 
-      const req = session.request({
-        ":path": "/query-stream",
-        ":method": "POST",
-      });
+  //     const req = session.request({
+  //       ":path": "/query-stream",
+  //       ":method": "POST",
+  //     });
 
-      const reqBody = {
-        sql: query,
-        Accept: "application/json"
-      }
+  //     const reqBody = {
+  //       sql: query,
+  //       Accept: "application/json"
+  //     }
 
-      req.write(JSON.stringify(reqBody), "utf8");
-      req.end();
-      req.setEncoding("utf8");
+  //     req.write(JSON.stringify(reqBody), "utf8");
+  //     req.end();
+  //     req.setEncoding("utf8");
 
-      req.on("data", (data) => {
-        dataRes.push(data);
-      })
-      req.on("end", () => {
-        resolve(dataRes);
-        session.close()
-      });
-    })
-  }
+  //     req.on("data", (data) => {
+  //       dataRes.push(data);
+  //     })
+  //     req.on("end", () => {
+  //       resolve(dataRes);
+  //       session.close()
+  //     });
+  //   })
+  // }
 
   push(query, cb) {
     return new Promise((resolve, reject) => {
@@ -130,7 +131,6 @@ class ksqljs {
   }
 
   createStream(name, columnsType, topic, value_format = 'json', partitions = 1, key) {
-    console.log(this.ksqldbURL);
     if(typeof name !== 'string' || typeof columnsType !== 'object' || typeof topic !== 'string' || typeof partitions !== 'number'){
       return console.log("invalid input(s)")
     }
@@ -183,6 +183,14 @@ class ksqljs {
     })
   }
 
+  pullFromTo = (streamName, timezone='Greenwich', from=[date, hours = '00', minutes = '00', seconds = '00', milliseconds = '000'], to=[date, hours = '00', minutes = '00', seconds = '00', milliseconds = '000']) => {
+    if(!streamName || typeof timezone !== 'string' || !from || typeof from[0] !== 'string' || typeof from[1] !== 'string' || typeof from[2] !== 'string' || typeof from[3] !== 'string' || typeof from[4] !== 'string' || typeof to[0] !== 'string' || typeof to[1] !== 'string' || typeof to[2] !== 'string' || typeof to[3] !== 'string' || typeof to[4] !== 'string'){
+      return new Error('invalid inputs');
+    }
+    const userFrom = `${from[0]}T${from[1]}:${from[2]}:${from[3]}:${from[4]}`;
+    const userTo = `${to[0]}T${to[1]}:${to[2]}:${to[3]}:${to[4]}`;
+
+  }
 };
 
 module.exports = ksqljs;
