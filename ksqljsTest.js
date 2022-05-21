@@ -98,11 +98,13 @@ createTableTest(); */
 */
 
 const insertStreamTest = async () => {
-    const test = await client.insertStream('TestStream', [
-        { "name": "matt", "email": "123@mail.com", "age": 1000 },
-        { "name": "jonathan", "email": "234@mail.com", "age": 99 }
-    ]);
+    // const test = await client.insertStream('TestStream', [
+        // { "name": "Scrooge", "email": "mcduck@mail.com", "age": 59 },
+        // { "name": "jonathan", "email": "234@mail.com", "age": 99 }
+    // ]);
     // console.log('returned array: ', test);
+    const streams = await client.ksql('LIST STREAMS;');
+    console.log(streams);
 };
 
 insertStreamTest();

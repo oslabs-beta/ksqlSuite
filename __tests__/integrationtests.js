@@ -2,12 +2,8 @@ const ksqljs = require('../ksqljs/ksqlJS.js');
 
 describe('Integration Tests', () => {
   beforeAll((done) => {
-    client = new ksqljs('http://localhost:8088');
+    client = new ksqljs({ksqldbURL: 'http://localhost:8088'});
     done();
-  });
-
-  beforeEach(async () => {
-    await client.createStream('TESTJESTSTREAM', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testJestTopic', 'json', 1);
   });
 
   afterAll(async () => {
@@ -61,6 +57,6 @@ describe('Integration Tests', () => {
 
   it('receives the correct data from a pull query', async () => {
     const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
-    expect(pullData[1]).toEqual('["stab-rabbit","123@mail.com",100]\n');
+    expect(pullData[1]).toEqual([ 'stab-rabbit', '123@mail.com', 100 ]);
   })
 })
