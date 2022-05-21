@@ -30,6 +30,9 @@ class queryBuilder {
       case "boolean":
         return param;
       case "object":
+        if (Array.isArray(param)){
+          return `${param[0].replaceAll("'", "''")}`
+        }
         return new Error("object passed in as query argument");
       case "function":
         return new Error("function passed in as query argument");

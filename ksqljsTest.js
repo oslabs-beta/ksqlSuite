@@ -70,9 +70,9 @@ setTimeout(() => terminateTest(metadata), 2000); */
 listQueries(); */
 
 //---------------------Test Stream Creation-------------------
-const createStreamTest = () => {
+/* const createStreamTest = () => {
     client.createStream('TestStream', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testTopic', 'json', 1);
-}
+} */
 
 // createStreamTest();
 
@@ -88,7 +88,8 @@ const createTableAsTest = () => {
     // create table
     // client.createTable('AnotherTestTable', ['name VARCHAR PRIMARY KEY', 'email VARCHAR', 'age INTEGER'], 'users', 'json', 1);
     // create derived table
-    client.createTableAs('tableAsTest', 'AnotherTestTable', ['name','email','age'], 'NEWTOPIC');
+    // client.createTableAs('currentLocation', 'riderlocations', ['profileId','LATEST_BY_OFFSET(latitude) AS la','LATEST_BY_OFFSET(longitude) AS lo'], {}, {GROUP_BY: 'profileId'});
+    client.createTableAs('ridersNearMountainView', 'currentLocation', ['ROUND(GEO_DISTANCE(la, lo, 37.4133, -122.1162), -1) AS distanceInMiles', 'COLLECT_LIST(profileId) AS riders', 'COUNT(*) AS count'], {}, {GROUP_BY: 'ROUND(GEO_DISTANCE(la, lo, 37.4133, -122.1162), -1)'})
 }
 
 createTableAsTest()
@@ -106,7 +107,7 @@ createTableAsTest()
     ]);
     console.log('returned array: ', test);
 */
-
+/* 
 const insertStreamTest = async () => {
     const test = await client.insertStream('TestStream', [
         { "name": "matt", "email": "123@mail.com", "age": 1000 },
@@ -115,4 +116,4 @@ const insertStreamTest = async () => {
     // console.log('returned array: ', test);
 };
 
-insertStreamTest();
+insertStreamTest(); */

@@ -1,5 +1,6 @@
 const axios = require("axios");
 const http2 = require("http2");
+const queryBuilder = require('./queryBuilder')
 
 class ksqljs {
   constructor(config) {
@@ -143,20 +144,69 @@ class ksqljs {
   }
 
   //---------------------Create tables-----------------
-  createTable = (name, columnsType, topic, value_format = 'json', partitions) => {
-      const columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
-      const query = `CREATE TABLE ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`
+  createTable = (name, columnsType, topic, value_format = 'json', partitions = 1) => {
+      let columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
+      
+      // reformat for builder
+      name = [name];
+      columnsTypeString = [columnsTypeString];
 
-      axios.post(this.ksqldbURL + '/ksql', {ksql: query})
+      const builder = new queryBuilder();
+      const query = builder.build('CREATE TABLE ? (?) WITH (kafka_topic=?, value_format=?, partitions=?);', name, columnsTypeString, topic, value_format, partitions)
+
+      return axios.post(this.ksqldbURL + '/ksql', {ksql: query})
       .catch(error => console.log(error));
     }
 
   //---------------------Create tables as select-----------------
-  createTableAs = (name, fromName, columnsArr, topic, value_format = 'json', partitions=1) => {
-    const selectColStr = columnsArr.reduce((result, current) => result + ', ' + current);
-    const query = `CREATE TABLE ${name} WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions}) AS SELECT ${selectColStr} FROM ${fromName} EMIT CHANGES;`
+  createTableAs = (tableName, source, selectArray, propertiesObj, conditionsObj) => {
+    let selectColStr = selectArray.reduce((result, current) => result + ', ' + current);
 
-    axios.post(this.ksqldbURL + '/ksql', { ksql: query })
+    // expect user to input properties object of format {topic: ... , value_format: ..., partitions: ...}
+    // check for properties object, look for properties, if any are missing assign it a default value, if there's no property 
+    const defaultProps = {
+      topic: tableName,
+      value_format: 'json',
+      partitions: 1
+    };
+    if (propertiesObj){
+        for (let key in defaultProps){
+          if (!propertiesObj[key]){
+            propertiesObj[key] = defaultProps[key];
+          }
+        }
+      }
+    else {
+      const propertiesObj = {};
+      for (let key in defaultProps){
+        propertiesObj[key] = defaultProps[key];
+      }
+    }
+    // if there's no properties Obj, assign them all default values
+
+    // expect user to input a conditions object of format {WHERE: condition, GROUP_BY: condition, HAVING: condition};
+    // generate conditions string based on object
+    let conditionQuery = '';
+    if (conditionsObj){
+    const conditionsArr = ['WHERE', 'GROUP_BY', 'HAVING'];
+    for (let i = 0; i < conditionsArr.length; i++){
+      if (conditionsObj[conditionsArr[i]]){
+        const sqlClause = conditionsArr[i].replace('_', ' ');
+        conditionQuery = conditionQuery + `${sqlClause} ${conditionsObj[conditionsArr[i]]} `
+      }
+    }
+  }
+
+    // reformat for builder
+    tableName = [tableName];
+    selectColStr = [selectColStr];
+    source = [source];
+    conditionQuery = [conditionQuery]
+
+    const builder = new queryBuilder();
+    const query = builder.build(`CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? ?EMIT CHANGES;`, tableName, propertiesObj.topic, propertiesObj.value_format, propertiesObj.partitions, selectColStr, source, conditionQuery)
+
+    return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
     .catch(error => console.log(error));
   }
   //---------------------Insert Rows Into Existing Streams-----------------
