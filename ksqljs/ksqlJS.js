@@ -131,15 +131,8 @@ class ksqljs {
   }
 
   createStream(name, columnsType, topic, value_format = 'json', partitions = 1, key) {
-<<<<<<< HEAD
-    if (typeof name !== 'string' || typeof columnsType !== 'object' || typeof topic !== 'string' || typeof partitions !== 'number') {
-||||||| constructed merge base
-    console.log(this.ksqldbURL);
-    if(typeof name !== 'string' || typeof columnsType !== 'object' || typeof topic !== 'string' || typeof partitions !== 'number'){
-=======
     console.log(this.ksqldbURL);
     if (typeof name !== 'string' || typeof columnsType !== 'object' || typeof topic !== 'string' || typeof partitions !== 'number') {
->>>>>>> completed inspect methods and tests
       return console.log("invalid input(s)")
     }
     const columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
