@@ -63,13 +63,25 @@ class ksqljs {
       .catch(error => console.log(error));
   }
 
-  //---------------------Create tables-----------------
+  //---------------------Create streams-----------------
   createStream = (name, columnsType, topic, value_format = 'json', partitions = 1, key) => {
     const columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
     const query = `CREATE STREAM ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`;
 
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
     .then(res => res)
+    .catch(error => console.log(error));
+  }
+
+  createStreamAs = (streamName, selectColumns, sourceStream, topic, value_format = 'json', conditions) => {
+    const selectColumnsString = selectColumns.reduce((result, currentColumn) => result + ', ' + currentColumn);
+    let query = `CREATE STREAM ${streamName} AS SELECT ${selectColumnsString} FROM ${sourceStream} `
+    // conditions ? query += `WHERE ${conditions} EMIT CHANGES;` : 'EMIT CHANGES;'
+    conditions ? query += 'WHERE ' + conditions + ' EMIT CHANGES;' : query += 'EMIT CHANGES;'
+    console.log(query);
+
+    return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
+    .then(res => res.data[0].commandStatus.queryId)
     .catch(error => console.log(error));
   }
 

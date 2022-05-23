@@ -60,3 +60,12 @@ createTableTest(); */
 };
 
 insertStreamTest(); */
+
+//---------------------Test Stream Creation As-------------------
+
+const createStreamAsTest = async () => {
+    const queryId = await client.createStreamAs('TestAsStream', ['latitude', 'longitude'], 'riderLocations', null, 'json', 'latitude > 37');
+    console.log('this is the queryId: ', queryId);
+};
+
+createStreamAsTest();
