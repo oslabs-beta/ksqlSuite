@@ -130,16 +130,11 @@ class ksqljs {
       .catch(error => console.log(error));
   }
 
-<<<<<<< HEAD
-  //---------------------Create streams-----------------
-  createStream = (name, columnsType, topic, value_format = 'json', partitions = 1, key) => {
-=======
   createStream(name, columnsType, topic, value_format = 'json', partitions = 1, key) {
     console.log(this.ksqldbURL);
     if (typeof name !== 'string' || typeof columnsType !== 'object' || typeof topic !== 'string' || typeof partitions !== 'number') {
       return console.log("invalid input(s)")
     }
->>>>>>> dev
     const columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
     const query = `CREATE STREAM ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`;
 
