@@ -25,7 +25,7 @@ class ksqljs {
       .catch((error) => { throw error });
   }
 
-  //---------------------Push queries (continue to receive updates to stream)-----------------
+  //---------------------Push query Relic-----------------
   // push = (query, cb) => {
   //   return new Promise((resolve, reject) => {
   //     const session = http2.connect(this.ksqldbURL);
@@ -96,32 +96,7 @@ class ksqljs {
   terminate(queryId) {
     return axios.post(this.ksqldbURL + '/ksql', { ksql: `TERMINATE ${queryId};` })
       .then(res => res.data[0])
-      .catch(error => { return error });
-    // return new Promise((resolve, reject) => {
-    // const session = http2.connect(this.ksqldbURL);
-    // session.on("error", (err) => console.error(err));
-
-    // const req = session.request({
-    //   ":path": "/close-query",
-    //   ":method": "POST",
-    // });
-
-    // const reqBody = {
-    //   queryId: queryId,
-    //   Accept: "application/json, application/vnd.ksqlapi.delimited.v1",
-    // };
-
-    // req.write(JSON.stringify(reqBody), "utf8");
-    // req.end();
-    // req.setEncoding("utf8");
-
-    // req.on("data", (response) => {
-    //   console.log(response);
-    //   resolve(response);
-    // })
-
-    // req.on("end", () => session.close());
-    // })
+      .catch(error => error);
   }
 
   ksql(query) {
@@ -131,7 +106,6 @@ class ksqljs {
   }
 
   createStream(name, columnsType, topic, value_format = 'json', partitions = 1, key) {
-    console.log(this.ksqldbURL);
     if (typeof name !== 'string' || typeof columnsType !== 'object' || typeof topic !== 'string' || typeof partitions !== 'number') {
       return console.log("invalid input(s)")
     }
@@ -148,7 +122,6 @@ class ksqljs {
     let query = `CREATE STREAM ${streamName} AS SELECT ${selectColumnsString} FROM ${sourceStream} `
     // conditions ? query += `WHERE ${conditions} EMIT CHANGES;` : 'EMIT CHANGES;'
     conditions ? query += 'WHERE ' + conditions + ' EMIT CHANGES;' : query += 'EMIT CHANGES;'
-    console.log(query);
 
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
     .then(res => res.data[0].commandStatus.queryId)
