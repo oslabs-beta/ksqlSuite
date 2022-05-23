@@ -17,8 +17,9 @@ let metadata;
     console.log('this is the result', result);
 }
 
-pullTest();
+pullTest(); */
 
+/*
 //---------------------Test Push Queries-------------------
 const pushTest = async () => {
     // metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
