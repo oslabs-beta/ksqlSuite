@@ -30,6 +30,13 @@ class queryBuilder {
       case "boolean":
         return param;
       case "object":
+        if (Array.isArray(param)){
+          //check if spaces
+          if(param.includes(" ")){
+            return new Error("string params should not include spaces");
+          }
+          return `${param[0].replaceAll("'", "''")}`
+        }
         return new Error("object passed in as query argument");
       case "function":
         return new Error("function passed in as query argument");

@@ -103,8 +103,13 @@ const insertStreamTest = async () => {
         // { "name": "jonathan", "email": "234@mail.com", "age": 99 }
     // ]);
     // console.log('returned array: ', test);
-    const streams = await client.ksql('LIST STREAMS;');
-    console.log(streams);
 };
 
-insertStreamTest();
+// insertStreamTest();
+
+const pullFromToTest = async () => {
+    const data = await client.pullFromTo('TESTSTREAM', 'America/Los_Angeles', ['2022-05-18', '00', '00', '00'], ['2022-05-20', '00', '00', '00']);
+    // console.log(data);
+}
+
+pullFromTo();
