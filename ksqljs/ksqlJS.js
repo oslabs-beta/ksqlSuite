@@ -27,41 +27,7 @@ class ksqljs {
       .catch((error) => { throw error });
   }
 
-<<<<<<< HEAD
-  //---------------------Push query Relic-----------------
-  // push = (query, cb) => {
-  //   return new Promise((resolve, reject) => {
-  //     const session = http2.connect(this.ksqldbURL);
-  //     let dataRes = [];
-
-  //     session.on("error", (err) => reject(err));
-
-  //     const req = session.request({
-  //       ":path": "/query-stream",
-  //       ":method": "POST",
-  //     });
-
-  //     const reqBody = {
-  //       sql: query,
-  //       Accept: "application/json"
-  //     }
-
-  //     req.write(JSON.stringify(reqBody), "utf8");
-  //     req.end();
-  //     req.setEncoding("utf8");
-
-  //     req.on("data", (data) => {
-  //       dataRes.push(data);
-  //     })
-  //     req.on("end", () => {
-  //       resolve(dataRes);
-  //       session.close()
-  //     });
-  //   })
-  // }
-=======
   //---------------------Push queries (continue to receive updates to stream)-----------------
->>>>>>> dev
 
   push(query, cb) {
     return new Promise((resolve, reject) => {
