@@ -104,4 +104,4 @@ dist
 .tern-port
 
 # Local Files
-ksqljsTest.js
+./ksqljsTest.js
