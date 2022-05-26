@@ -70,8 +70,14 @@ createTableTest(); */
     ]);
     console.log('returned array: ', test);
   };
-
   insertStreamTest(); */
+
+/* const pullFromToTest = async () => {
+    const data = await client.pullFromTo('TESTSTREAM', 'America/Los_Angeles', ['2022-05-18', '00', '00', '00'], ['2022-05-20', '00', '00', '00']);
+    // console.log(data);
+}
+
+pullFromTo(); */
 
 //---------------------Test Stream Creation As-------------------
 
