@@ -1,5 +1,6 @@
 const ksqljs = require('./ksqljs/ksqlJS');
 require('dotenv').config();
+const util = require('util')
 
 // const client = new ksqljs({
 //     ksqldbURL: 'https://pksqlc-755v2.us-east-2.aws.confluent.cloud:443',
@@ -70,9 +71,9 @@ setTimeout(() => terminateTest(metadata), 2000); */
 listQueries(); */
 
 //---------------------Test Stream Creation-------------------
-const createStreamTest = () => {
-    client.createStream('TestStream', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testTopic', 'json', 1);
-}
+// const createStreamTest = () => {
+//     client.createStream('TestStream', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testTopic', 'json', 1);
+// }
 
 // createStreamTest();
 
@@ -98,11 +99,113 @@ createTableTest(); */
 */
 
 const insertStreamTest = async () => {
-    const test = await client.insertStream('TestStream', [
-        { "name": "matt", "email": "123@mail.com", "age": 1000 },
-        { "name": "jonathan", "email": "234@mail.com", "age": 99 }
-    ]);
+    // const test = await client.insertStream('TestStream', [
+        // { "name": "Scrooge", "email": "mcduck@mail.com", "age": 59 },
+        // { "name": "jonathan", "email": "234@mail.com", "age": 99 }
+    // ]);
     // console.log('returned array: ', test);
 };
 
-insertStreamTest();
+// insertStreamTest();
+
+const pullFromToTest = async () => {
+    const data = await client.pullFromTo('TESTSTREAM', 'America/Los_Angeles', ['2022-05-18', '00', '00', '00'], ['2022-05-20', '00', '00', '00']);
+    // console.log(data);
+}
+
+pullFromTo();
+// const insertStreamTest = async () => {
+//     const test = await client.insertStream('TestStream', [
+//         { "name": "matt", "email": "123@mail.com", "age": 1000 },
+//         { "name": "jonathan", "email": "234@mail.com", "age": 99 }
+//     ]);
+//     // console.log('returned array: ', test);
+// };
+
+// insertStreamTest();
+
+
+//---------------------Test Inspect query status -------------------
+// const inspectQueryStatusTest = async () => {
+//     // PLEASE CHANGE streamName to a nonexisting stream in order for this test to work.
+//     const streamName = 'TestStream4'
+//     const create = await client.ksql(`CREATE STREAM IF NOT EXISTS ${streamName}
+//                     (name VARCHAR,
+//                     email varchar,
+//                     age INTEGER)
+//                  WITH (
+//                      KAFKA_TOPIC = 'testTopic',
+//                      VALUE_FORMAT = 'json',
+//                      PARTITIONS = 1
+//                  );`);
+//     const commandId = create ? create.commandId : `stream/${streamName}/create`;
+//     const status = await client.inspectQueryStatus(commandId);
+//     console.log(status.data);
+//     // response should be { status: 'SUCCESS', message: 'Stream created', queryId: null }
+// };
+
+// inspectQueryStatusTest();
+
+
+//---------------------Test Inspect server status-------------------
+
+// const inspectServerInfoTest = async () => {
+//     const status = await client.inspectServerInfo();
+//     console.log(status.data);
+//     // should return something like: {
+//     //   KsqlServerInfo: {
+//     //     version: '0.25.1',
+//     //     kafkaClusterId: '0Yxd6N5OSKGDUalltPWvXg',
+//     //     ksqlServiceId: 'default_',
+//     //     serverStatus: 'RUNNING'
+//     //   }
+//     // }
+// };
+
+// inspectServerInfoTest();
+
+// const inspectServerHealthTest = async () => {
+//     const status = await client.inspectServerHealth();
+//     console.log(status.data);
+//     // should return something like: {
+//     //   isHealthy: true,
+//     //   details: {
+//     //     metastore: { isHealthy: true },
+//     //     kafka: { isHealthy: true },
+//     //     commandRunner: { isHealthy: true }
+//     //   }
+//     // }
+// };
+
+// inspectServerHealthTest();
+
+//---------------------Test Inspect cluster status-------------------
+
+
+// const inspectClusterStatusTest = async () => {
+//     // need to have the following config in docker-compose.yml under ksqldb-server.environment
+//     // KSQL_KSQL_HEARTBEAT_ENABLE: "true"
+//     // KSQL_KSQL_LAG_REPORTING_ENABLE: "true"
+//     let status = await client.inspectClusterStatus();
+//     console.log(util.inspect(status.data, { showHidden: false, depth: null, colors: true }));
+//     // should return something like: {
+//     //   clusterStatus: {
+//     //     'ksqldb-server:8088': {
+//     //       hostAlive: true,
+//     //       lastStatusUpdateMs: 1653164479237,
+//     //       activeStandbyPerQuery: [Object],
+//     //       hostStoreLags: [Object]
+//     //     }
+//     //   }
+// };
+
+// inspectClusterStatusTest();
+
+//---------------------Test check validity of property-------------------
+// const isValidPropertyTest = async () => {
+//     let status = await client.isValidProperty('test');
+//     console.log(util.inspect(status.data, { showHidden: false, depth: null, colors: true }));
+//     // should return true
+// };
+
+// isValidPropertyTest();
