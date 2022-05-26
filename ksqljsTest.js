@@ -98,6 +98,22 @@ createTableTest(); */
     console.log('returned array: ', test);
 */
 
+const insertStreamTest = async () => {
+    // const test = await client.insertStream('TestStream', [
+        // { "name": "Scrooge", "email": "mcduck@mail.com", "age": 59 },
+        // { "name": "jonathan", "email": "234@mail.com", "age": 99 }
+    // ]);
+    // console.log('returned array: ', test);
+};
+
+// insertStreamTest();
+
+const pullFromToTest = async () => {
+    const data = await client.pullFromTo('TESTSTREAM', 'America/Los_Angeles', ['2022-05-18', '00', '00', '00'], ['2022-05-20', '00', '00', '00']);
+    // console.log(data);
+}
+
+pullFromTo();
 // const insertStreamTest = async () => {
 //     const test = await client.insertStream('TestStream', [
 //         { "name": "matt", "email": "123@mail.com", "age": 1000 },

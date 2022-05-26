@@ -1,6 +1,8 @@
 const axios = require("axios");
 const http2 = require("http2");
+const { getPriority } = require("os");
 const queryBuilder = require('./queryBuilder.js');
+const builder = new queryBuilder();
 
 class ksqljs {
   constructor(config) {
@@ -26,36 +28,6 @@ class ksqljs {
   }
 
   //---------------------Push queries (continue to receive updates to stream)-----------------
-  // push = (query, cb) => {
-  //   return new Promise((resolve, reject) => {
-  //     const session = http2.connect(this.ksqldbURL);
-  //     let dataRes = [];
-
-  //     session.on("error", (err) => reject(err));
-
-  //     const req = session.request({
-  //       ":path": "/query-stream",
-  //       ":method": "POST",
-  //     });
-
-  //     const reqBody = {
-  //       sql: query,
-  //       Accept: "application/json"
-  //     }
-
-  //     req.write(JSON.stringify(reqBody), "utf8");
-  //     req.end();
-  //     req.setEncoding("utf8");
-
-  //     req.on("data", (data) => {
-  //       dataRes.push(data);
-  //     })
-  //     req.on("end", () => {
-  //       resolve(dataRes);
-  //       session.close()
-  //     });
-  //   })
-  // }
 
   push(query, cb) {
     return new Promise((resolve, reject) => {
@@ -184,13 +156,29 @@ class ksqljs {
     })
   }
 
-  pullFromTo = (streamName, timezone = 'Greenwich', from = [date, hours = '00', minutes = '00', seconds = '00', milliseconds = '000'], to = [date, hours = '00', minutes = '00', seconds = '00', milliseconds = '000']) => {
-    if (!streamName || typeof timezone !== 'string' || !from || typeof from[0] !== 'string' || typeof from[1] !== 'string' || typeof from[2] !== 'string' || typeof from[3] !== 'string' || typeof from[4] !== 'string' || typeof to[0] !== 'string' || typeof to[1] !== 'string' || typeof to[2] !== 'string' || typeof to[3] !== 'string' || typeof to[4] !== 'string') {
+  pullFromTo = async (streamName, timezone='Greenwich', from=[undefined, '00', '00', '00'], to=['2200-03-14', '00', '00', '00']) => {
+    if(!streamName || typeof timezone !== 'string' || !from 
+    || typeof from[0] !== 'string' || typeof from[1] !== 'string' || typeof from[2] !== 'string' || typeof from[3] !== 'string'  
+    || typeof to[0] !== 'string' || typeof to[1] !== 'string' || typeof to[2] !== 'string' || typeof to[3] !== 'string'  
+    || from[0].length !== 10 || to[0].length !== 10 || from[1].length !== 2 || to[1].length !== 2 || from[2].length !== 2 || to[2].length !== 2 || from[3].length !== 2 || to[3].length !== 2
+    ){
       return new Error('invalid inputs');
     }
-    const userFrom = `${from[0]}T${from[1]}:${from[2]}:${from[3]}:${from[4]}`;
-    const userTo = `${to[0]}T${to[1]}:${to[2]}:${to[3]}:${to[4]}`;
-
+    const userFrom = `${from[0]}T${from[1]}:${from[2]}:${from[3]}`;
+    const userTo = `${to[0]}T${to[1]}:${to[2]}:${to[3]}`;
+    const userFromUnix = new Date(userFrom).getTime();
+    const userToUnix = new Date(userTo).getTime();
+    const query = builder.build("SELECT *, CONVERT_TZ(FROM_UNIXTIME(ROWTIME), 'UTC', ?) AS DATE, ROWTIME FROM ?;", timezone, [streamName]);
+    const data = await this.pull(query);
+    data.shift();
+    console.log(data);
+    const filtered = [];
+    data.map((element) => {
+      if(element[element.length - 1] >= userFromUnix && element[element.length - 1] <= userToUnix){
+        filtered.push(element.slice(0, element.length - 1));
+      }
+    })
+    return filtered;
   }
 
   //---------------------Inspect push query status -----------------
