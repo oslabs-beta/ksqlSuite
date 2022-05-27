@@ -1,5 +1,6 @@
 const queryBuilder = require('../ksqljs/queryBuilder.js');
 
+
 describe('Unit tests for query builder class', () => {
   let builder;
   let query;

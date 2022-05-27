@@ -15,19 +15,19 @@ class ksqljs {
    * Executes a pull query and returns the results.
    *
    * <p>This method may be used to execute pull queries, and returns an array containing all the data
-   * received. The first value of the array will be an object containing -> 
+   * received. The first value of the array will be an object containing ->
    * queryId: a string that contains the id of the stream that the pull query is being executed upon.
    * columnNames: an array that contains the names of the columns in the format of strings.
    * columnTypes: an array that contains the names of the columnTypes in the format of strings.
-   * 
+   *
    * Any subsequent values of the array are arrays that contain the data received.
-   * 
+   *
    * <p>If user input is used to build the query, please use the queryBuilder method to protect against sql injection.
    *
    * @param {string} query sql statement of query to execute
    * @return {Promise} a promise that completes once the server response is received, and contains the query
-   *         result if successful. 
-   * 
+   *         result if successful.
+   *
    *         Example: [{object that contains the metadata}, [data], [data], ...}]
    */
   pull = (query) => {
@@ -51,7 +51,7 @@ class ksqljs {
    * <p>This method may be used to issue a push query against a stream, with the first piece of data being an object
    * containing queryId, the id of the push query that can be used to terminate the push query being executed.
    * Otherwise, the push query will continuously run until terminated, returning results one at a time.
-   * 
+   *
    * <p>If user input is used to build the query, please use the queryBuilder method to protect against sql injection.
    *
    * @param {string} query sql statement of query to execute
@@ -100,7 +100,7 @@ class ksqljs {
    *
    * <p>This method may be used to end an active push query, and returns an object signifying whether the push query was
    * terminated properly or not.
-   * 
+   *
    * <p>This method is sql injection protected with the use of queryBuilder.
    *
    * @param {string} queryId a string that is the id of the push query to be terminated.
@@ -117,7 +117,7 @@ class ksqljs {
    * Executes a query and returns the result(s).
    *
    * <p>This method may be used to issue custom sql queries against ksqldb without constraints.
-   * 
+   *
    * <p>If user input is used to build the query, please use the queryBuilder method to protect against sql injection.
    *
    * @param {string} query statement of a query to execute.
@@ -133,13 +133,13 @@ class ksqljs {
    * Executes a query to create a stream.
    *
    * <p>This method is used to create a stream.
-   * 
+   *
    * <p>This method is sql injection protected with the use of queryBuilder.
    *
    * @param {string} name the name of the stream to be created.
    * @param {array} columnsType an array that contains the name of the columns and the associated types e.g [name VARCHAR, age INTEGER, ...]
    * @param {string} topic the name of the topic the stream is listening to. The topic is created if it does not currently exist.
-   * @param {string} value_format a string specifying the value format. 
+   * @param {string} value_format a string specifying the value format.
    * @param {integer} partitions the number of partitions the stream should have.
    * @param {integer} key the key of the string.
    * @return {Promise} a promise that completes once the server response is received, and returns a response object.
@@ -160,7 +160,7 @@ class ksqljs {
    * Executes a query to create a table.
    *
    * <p>This method is used to create a table.
-   * 
+   *
    * <p>This method is sql injection protected with the use of queryBuilder.
    *
    * @param {string} name the name of the table to be created.
@@ -182,7 +182,7 @@ class ksqljs {
    * Inserts rows of data into a stream.
    *
    * <p>This method may be used to insert new rows of data into a stream.
-   * 
+   *
    * <p>This method is sql injection protected with the use of queryBuilder.
    *
    * @param {string} stream the name of the stream to insert data into.
@@ -225,24 +225,24 @@ class ksqljs {
    *
    * <p>This method may be used to pull data from within two specific points in time. The first three
    * parameters are required, with the fourth parameter being optional.
-   * 
+   *
    * <p>This method is sql injection protected with the use of queryBuilder.
    *
    * @param {string} streamName the name of the stream to pull data from.
    * @param {string} timeZone desired timezone that the data should conform to.
-   * @param {array} from array of the format ['2200-01-01', '16', '10', '20'], with the values being 
+   * @param {array} from array of the format ['2200-01-01', '16', '10', '20'], with the values being
    * date, hour, minute, and second respectively.
-   * @param {array} to array of the format ['2000-01-01', '16', '10', '20'], with the values being 
+   * @param {array} to array of the format ['2000-01-01', '16', '10', '20'], with the values being
    * date, hour, minute, and second respectively. This defaults to ['2200-03-14', '00', '00', '00'].
-   * @return {array} this method returns an array that contains arrays with the data, along with an extra value at 
-   *         the end of the array that includes the time that the data was inserted into the ksqldb. 
+   * @return {array} this method returns an array that contains arrays with the data, along with an extra value at
+   *         the end of the array that includes the time that the data was inserted into the ksqldb.
    */
-  pullFromTo = async (streamName, timezone='Greenwich', from=[undefined, '00', '00', '00'], to=['2200-03-14', '00', '00', '00']) => {
-    if(!streamName || typeof timezone !== 'string' || !from 
-    || typeof from[0] !== 'string' || typeof from[1] !== 'string' || typeof from[2] !== 'string' || typeof from[3] !== 'string'  
-    || typeof to[0] !== 'string' || typeof to[1] !== 'string' || typeof to[2] !== 'string' || typeof to[3] !== 'string'  
-    || from[0].length !== 10 || to[0].length !== 10 || from[1].length !== 2 || to[1].length !== 2 || from[2].length !== 2 || to[2].length !== 2 || from[3].length !== 2 || to[3].length !== 2
-    ){
+  pullFromTo = async (streamName, timezone = 'Greenwich', from = [undefined, '00', '00', '00'], to = ['2200-03-14', '00', '00', '00']) => {
+    if (!streamName || typeof timezone !== 'string' || !from
+      || typeof from[0] !== 'string' || typeof from[1] !== 'string' || typeof from[2] !== 'string' || typeof from[3] !== 'string'
+      || typeof to[0] !== 'string' || typeof to[1] !== 'string' || typeof to[2] !== 'string' || typeof to[3] !== 'string'
+      || from[0].length !== 10 || to[0].length !== 10 || from[1].length !== 2 || to[1].length !== 2 || from[2].length !== 2 || to[2].length !== 2 || from[3].length !== 2 || to[3].length !== 2
+    ) {
       return new Error('invalid inputs');
     }
     const userFrom = `${from[0]}T${from[1]}:${from[2]}:${from[3]}`;
@@ -254,7 +254,7 @@ class ksqljs {
     data.shift();
     const filtered = [];
     data.map((element) => {
-      if(element[element.length - 1] >= userFromUnix && element[element.length - 1] <= userToUnix){
+      if (element[element.length - 1] >= userFromUnix && element[element.length - 1] <= userToUnix) {
         filtered.push(element.slice(0, element.length - 1));
       }
     })
@@ -265,14 +265,14 @@ class ksqljs {
    * Inspects a specific query and returns the results.
    *
    * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/status-endpoint/
-   * 
+   *
    * <p> This method may be used to inspect the status of a query.
    *
    * @param {string} commandId this id is obtained when using the .ksql method (/ksql endpoint) to run CREATE, DROP, TERMINATE commands.
    * @return {Promise} this method returns a promise, that resolves to a JSON object that has the following two properties->
-   * 
+   *
    *         status (string): One of QUEUED, PARSING, EXECUTING, TERMINATED, SUCCESS, or ERROR.
-   * 
+   *
    *         message (string): Detailed message regarding the status of the execution statement.
    */
   inspectQueryStatus(commandId) {
@@ -285,7 +285,7 @@ class ksqljs {
    * Inspects a ksqlDB server and returns the results.
    *
    * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/info-endpoint/
-   * 
+   *
    * <p>This method is mainly used for troubleshooting.
    *
    * @return {Promise} this method returns a promise that resolves to an object containing the version, clusterId, and ksqlservice id.
@@ -300,7 +300,7 @@ class ksqljs {
    * Inspects the health status of a ksqlDB server.
    *
    * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/info-endpoint/
-   * 
+   *
    * <p>This method may be used to give the health status of a ksqlDB server.
    *
    * @return {Promise} this method returns a promise that resolves to an object containing the metastore, kafka, and commandRunner info.
@@ -315,7 +315,7 @@ class ksqljs {
    * Inspects all servers in a ksqlDB cluster and returns the results.
    *
    * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/cluster-status-endpoint/
-   * 
+   *
    * <p>This method may be used to get information about the status of all ksqlDB servers in a ksqlDB cluster, which can be useful
    * for troubleshooting.
    *
@@ -331,7 +331,7 @@ class ksqljs {
    * Terminates a ksqlDB cluster.
    *
    * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/terminate-endpoint/
-   * 
+   *
    * <p>This method may be used to terminate a ksqlDB cluster. First, shut down all the servers except one.
    *
    * @return {Promise} this method returns a promise that returns a response object.
@@ -349,22 +349,22 @@ class ksqljs {
       .catch(error => console.log(error));
   }
 
-    /**
-   * Checks whether a ksqldb server property is allowed to be changed.
-   *
-   * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/is_valid_property-endpoint/
-   * 
-   * <p>This method may be used to check if a property in a ksqldb server is prohibited from being changed.
-   * 
-   * <p>If the property is prohibited from setting, the following object will be returned:
-   * {
-   *   "@type": "generic_error",
-   *   "error_code": 40000,
-   *   "message": "One or more properties overrides set locally are prohibited by the KSQL server (use UNSET to reset their default value): [ksql.service.id]"
-   * }
-   *
-   * @return {Promise} this method returns a promise that resolves to a boolean true if the property is allowed to be changed.
-   */
+  /**
+ * Checks whether a ksqldb server property is allowed to be changed.
+ *
+ * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/is_valid_property-endpoint/
+ *
+ * <p>This method may be used to check if a property in a ksqldb server is prohibited from being changed.
+ *
+ * <p>If the property is prohibited from setting, the following object will be returned:
+ * {
+ *   "@type": "generic_error",
+ *   "error_code": 40000,
+ *   "message": "One or more properties overrides set locally are prohibited by the KSQL server (use UNSET to reset their default value): [ksql.service.id]"
+ * }
+ *
+ * @return {Promise} this method returns a promise that resolves to a boolean true if the property is allowed to be changed.
+ */
   isValidProperty(propertyName) {
     return axios.get(this.ksqldbURL + `/is_valid_property/${propertyName}`)
       .then(response => response)
