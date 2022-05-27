@@ -156,12 +156,12 @@ class ksqljs {
     })
   }
 
-  pullFromTo = async (streamName, timezone='Greenwich', from=[undefined, '00', '00', '00'], to=['2200-03-14', '00', '00', '00']) => {
-    if(!streamName || typeof timezone !== 'string' || !from 
-    || typeof from[0] !== 'string' || typeof from[1] !== 'string' || typeof from[2] !== 'string' || typeof from[3] !== 'string'  
-    || typeof to[0] !== 'string' || typeof to[1] !== 'string' || typeof to[2] !== 'string' || typeof to[3] !== 'string'  
-    || from[0].length !== 10 || to[0].length !== 10 || from[1].length !== 2 || to[1].length !== 2 || from[2].length !== 2 || to[2].length !== 2 || from[3].length !== 2 || to[3].length !== 2
-    ){
+  pullFromTo = async (streamName, timezone = 'Greenwich', from = [undefined, '00', '00', '00'], to = ['2200-03-14', '00', '00', '00']) => {
+    if (!streamName || typeof timezone !== 'string' || !from
+      || typeof from[0] !== 'string' || typeof from[1] !== 'string' || typeof from[2] !== 'string' || typeof from[3] !== 'string'
+      || typeof to[0] !== 'string' || typeof to[1] !== 'string' || typeof to[2] !== 'string' || typeof to[3] !== 'string'
+      || from[0].length !== 10 || to[0].length !== 10 || from[1].length !== 2 || to[1].length !== 2 || from[2].length !== 2 || to[2].length !== 2 || from[3].length !== 2 || to[3].length !== 2
+    ) {
       return new Error('invalid inputs');
     }
     const userFrom = `${from[0]}T${from[1]}:${from[2]}:${from[3]}`;
@@ -174,7 +174,7 @@ class ksqljs {
     console.log(data);
     const filtered = [];
     data.map((element) => {
-      if(element[element.length - 1] >= userFromUnix && element[element.length - 1] <= userToUnix){
+      if (element[element.length - 1] >= userFromUnix && element[element.length - 1] <= userToUnix) {
         filtered.push(element.slice(0, element.length - 1));
       }
     })
@@ -195,16 +195,20 @@ class ksqljs {
   }
 
 
-  //---------------------Inspect server status -----------------
-  // https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/info-endpoint/
-  // The /info endpoint gives information about the version, clusterId and ksqlservice id.
-  // The /healthcheck gives the health status of the ksqlDB server.
+  /** Inspects server information such as version, cluster Id and ksqlservice id
+  @return an object with the server information
+  https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/info-endpoint/
+  **/
   inspectServerInfo() {
     return axios.get(this.ksqldbURL + `/info`)
       .then(response => response)
       .catch(error => console.log(error));
   }
 
+  /** Inspects server health
+  @return an object with the server health
+  https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/info-endpoint/
+  **/
   inspectServerHealth() {
     return axios.get(this.ksqldbURL + `/healthcheck`)
       .then(response => response)
@@ -212,19 +216,21 @@ class ksqljs {
   }
 
 
-  //---------------------Inspect cluster status -----------------
-  // https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/cluster-status-endpoint/
-  // The /clusterStatus resource gives you information about the status of all ksqlDB servers in a ksqlDB cluster, which can be useful for troubleshooting
+  /** Inspect cluster status
+  @return an object with the status of all ksqlDB servers in a ksqlDB cluster, useful for troubleshooting
+  https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/cluster-status-endpoint/
+  **/
   inspectClusterStatus() {
     return axios.get(this.ksqldbURL + `/clusterStatus`)
       .then(response => response)
       .catch(error => console.log(error));
   }
 
-  //---------------------Terminate cluster -----------------
-  // https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/terminate-endpoint/
-  //  To terminate a ksqlDB cluster, first shut down all of the servers, except one.
-  // Then, send the TERMINATE CLUSTER request to the /ksql/terminate endpoint in the last remaining server.
+  /** Terminate a cluster and clean up resources
+  To terminate a ksqlDB cluster, first shut down all of the servers, except one.
+  Then, send the TERMINATE CLUSTER request to the /ksql/terminate endpoint in the last remaining server.
+  https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/terminate-endpoint/
+  **/
   terminateCluster() {
     return axios.post(this.ksqldbURL + `/ksql/terminate`, {}, {
       headers: {
@@ -239,9 +245,10 @@ class ksqljs {
   }
 
 
-  //---------------------Get validity of a property -----------------
-  // https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/is_valid_property-endpoint/
-  // The /is_valid_property resource tells you whether a property is prohibited from setting.
+  /** Tells us if a property is allowed to be set or changed
+  @return boolean
+  https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/is_valid_property-endpoint/
+  **/
   isValidProperty(propertyName) {
     return axios.get(this.ksqldbURL + `/is_valid_property/${propertyName}`)
       .then(response => response)
