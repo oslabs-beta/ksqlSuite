@@ -135,33 +135,34 @@ class ksqljs {
       value_format: 'json',
       partitions: 1
     };
-    if (propertiesObj){
-        for (let key in defaultProps){
-          if (!propertiesObj[key]){
-            propertiesObj[key] = defaultProps[key];
-          }
-        }
-      }
-    else {
-      const propertiesObj = {};
-      for (let key in defaultProps){
-        propertiesObj[key] = defaultProps[key];
-      }
-    }
+    Object.assign(defaultProps, conditionsObj);
     // if there's no properties Obj, assign them all default values
 
     // expect user to input a conditions object of format {WHERE: condition, GROUP_BY: condition, HAVING: condition};
     // generate conditions string based on object
+    // const builder = new queryBuilder();
+
     let conditionQuery = '';
     if (conditionsObj){
-    const conditionsArr = ['WHERE', 'GROUP_BY', 'HAVING'];
-    for (let i = 0; i < conditionsArr.length; i++){
-      if (conditionsObj[conditionsArr[i]]){
-        const sqlClause = conditionsArr[i].replace('_', ' ');
-        conditionQuery = conditionQuery + `${sqlClause} ${conditionsObj[conditionsArr[i]]} `
+      const conditionsArr = ['WHERE', 'GROUP_BY', 'HAVING'];
+      const sqlClauses = [];
+    
+      let i = 0;
+      while (conditionsArr.length){
+        if (conditionsObj[conditionsArr[0]]){
+          sqlClauses[i] = [conditionsArr[0].replace('_',' ')]; // clause values are set as arrays for query builder
+          sqlClauses[i+1] =[' ' + conditionsObj[conditionsArr[0]] + ' '];
+        }
+        else {
+          sqlClauses[i] = [''];
+          sqlClauses[i+1] = [''];
+        }
+        i+=2;
+        conditionsArr.shift()
       }
+      conditionQuery = builder.build('??????', sqlClauses[0], sqlClauses[1], sqlClauses[2], sqlClauses[3], sqlClauses[4], sqlClauses[5]);
     }
-  }
+  
 
     // reformat for builder
     tableName = [tableName];
@@ -169,8 +170,8 @@ class ksqljs {
     source = [source];
     conditionQuery = [conditionQuery]
 
-    const builder = new queryBuilder();
-    const query = builder.build(`CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? ?EMIT CHANGES;`, tableName, propertiesObj.topic, propertiesObj.value_format, propertiesObj.partitions, selectColStr, source, conditionQuery)
+
+    const query = builder.build(`CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? ?EMIT CHANGES;`, tableName, defaultProps.topic, defaultProps.value_format, defaultProps.partitions, selectColStr, source, conditionQuery)
 
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
     .catch(error => console.log(error));
