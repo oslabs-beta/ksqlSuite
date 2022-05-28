@@ -104,16 +104,8 @@ dist
 .tern-port
 
 # Local
-./ksqljsTest.js
+ksqljsTest.js
 
 # KSQLDB docker server settings
-./ca-cert 
-./ca-cert.srl 
-./ca-key
-./cert-file 
-./cert-signed 
-./jaas_config.file
-./kafka.client.truststore.jks 
-./kafka.server.truststore.jks 
-./kafka.server.keystore.jks 
-./password.properties
+ksqldb_server_config/
+
