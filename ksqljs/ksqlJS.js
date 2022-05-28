@@ -148,6 +148,7 @@ class ksqljs {
   createStreamAs = (streamName, selectColumns, sourceStream, propertiesObj, conditions, partitionBy) => {
     const propertiesArgs = [];
     const selectColStr = selectColumns.reduce((result, current) => result + ', ' + current);
+    // begin with first consistent portion of query
     let builderQuery = 'CREATE STREAM ? ';
     
     // include properties in query if provided
@@ -157,23 +158,24 @@ class ksqljs {
         const justStarted = builderQuery[builderQuery.length - 1] === '(';
 
         if (!justStarted) builderQuery += ', ';
-        propertiesArgs.push([key], value);
         builderQuery += '? = ?';
+        propertiesArgs.push([key], value);
       };
       builderQuery += ') ';
     }
 
+    // continue building the query to be sent to the builder
     builderQuery += `AS SELECT ${selectColStr} FROM ? `;
     if (conditions.indexOf(';') === -1) builderQuery += `WHERE ${conditions} `;
     builderQuery += partitionBy || '';
     builderQuery += 'EMIT CHANGES;'
-    
+
+    // utilize query with variables to build actual query
     const query = builder.build(builderQuery, [streamName], ...propertiesArgs, [sourceStream]);
 
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
     .then(res => res.data[0].commandStatus.queryId)
     .catch(error => console.log(error));
-
   }
 
   //---------------------Create tables-----------------
