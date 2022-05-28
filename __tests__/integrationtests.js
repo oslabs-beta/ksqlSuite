@@ -49,7 +49,6 @@ describe('--Integration Tests--', () => {
       const response = await client.insertStream('TESTJESTSTREAM', [
         { "name": "stab-rabbit", "email": "123@mail.com", "age": 100 }
       ]);
-      console.log(response);
       const data = [];
       await client.push('SELECT * FROM TESTJESTSTREAM;', async (chunk) => {
         data.push(JSON.parse(chunk));
