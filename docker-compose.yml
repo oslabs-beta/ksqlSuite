@@ -43,7 +43,7 @@ services:
     ports:
       - "8088:8088"
     environment:
-      KSQL_LISTENERS: http://0.0.0.0:8088
+      KSQL_LISTENERS: https://0.0.0.0:8088
       KSQL_BOOTSTRAP_SERVERS: broker:9092
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
@@ -52,9 +52,9 @@ services:
       # KSQL_AUTHENTICATION_REALM: KsqlServer-Props
       # KSQL_AUTHENTICATION_ROLES: admin,developer,user
       # KSQL_SSL_CLIENT_AUTHENTICATION: NONE
-      # KSQL_SSL_TRUSTSTORE_LOCATION: kafka.server.truststore.jks
+      # KSQL_SSL_TRUSTSTORE_LOCATION: ksqldb_server_config/kafka.server.truststore.jks
       # KSQL_SSL_TRUSTSTORE_PASSWORD: ${SSL_PASSWORD}
-      # KSQL_SSL_KEYSTORE_LOCATION: kafka.server.keystore.jks
+      # KSQL_SSL_KEYSTORE_LOCATION: ksqldb_server_config/kafka.server.keystore.jks
       # KSQL_SSL_KEYSTORE_PASSWORD: ${SSL_PASSWORD}
       # KSQL_SSL_KEY_PASSWORD: ${SSL_PASSWORD}
       KSQL_KSQL_HEARTBEAT_ENABLE: "true"
