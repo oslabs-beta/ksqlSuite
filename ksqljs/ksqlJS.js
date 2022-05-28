@@ -114,14 +114,10 @@ class ksqljs {
   terminate(queryId) {
     return axios.post(this.ksqldbURL + '/ksql', { ksql: `TERMINATE ${queryId};` })
       .then(res => res.data[0])
-<<<<<<< HEAD
-      .catch(error => error);
-=======
       .catch(error => {
         console.error(error);
         throw new ksqlDBError(error);
       });
->>>>>>> dev
   }
 
   /**
