@@ -1,6 +1,7 @@
 const axios = require("axios");
 const http2 = require("http2");
 const { getPriority } = require("os");
+const { ksqlDBError } = require("./customErrors.js");
 const queryBuilder = require('./queryBuilder.js');
 const builder = new queryBuilder();
 
@@ -42,7 +43,10 @@ class ksqljs {
           // }
         })
       .then((res) => res.data)
-      .catch((error) => { throw error });
+      .catch((error) => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
@@ -110,7 +114,10 @@ class ksqljs {
   terminate(queryId) {
     return axios.post(this.ksqldbURL + '/ksql', { ksql: `TERMINATE ${queryId};` })
       .then(res => res.data[0])
-      .catch(error => { return error });
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
@@ -126,7 +133,10 @@ class ksqljs {
   ksql(query) {
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
       .then(res => res.data[0])
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
@@ -153,7 +163,11 @@ class ksqljs {
     const query = `CREATE STREAM ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`;
 
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
-      .catch(error => console.log(error));
+      .then(res => res)
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
@@ -174,8 +188,11 @@ class ksqljs {
     const columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
     const query = `CREATE TABLE ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`
 
-    return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
-      .catch(error => console.log(error));
+    axios.post(this.ksqldbURL + '/ksql', { ksql: query })
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
@@ -194,6 +211,8 @@ class ksqljs {
       const msgOutput = [];
 
       const session = http2.connect(this.ksqldbURL);
+      session.on("error", (err) => reject(err));
+
       const req = session.request({
         ":path": "/inserts-stream",
         ":method": "POST",
@@ -278,7 +297,10 @@ class ksqljs {
   inspectQueryStatus(commandId) {
     return axios.get(this.ksqldbURL + `/status/${commandId}`)
       .then(response => response)
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
@@ -293,7 +315,10 @@ class ksqljs {
   inspectServerInfo() {
     return axios.get(this.ksqldbURL + `/info`)
       .then(response => response)
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
@@ -308,7 +333,10 @@ class ksqljs {
   inspectServerHealth() {
     return axios.get(this.ksqldbURL + `/healthcheck`)
       .then(response => response)
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
@@ -324,7 +352,10 @@ class ksqljs {
   inspectClusterStatus() {
     return axios.get(this.ksqldbURL + `/clusterStatus`)
       .then(response => response)
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
@@ -346,7 +377,10 @@ class ksqljs {
       }
     })
       .then(response => response)
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
@@ -368,7 +402,10 @@ class ksqljs {
   isValidProperty(propertyName) {
     return axios.get(this.ksqldbURL + `/is_valid_property/${propertyName}`)
       .then(response => response)
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 };
 
