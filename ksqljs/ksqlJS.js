@@ -89,15 +89,91 @@ class ksqljs {
       .catch(error => console.log(error));
   }
 
-  createStreamAs = (streamName, selectColumns, sourceStream, topic, value_format = 'json', conditions) => {
-    const selectColumnsString = selectColumns.reduce((result, currentColumn) => result + ', ' + currentColumn);
-    let query = `CREATE STREAM ${streamName} AS SELECT ${selectColumnsString} FROM ${sourceStream} `
-    // conditions ? query += `WHERE ${conditions} EMIT CHANGES;` : 'EMIT CHANGES;'
-    conditions ? query += 'WHERE ' + conditions + ' EMIT CHANGES;' : query += 'EMIT CHANGES;'
+  createTableAs = (tableName, source, selectArray, propertiesObj, conditionsObj) => {
+    // ['kafka_topic = "topic"', 'whatever > 9']
+    let selectColStr = selectArray.reduce((result, current) => result + ', ' + current);
+    // expect user to input properties object of format {topic: ... , value_format: ..., partitions: ...}
+    // check for properties object, look for properties, if any are missing assign it a default value, if there's no property
+    const defaultProps = {
+      topic: tableName,
+      value_format: 'json',
+      partitions: 1
+    };
+    if (propertiesObj){
+        for (let key in defaultProps){
+          if (!propertiesObj[key]){
+            propertiesObj[key] = defaultProps[key];
+          }
+        }
+      }
+    else {
+      const propertiesObj = {};
+      for (let key in defaultProps){
+        propertiesObj[key] = defaultProps[key];
+      }
+    }
+    // if there's no properties Obj, assign them all default values
+    // expect user to input a conditions object of format {WHERE: condition, GROUP_BY: condition, HAVING: condition};
+    // generate conditions string based on object
+    const builder = new queryBuilder();
+    let conditionQuery = '';
+    if (conditionsObj){
+      const conditionsArr = ['WHERE', 'GROUP_BY', 'HAVING'];
+      const sqlClauses = [];
+      let i = 0;
+      while (conditionsArr.length){
+        if (conditionsObj[conditionsArr[0]]){
+          sqlClauses[i] = [conditionsArr[0].replace('_',' ')]; // clause values are set as arrays for query builder
+          sqlClauses[i+1] =[' ' + conditionsObj[conditionsArr[0]] + ' '];
+        }
+        else {
+          sqlClauses[i] = [''];
+          sqlClauses[i+1] = [''];
+        }
+        i+=2;
+        conditionsArr.shift()
+      }
+      conditionQuery = builder.build('??????', sqlClauses[0], sqlClauses[1], sqlClauses[2], sqlClauses[3], sqlClauses[4], sqlClauses[5]);
+    }
+    // reformat for builder
+    tableName = [tableName];
+    selectColStr = [selectColStr];
+    source = [source];
+    conditionQuery = [conditionQuery]
+    const query = builder.build(`CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? ?EMIT CHANGES;`, tableName, propertiesObj.topic, propertiesObj.value_format, propertiesObj.partitions, selectColStr, source, conditionQuery)
+    return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
+    .catch(error => console.log(error));
+  }
+
+  createStreamAs = (streamName, selectColumns, sourceStream, propertiesObj, conditions, partitionBy) => {
+    const propertiesArgs = [];
+    const selectColStr = selectColumns.reduce((result, current) => result + ', ' + current);
+    let builderQuery = 'CREATE STREAM ? ';
+    
+    // include properties in query if provided
+    if(Object.keys(propertiesObj).length > 0) {
+      builderQuery += 'WITH (';
+      for (const [key, value] of Object.entries(propertiesObj)) {
+        const justStarted = builderQuery[builderQuery.length - 1] === '(';
+
+        if (!justStarted) builderQuery += ', ';
+        propertiesArgs.push([key], value);
+        builderQuery += '? = ?';
+      };
+      builderQuery += ') ';
+    }
+
+    builderQuery += `AS SELECT ${selectColStr} FROM ? `;
+    if (conditions.indexOf(';') === -1) builderQuery += `WHERE ${conditions} `;
+    builderQuery += partitionBy || '';
+    builderQuery += 'EMIT CHANGES;'
+    
+    const query = builder.build(builderQuery, [streamName], ...propertiesArgs, [sourceStream]);
 
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
     .then(res => res.data[0].commandStatus.queryId)
     .catch(error => console.log(error));
+
   }
 
   //---------------------Create tables-----------------
