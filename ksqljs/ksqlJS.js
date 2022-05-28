@@ -155,7 +155,6 @@ class ksqljs {
    * @return {Promise} a promise that completes once the server response is received, and returns a response object.
    */
   createStream(name, columnsType, topic, value_format = 'json', partitions = 1, key) {
-    // console.log(this.ksqldbURL);
     if (typeof name !== 'string' || typeof columnsType !== 'object' || typeof topic !== 'string' || typeof partitions !== 'number') {
       return console.log("invalid input(s)")
     }
@@ -170,6 +169,50 @@ class ksqljs {
       });
   }
 
+  /**
+   * 
+   * @param {string} streamName 
+   * @param {string[]} selectColumns 
+   * @param {string} sourceStream 
+   * @param {object} propertiesObj 
+   * @param {string} conditions 
+   * @param {string} partitionBy 
+   * @returns {Promise}
+   */
+  createStreamAs = (streamName, selectColumns, sourceStream, propertiesObj, conditions, partitionBy) => {
+    const propertiesArgs = [];
+    const selectColStr = selectColumns.reduce((result, current) => result + ', ' + current);
+    // begin with first consistent portion of query
+    let builderQuery = 'CREATE STREAM ? ';
+    
+    // include properties in query if provided
+    if(Object.keys(propertiesObj).length > 0) {
+      builderQuery += 'WITH (';
+      for (const [key, value] of Object.entries(propertiesObj)) {
+        const justStarted = builderQuery[builderQuery.length - 1] === '(';
+
+        if (!justStarted) builderQuery += ', ';
+        builderQuery += '? = ?';
+        propertiesArgs.push([key], value);
+      };
+      builderQuery += ') ';
+    }
+
+    // continue building the query to be sent to the builder
+    builderQuery += `AS SELECT ${selectColStr} FROM ? `;
+    if (conditions.indexOf(';') === -1) builderQuery += `WHERE ${conditions} `;
+    builderQuery += partitionBy || '';
+    builderQuery += 'EMIT CHANGES;'
+
+    // utilize query with variables to build actual query
+    const query = builder.build(builderQuery, [streamName], ...propertiesArgs, [sourceStream]);
+
+    return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
+    .then(res => res.data[0].commandStatus.queryId)
+    .catch(error => console.log(error));
+  }
+
+  //---------------------Create tables-----------------
   /**
    * Executes a query to create a table.
    *

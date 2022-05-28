@@ -17,41 +17,19 @@ let metadata;
     console.log('this is the result', result);
 }
 
-pullTest();
+pullTest(); */
 
 //---------------------Test Push Queries-------------------
-const pushTest = async () => {
-    // metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
-    // console.log('this is the metadata returned ', metadata);
-    let pushActive = false;
-    await client.createStream('TESTJESTSTREAM', ['age INTEGER'], 'testJestTopic', 'json', 1);
-    // await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;', (data) => {
-    //   console.log(data);
-    //   console.log('HERE IS DATA ', JSON.parse(data).queryId)
-    //   if(JSON.parse(data).queryId){
-    //     pushActive = true;
-    //   }
-    //   client.ksql(`TERMINATE ${JSON.parse(data).queryId};`)
-    //   client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
-    // });
-    // await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
-
-    /* const pushTest = async () => {
+/* const pushTest = async () => {
     try {
         metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
         console.log('this is the metadata returned ', metadata);
     } catch (error) {
         console.log(error);
     }
-
-    metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
-    console.log('this is the metadata returned ', metadata);
-
-    metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
-    console.log('this is the metadata returned ', metadata);
 };
 
-pushTest();
+pushTest(); */
 
 //---------------------Test Termination of Queries-------------------
 /* const terminateTest = async () => {
@@ -71,11 +49,11 @@ setTimeout(() => terminateTest(metadata), 2000); */
 listQueries(); */
 
 //---------------------Test Stream Creation-------------------
-// const createStreamTest = () => {
-//     client.createStream('TestStream', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testTopic', 'json', 1);
-// }
+/* const createStreamTest = () => {
+    client.createStream('TestStream', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testTopic', 'json', 1);
+}
 
-// createStreamTest();
+createStreamTest(); */
 
 //---------------------Test Table Creation-------------------
 /* const createTableTest = () => {
@@ -85,45 +63,42 @@ listQueries(); */
 createTableTest(); */
 
 //---------------------Test Insert Stream-------------------
-/* const insertStreamTest = () => {
-    client.insertStream('TestStream', [
-        { "name": "matt", "email": "123@mail.com", "age": 1000 },
-        { "name": "jonathan", "email": "234@mail.com", "age": 99 }
-    ]);
-/* const insertStreamTest = async () => {
+/*   const insertStreamTest = async () => {
     const test = await client.insertStream('TestStream', [
         { "name": "matt", "email": "123@mail.com", "age": 1000 },
         { "name": "jonathan", "email": "234@mail.com", "age": 99 }
     ]);
     console.log('returned array: ', test);
-*/
+  };
+  insertStreamTest(); */
 
-const insertStreamTest = async () => {
-    // const test = await client.insertStream('TestStream', [
-        // { "name": "Scrooge", "email": "mcduck@mail.com", "age": 59 },
-        // { "name": "jonathan", "email": "234@mail.com", "age": 99 }
-    // ]);
-    // console.log('returned array: ', test);
-};
-
-// insertStreamTest();
-
-const pullFromToTest = async () => {
+/* const pullFromToTest = async () => {
     const data = await client.pullFromTo('TESTSTREAM', 'America/Los_Angeles', ['2022-05-18', '00', '00', '00'], ['2022-05-20', '00', '00', '00']);
     // console.log(data);
 }
 
-pullFromTo();
-// const insertStreamTest = async () => {
-//     const test = await client.insertStream('TestStream', [
-//         { "name": "matt", "email": "123@mail.com", "age": 1000 },
-//         { "name": "jonathan", "email": "234@mail.com", "age": 99 }
-//     ]);
-//     // console.log('returned array: ', test);
-// };
+pullFromTo(); */
 
-// insertStreamTest();
+//---------------------Test Stream Creation As-------------------
 
+const createStreamAsTest = async () => {
+    const queryId = await client.createStreamAs('TestAsStream', ['latitude', 'longitude'], 'riderLocations', {
+        kafka_topic: 'TestAsStream',
+        value_format: 'json',
+        partitions: 1
+    },
+    'latitude > 37');
+    console.log('this is the queryId: ', queryId);
+};
+
+createStreamAsTest();
+
+// (streamName, selectColumns, sourceStream, propertiesObj, conditionsObj)
+//   const defaultProps = {
+//       kafka_topic: streamName,
+//       value_format: 'json',
+//       partitions: 1
+//     };
 
 //---------------------Test Inspect query status -------------------
 // const inspectQueryStatusTest = async () => {
