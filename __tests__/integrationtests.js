@@ -1,22 +1,21 @@
 const ksqljs = require('../ksqljs/ksqlJS.js');
+
 // Pre-requisite: start a docker container
 
 describe('--Integration Tests--', () => {
+
   describe('--Method Tests--', () => {
     beforeAll((done) => {
-      client = new ksqljs({
-        ksqldbURL: 'http://localhost:8088',
-        httpsAgent: {
-          rejectUnauthorized: false
-        }
-      });
+      client = new ksqljs({ ksqldbURL: 'http://localhost:8088' });
       done();
     });
+
     afterAll(async () => {
       await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
     })
+
     it('.createStream properly creates a stream', async () => {
-      await client.createStream('TESTJESTSTREAM', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testJestTopic', 'json', 1);
+      const result = await client.createStream('TESTJESTSTREAM', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testJestTopic', 'json', 1);
       const streams = await client.ksql('LIST STREAMS;');
       const allStreams = streams.streams;
       let streamExists = false;
@@ -28,7 +27,7 @@ describe('--Integration Tests--', () => {
       }
       expect(streamExists).toEqual(true);
     })
-
+  
     it('.push properly creates a push query', () => {
       let pushActive = false;
       client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
@@ -38,20 +37,21 @@ describe('--Integration Tests--', () => {
         expect(pushActive).toEqual(true)
       });
     })
-
+  
     it('.terminate properly terminates a push query', () => {
       client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 3;', async (data) => {
         const terminateRes = await client.terminate(JSON.parse(data).queryId);
         expect(terminateRes.wasTerminated).toEqual(true);
       })
     })
-
+  
     it('.insertStream properly inserts a row into a stream', async () => {
-      await client.insertStream('TESTJESTSTREAM', [
+      const response = await client.insertStream('TESTJESTSTREAM', [
         { "name": "stab-rabbit", "email": "123@mail.com", "age": 100 }
       ]);
+      console.log(response);
       const data = [];
-      await client.push('SELECT * FROM TESTJESTSTREAM;', async (chunk) => {
+      await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES;', async (chunk) => {
         data.push(JSON.parse(chunk));
         if (data[1]) {
           client.terminate(data[0].queryId);
@@ -59,23 +59,32 @@ describe('--Integration Tests--', () => {
         }
       });
     })
-
+  
     it('.pull receives the correct data from a pull query', async () => {
       const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
-      expect(pullData[1]).toEqual(['stab-rabbit', '123@mail.com', 100]);
+      console.log(pullData[1]);
+      expect(pullData[1]).toEqual(["stab-rabbit", "123@mail.com", 100]);
+    })
+
+    it('.pullFromTo receives all the data', async () => {
+      const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
+      const data = await client.pullFromTo('TESTJESTSTREAM', 'America/Los_Angeles', ['2022-01-01', '00', '00', '00']);
+      const expectPullData = pullData[1];
+      const expectData = data[0].slice(0, 3);
+      expect(expectPullData).toEqual(expectData);
     })
   })
-  describe('Health Tests', () => {
+
+  describe('--Health Tests--', () => {
     beforeAll((done) => {
-      client = new ksqljs({
-        ksqldbURL: 'http://localhost:8088',
-      });
+      client = new ksqljs({ ksqldbURL: 'http://localhost:8088' });
       done();
     });
-
+  
     afterAll(async () => {
       await client.ksql('DROP STREAM IF EXISTS TESTSTREAM2;');
     })
+
     it('.inspectQueryStatus checks if a stream is created successfully', async () => {
       const streamName = 'TESTSTREAM2'
       const create = await client.ksql(`CREATE STREAM IF NOT EXISTS ${streamName}
@@ -96,7 +105,7 @@ describe('--Integration Tests--', () => {
         queryId: null
       }));
     })
-
+  
     it('.inspectServerInfo returns the server info and status', async () => {
       const status = await client.inspectServerInfo();
       // should return something like: {
@@ -115,7 +124,7 @@ describe('--Integration Tests--', () => {
         })
       }));
     })
-
+  
     it('.inspectServerHealth returns the server health', async () => {
       const status = await client.inspectServerHealth();
       // should return something like: {
@@ -136,7 +145,7 @@ describe('--Integration Tests--', () => {
       })
       );
     })
-
+  
     it('.inspectClusterStatus returns the cluster status', async () => {
       const status = await client.inspectClusterStatus();
       // should return something like: {
@@ -153,13 +162,13 @@ describe('--Integration Tests--', () => {
       })
       );
     })
-
+  
     it('.isValidProperty returns true if a server configuration property is not prohibited from setting', async () => {
       const status = await client.isValidProperty('test');
       // should return true
       expect(status.data).toEqual(true);
     })
-
+  
     // it('isValidProperty returns an error if the server property is prohibited from setting', async () => {
     //   const status = await client.isValidProperty('ksql.connect.url');
     //   // should return something like

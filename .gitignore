@@ -103,5 +103,17 @@ dist
 # TernJS port file
 .tern-port
 
-# Local Files
+# Local
 ./ksqljsTest.js
+
+# KSQLDB docker server settings
+./ca-cert 
+./ca-cert.srl 
+./ca-key
+./cert-file 
+./cert-signed 
+./jaas_config.file
+./kafka.client.truststore.jks 
+./kafka.server.truststore.jks 
+./kafka.server.keystore.jks 
+./password.properties
