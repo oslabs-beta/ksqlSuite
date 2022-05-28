@@ -30,10 +30,13 @@ class queryBuilder {
       case "boolean":
         return param;
       case "object":
-        if (Array.isArray(param)){
+        if (Array.isArray(param)) {
           //check if spaces
-          if(param.includes(" ")){
+          if (param[0].includes(" ")) {
             return new Error("string params should not include spaces");
+          }
+          else if (param[0].includes(";")) {
+            return new Error("string params should not include semi-colons");
           }
           return `${param[0].replaceAll("'", "''")}`
         }
