@@ -78,7 +78,7 @@ class ksqljs {
         this.httpsAgentHttp2 ? this.httpsAgentHttp2 : {}
       );
 
-      session.on("error", (err) => console.error(err));
+      session.on("error", (err) => reject(err));
 
       const req = session.request(
         this.secret && this.API ?

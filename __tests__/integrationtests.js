@@ -1,6 +1,10 @@
 const ksqljs = require('../ksqljs/ksqlJS.js');
 
 // Pre-requisite: start a docker container
+/* To add to README: Prior to running test with 'npm test', please start the ksqlDB
+server using the command 'docker compose-up'. This will spin up a ksqlDB server on
+'http://localhost:8088'
+*/
 
 describe('--Integration Tests--', () => {
 
