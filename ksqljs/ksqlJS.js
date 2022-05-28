@@ -1,6 +1,7 @@
 const axios = require("axios");
 const https = require('node:https');
 const http2 = require("http2");
+const { ksqlDBError } = require("./customErrors.js");
 const queryBuilder = require('./queryBuilder.js');
 const builder = new queryBuilder();
 
@@ -17,19 +18,19 @@ class ksqljs {
    * Executes a pull query and returns the results.
    *
    * <p>This method may be used to execute pull queries, and returns an array containing all the data
-   * received. The first value of the array will be an object containing -> 
+   * received. The first value of the array will be an object containing ->
    * queryId: a string that contains the id of the stream that the pull query is being executed upon.
    * columnNames: an array that contains the names of the columns in the format of strings.
    * columnTypes: an array that contains the names of the columnTypes in the format of strings.
-   * 
+   *
    * Any subsequent values of the array are arrays that contain the data received.
-   * 
+   *
    * <p>If user input is used to build the query, please use the queryBuilder method to protect against sql injection.
    *
    * @param {string} query sql statement of query to execute
    * @return {Promise} a promise that completes once the server response is received, and contains the query
-   *         result if successful. 
-   * 
+   *         result if successful.
+   *
    *         Example: [{object that contains the metadata}, [data], [data], ...}]
    */
   pull = (query) => {
@@ -49,7 +50,10 @@ class ksqljs {
           httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
         })
       .then((res) => res.data)
-      .catch((error) => { throw error });
+      .catch((error) => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
@@ -58,7 +62,7 @@ class ksqljs {
    * <p>This method may be used to issue a push query against a stream, with the first piece of data being an object
    * containing queryId, the id of the push query that can be used to terminate the push query being executed.
    * Otherwise, the push query will continuously run until terminated, returning results one at a time.
-   * 
+   *
    * <p>If user input is used to build the query, please use the queryBuilder method to protect against sql injection.
    *
    * @param {string} query sql statement of query to execute
@@ -119,7 +123,7 @@ class ksqljs {
    *
    * <p>This method may be used to end an active push query, and returns an object signifying whether the push query was
    * terminated properly or not.
-   * 
+   *
    * <p>This method is sql injection protected with the use of queryBuilder.
    *
    * @param {string} queryId a string that is the id of the push query to be terminated.
@@ -142,14 +146,17 @@ class ksqljs {
         httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
       })
       .then(res => res.data[0])
-      .catch(error => { throw error });
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
    * Executes a query and returns the result(s).
    *
    * <p>This method may be used to issue custom sql queries against ksqldb without constraints.
-   * 
+   *
    * <p>If user input is used to build the query, please use the queryBuilder method to protect against sql injection.
    *
    * @param {string} query statement of a query to execute.
@@ -171,55 +178,100 @@ class ksqljs {
         httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
       })
       .then(res => res.data[0])
-      .catch(error => { throw error });
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
    * Executes a query to create a stream.
    *
    * <p>This method is used to create a stream.
-   * 
+   *
    * <p>This method is sql injection protected with the use of queryBuilder.
    *
    * @param {string} name the name of the stream to be created.
    * @param {array} columnsType an array that contains the name of the columns and the associated types e.g [name VARCHAR, age INTEGER, ...]
    * @param {string} topic the name of the topic the stream is listening to. The topic is created if it does not currently exist.
-   * @param {string} value_format a string specifying the value format. 
+   * @param {string} value_format a string specifying the value format.
    * @param {integer} partitions the number of partitions the stream should have.
    * @param {integer} key the key of the string.
    * @return {Promise} a promise that completes once the server response is received, and returns a response object.
    */
   createStream(name, columnsType, topic, value_format = 'json', partitions = 1, key) {
-    // console.log(this.ksqldbURL);
     if (typeof name !== 'string' || typeof columnsType !== 'object' || typeof topic !== 'string' || typeof partitions !== 'number') {
       return console.log("invalid input(s)")
     }
     const columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
     const query = `CREATE STREAM ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`;
 
-    return axios.post(this.ksqldbURL + '/ksql',
-      {
-        ksql: query
-      },
-      {
-        headers:
-          this.API && this.secret ?
-            {
-              "Authorization": `Basic ${Buffer.from(this.API + ":" + this.secret, 'utf8').toString('base64')}`,
-            }
-            :
-            {},
-        httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
-      })
+    return axios.post(this.ksqldbURL + '/ksql', { ksql: query }, {
+      headers:
+        this.API && this.secret ?
+          {
+            "Authorization": `Basic ${Buffer.from(this.API + ":" + this.secret, 'utf8').toString('base64')}`,
+          }
+          :
+          {},
+      httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
+    })
       .then(res => res)
-      .catch(error => { throw error });
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
+  /**
+   * 
+   * @param {string} streamName 
+   * @param {string[]} selectColumns 
+   * @param {string} sourceStream 
+   * @param {object} propertiesObj 
+   * @param {string} conditions 
+   * @param {string} partitionBy 
+   * @returns {Promise}
+   */
+  createStreamAs = (streamName, selectColumns, sourceStream, propertiesObj, conditions, partitionBy) => {
+    const propertiesArgs = [];
+    const selectColStr = selectColumns.reduce((result, current) => result + ', ' + current);
+    // begin with first consistent portion of query
+    let builderQuery = 'CREATE STREAM ? ';
+
+    // include properties in query if provided
+    if (Object.keys(propertiesObj).length > 0) {
+      builderQuery += 'WITH (';
+      for (const [key, value] of Object.entries(propertiesObj)) {
+        const justStarted = builderQuery[builderQuery.length - 1] === '(';
+
+        if (!justStarted) builderQuery += ', ';
+        builderQuery += '? = ?';
+        propertiesArgs.push([key], value);
+      };
+      builderQuery += ') ';
+    }
+
+    // continue building the query to be sent to the builder
+    builderQuery += `AS SELECT ${selectColStr} FROM ? `;
+    if (conditions.indexOf(';') === -1) builderQuery += `WHERE ${conditions} `;
+    builderQuery += partitionBy || '';
+    builderQuery += 'EMIT CHANGES;'
+
+    // utilize query with variables to build actual query
+    const query = builder.build(builderQuery, [streamName], ...propertiesArgs, [sourceStream]);
+
+    return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
+      .then(res => res.data[0].commandStatus.queryId)
+      .catch(error => console.log(error));
+  }
+
+  //---------------------Create tables-----------------
   /**
    * Executes a query to create a table.
    *
    * <p>This method is used to create a table.
-   * 
+   *
    * <p>This method is sql injection protected with the use of queryBuilder.
    *
    * @param {string} name the name of the table to be created.
@@ -247,14 +299,17 @@ class ksqljs {
             {},
         httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
       })
-      .catch(error => { throw error });
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
    * Inserts rows of data into a stream.
    *
    * <p>This method may be used to insert new rows of data into a stream.
-   * 
+   *
    * <p>This method is sql injection protected with the use of queryBuilder.
    *
    * @param {string} stream the name of the stream to insert data into.
@@ -269,6 +324,8 @@ class ksqljs {
         this.ksqldbURL,
         this.httpsAgentHttp2 ? this.httpsAgentHttp2 : {}
       );
+
+      session.on("error", (err) => reject(err));
 
       const req = session.request(
         this.secret && this.API ?
@@ -310,17 +367,17 @@ class ksqljs {
    *
    * <p>This method may be used to pull data from within two specific points in time. The first three
    * parameters are required, with the fourth parameter being optional.
-   * 
+   *
    * <p>This method is sql injection protected with the use of queryBuilder.
    *
    * @param {string} streamName the name of the stream to pull data from.
    * @param {string} timeZone desired timezone that the data should conform to.
-   * @param {array} from array of the format ['2200-01-01', '16', '10', '20'], with the values being 
+   * @param {array} from array of the format ['2200-01-01', '16', '10', '20'], with the values being
    * date, hour, minute, and second respectively.
-   * @param {array} to array of the format ['2000-01-01', '16', '10', '20'], with the values being 
+   * @param {array} to array of the format ['2000-01-01', '16', '10', '20'], with the values being
    * date, hour, minute, and second respectively. This defaults to ['2200-03-14', '00', '00', '00'].
-   * @return {array} this method returns an array that contains arrays with the data, along with an extra value at 
-   *         the end of the array that includes the time that the data was inserted into the ksqldb. 
+   * @return {array} this method returns an array that contains arrays with the data, along with an extra value at
+   *         the end of the array that includes the time that the data was inserted into the ksqldb.
    */
   pullFromTo = async (streamName, timezone = 'Greenwich', from = [undefined, '00', '00', '00'], to = ['2200-03-14', '00', '00', '00']) => {
     if (!streamName || typeof timezone !== 'string' || !from
@@ -347,30 +404,33 @@ class ksqljs {
   }
 
   /**
-  * Inspects a specific query and returns the results.
-  *
-  * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/status-endpoint/
-  * 
-  * <p> This method may be used to inspect the status of a query.
-  *
-  * @param {string} commandId this id is obtained when using the .ksql method (/ksql endpoint) to run CREATE, DROP, TERMINATE commands.
-  * @return {Promise} this method returns a promise, that resolves to a JSON object that has the following two properties->
-  * 
-  *         status (string): One of QUEUED, PARSING, EXECUTING, TERMINATED, SUCCESS, or ERROR.
-  * 
-  *         message (string): Detailed message regarding the status of the execution statement.
-  */
+   * Inspects a specific query and returns the results.
+   *
+   * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/status-endpoint/
+   *
+   * <p> This method may be used to inspect the status of a query.
+   *
+   * @param {string} commandId this id is obtained when using the .ksql method (/ksql endpoint) to run CREATE, DROP, TERMINATE commands.
+   * @return {Promise} this method returns a promise, that resolves to a JSON object that has the following two properties->
+   *
+   *         status (string): One of QUEUED, PARSING, EXECUTING, TERMINATED, SUCCESS, or ERROR.
+   *
+   *         message (string): Detailed message regarding the status of the execution statement.
+   */
   inspectQueryStatus(commandId) {
     return axios.get(this.ksqldbURL + `/status/${commandId}`)
       .then(response => response)
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
    * Inspects a ksqlDB server and returns the results.
    *
    * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/info-endpoint/
-   * 
+   *
    * <p>This method is mainly used for troubleshooting.
    *
    * @return {Promise} this method returns a promise that resolves to an object containing the version, clusterId, and ksqlservice id.
@@ -378,14 +438,17 @@ class ksqljs {
   inspectServerInfo() {
     return axios.get(this.ksqldbURL + `/info`)
       .then(response => response)
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
    * Inspects the health status of a ksqlDB server.
    *
    * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/info-endpoint/
-   * 
+   *
    * <p>This method may be used to give the health status of a ksqlDB server.
    *
    * @return {Promise} this method returns a promise that resolves to an object containing the metastore, kafka, and commandRunner info.
@@ -393,14 +456,17 @@ class ksqljs {
   inspectServerHealth() {
     return axios.get(this.ksqldbURL + `/healthcheck`)
       .then(response => response)
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
    * Inspects all servers in a ksqlDB cluster and returns the results.
    *
    * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/cluster-status-endpoint/
-   * 
+   *
    * <p>This method may be used to get information about the status of all ksqlDB servers in a ksqlDB cluster, which can be useful
    * for troubleshooting.
    *
@@ -409,14 +475,17 @@ class ksqljs {
   inspectClusterStatus() {
     return axios.get(this.ksqldbURL + `/clusterStatus`)
       .then(response => response)
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
    * Terminates a ksqlDB cluster.
    *
    * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/terminate-endpoint/
-   * 
+   *
    * <p>This method may be used to terminate a ksqlDB cluster. First, shut down all the servers except one.
    *
    * @return {Promise} this method returns a promise that returns a response object.
@@ -431,16 +500,19 @@ class ksqljs {
       }
     })
       .then(response => response)
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 
   /**
  * Checks whether a ksqldb server property is allowed to be changed.
  *
  * @link https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/is_valid_property-endpoint/
- * 
+ *
  * <p>This method may be used to check if a property in a ksqldb server is prohibited from being changed.
- * 
+ *
  * <p>If the property is prohibited from setting, the following object will be returned:
  * {
  *   "@type": "generic_error",
@@ -453,7 +525,10 @@ class ksqljs {
   isValidProperty(propertyName) {
     return axios.get(this.ksqldbURL + `/is_valid_property/${propertyName}`)
       .then(response => response)
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.error(error);
+        throw new ksqlDBError(error);
+      });
   }
 };
 
