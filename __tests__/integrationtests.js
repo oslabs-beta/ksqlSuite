@@ -2,7 +2,7 @@ const ksqljs = require('../ksqljs/ksqljs.js');
 
 describe('Integration Tests', () => {
   beforeAll((done) => {
-    client = new ksqljs('http://localhost:8088');
+    client = new ksqljs({ksqldbURL: 'http://localhost:8088'});
     done();
   });
 

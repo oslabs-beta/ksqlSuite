@@ -1,13 +1,13 @@
-const ksqljs = require('./ksqljs/ksqljs');
+const ksqljs = require('./ksqljs/ksqljs.js');
 require('dotenv').config();
 
-// const client = new ksqljs({
-//     ksqldbURL: 'https://pksqlc-755v2.us-east-2.aws.confluent.cloud:443',
-//     API: process.env.KSQL_API_KEY,
-//     secret: process.env.KSQL_API_SECRET
-// });
+const client = new ksqljs({
+    ksqldbURL: 'http://0.0.0.0:8088',
+    API: process.env.KSQL_USER,
+    secret: process.env.KSQL_PASS
+});
 
-const client = new ksqljs({ksqldbURL: 'http://localhost:8088'})
+// const client = new ksqljs({ksqldbURL: 'https://0.0.0.0:8088'});
 let metadata;
 
 //---------------------Test PUll Queries-------------------
@@ -20,8 +20,13 @@ pullTest();
 
 //---------------------Test Push Queries-------------------
 /* const pushTest = async () => {
-    metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
-    console.log('this is the metadata returned ', metadata);
+    try {
+        metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
+        console.log('this is the metadata returned ', metadata);
+    } catch (error) {
+        console.log(error);
+    }
+
 };
 
 pushTest(); */
@@ -66,4 +71,5 @@ createTableTest(); */
     console.log('returned array: ', test);
 };
 
-insertStreamTest(); */
+insertStreamTest();
+*/
