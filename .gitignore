@@ -105,6 +105,7 @@ dist
 
 # Local
 ksqljsTest.js
+package-lock.json
 
 # KSQLDB docker server settings
 ksqldb_server_config/
