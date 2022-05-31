@@ -135,7 +135,7 @@ class ksqljs {
       value_format: 'json',
       partitions: 1
     };
-    Object.assign(defaultProps, conditionsObj);
+    Object.assign(defaultProps, propertiesObj);
     // if there's no properties Obj, assign them all default values
 
     // expect user to input a conditions object of format {WHERE: condition, GROUP_BY: condition, HAVING: condition};
@@ -172,7 +172,6 @@ class ksqljs {
 
 
     const query = builder.build(`CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? ?EMIT CHANGES;`, tableName, defaultProps.topic, defaultProps.value_format, defaultProps.partitions, selectColStr, source, conditionQuery)
-
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
     .catch(error => console.log(error));
   }

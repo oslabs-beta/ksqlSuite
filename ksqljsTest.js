@@ -85,12 +85,18 @@ listQueries(); */
 createTableTest(); */
 
 //---------------------Test Table Create As-------------------
-const createTableAsTest = () => {
-    // create table
-    // client.createTable('AnotherTestTable', ['name VARCHAR PRIMARY KEY', 'email VARCHAR', 'age INTEGER'], 'users', 'json', 1);
-    // create derived table
-    // client.createTableAs('currentLocation', 'riderlocations', ['profileId','LATEST_BY_OFFSET(latitude) AS la','LATEST_BY_OFFSET(longitude) AS lo'], {}, {GROUP_BY: 'profileId'});
-    client.createTableAs('ridersNearMountainView', 'currentLocation', ['ROUND(GEO_DISTANCE(la, lo, 37.4133, -122.1162), -1) AS distanceInMiles', 'COLLECT_LIST(profileId) AS riders', 'COUNT(*) AS count'], {}, {GROUP_BY: 'ROUND(GEO_DISTANCE(la, lo, 37.4133, -122.1162), -1)'})
+const createTableAsTest = async () => {
+
+    await client.ksql('CREATE STREAM RIDERLOCATIONS (PROFILEID VARCHAR, LATITUDE DOUBLE, LONGITUDE DOUBLE) WITH (KAFKA_TOPIC=\'locations\', value_format=\'json\', partitions=1);')
+    await client.createTableAs('currentLocation', 'riderlocations', ['profileId', 'LATEST_BY_OFFSET(latitude) AS la', 'LATEST_BY_OFFSET(longitude) AS lo'], {}, {GROUP_BY: 'profileId'})
+    // let x;
+    // x = await client.push('SELECT * FROM CURRENTLOCATION EMIT CHANGES LIMIT 20;', async (data) => {
+    //     console.log('push query data', JSON.parse(data))
+    // })
+    // console.log('first x', x)
+    // await client.insertStream('RIDERLOCATIONS', [{'PROFILEID':'abc123abcddzzz', 'latitude':9999999,'longitude':999999}])
+    // console.log('second x', x)
+    // console.log(await client.pull('SELECT * FROM TABLEOFSTREAM;'));
 }
 
 createTableAsTest()
