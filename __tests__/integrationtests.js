@@ -1,13 +1,17 @@
 const ksqljs = require('../ksqljs/ksqlJS.js');
-
 // Pre-requisite: start a docker container
 /* To add to README: Prior to running test with 'npm test', please start the ksqlDB
 server using the command 'docker compose-up'. This will spin up a ksqlDB server on
 'http://localhost:8088'
 */
 
-describe('--Integration Tests--', () => {
+// ** INTEGRATION TEST INSTRUCTIONS **
 
+// Prior to running the test files, please ensure an instance of the ksqldb server is running
+// Steps to starting the ksqldb server can be found here: (https://ksqldb.io/quickstart.html)
+// Once the ksqlDB server is running, tests can be run with terminal line: (npm test)
+
+describe('--Integration Tests--', () => {
   describe('--Method Tests--', () => {
     beforeAll((done) => {
       client = new ksqljs({ ksqldbURL: 'http://localhost:8088' });
@@ -77,6 +81,45 @@ describe('--Integration Tests--', () => {
       const expectData = data[0].slice(0, 3);
       expect(expectPullData).toEqual(expectData);
     })
+
+
+  // describe('--Materialized Views Test--', () => {
+  //   beforeAll( async () => {
+  //     client = new ksqljs({ ksqldbURL: 'http://localhost:8088'});
+  //     await client.ksql('CREATE STREAM TESTJESTSTREAM (NAME VARCHAR, AGE INTEGER, LOCATION VARCHAR, WEIGHT INTEGER) WITH (kafka_topic= \'testJestTopic\', value_format=\'json\', partitions=1);')
+  //   });
+  //   afterAll(async () => {
+  //     await client.ksql('DROP TABLE IF EXISTS TABLEOFSTREAM DELETE TOPIC;')
+  //     await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;')
+  //   })
+  //   it('creates a materialized table view of a stream', async () => {
+  //     await client.createTableAs('TABLEOFSTREAM', 'TESTJESTSTREAM', ['name', 'LATEST_BY_OFFSET(age) AS recentAge', 'LATEST_BY_OFFSET(weight) AS recentweight'], {topic:'newTopic'},{WHERE: 'age >= 21', GROUP_BY: 'name'});
+  //     const tables = await client.ksql('LIST TABLES;');
+  //     const allTables = tables.tables;
+  //     let tableCheck = false;
+  //     for (let i = 0; i < allTables.length; i++){
+  //       if (allTables[i].name === 'TABLEOFSTREAM') {
+  //         tableCheck = true;
+  //         break;
+  //       }
+  //     }
+  //     expect(tableCheck).toEqual(true);
+      
+  //   })
+  //   it('materialized table view updates with source stream', async () => {
+  //     await client.insertStream('TESTJESTSTREAM', [{"NAME":"firstTester", "AGE":25, "LOCATION": "Seattle", "WEIGHT": 130}, {"NAME":"secondTester", "AGE":30, "LOCATION": "Cali", "WEIGHT": 150}, {"NAME":"firstTester", "AGE":28, "LOCATION": "Seattle", "WEIGHT": 145}, {"NAME":"thirdTester", "AGE":19, "LOCATION": "Colorado", "WEIGHT": 110}])      
+  //     const matTable = await client.pull('SELECT * FROM TABLEOFSTREAM;');
+  //     // console.log('table list', matTable)
+  //     let rowCheck = false;
+  //     for (let i = 1; i < matTable.length; i++){
+  //       if (matTable[i][0] === "firstTester" && matTable[i][1] === "25" && matTable[i][2] === 130){
+  //         rowCheck = true;
+  //         break;
+  //       }
+  //     }
+  //     expect(rowCheck).toEqual(true);
+  //   })
+  // })
   })
 
   describe('--Health Tests--', () => {
