@@ -81,7 +81,7 @@ describe('--Integration Tests--', () => {
       const expectData = data[0].slice(0, 3);
       expect(expectPullData).toEqual(expectData);
     })
-
+  })
 
   // describe('--Materialized Views Test--', () => {
   //   beforeAll( async () => {
@@ -120,7 +120,7 @@ describe('--Integration Tests--', () => {
   //     expect(rowCheck).toEqual(true);
   //   })
   // })
-  })
+  
 
   describe('--Health Tests--', () => {
     beforeAll((done) => {
