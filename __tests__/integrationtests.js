@@ -1,6 +1,10 @@
 const ksqljs = require('../ksqljs/ksqlJS.js');
 
 // Pre-requisite: start a docker container
+/* To add to README: Prior to running test with 'npm test', please start the ksqlDB
+server using the command 'docker compose-up'. This will spin up a ksqlDB server on
+'http://localhost:8088'
+*/
 
 describe('--Integration Tests--', () => {
 
@@ -61,7 +65,8 @@ describe('--Integration Tests--', () => {
   
     it('.pull receives the correct data from a pull query', async () => {
       const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
-      expect(pullData[1]).toEqual(['stab-rabbit', '123@mail.com', 100]);
+      console.log(pullData[1]);
+      expect(pullData[1]).toEqual(["stab-rabbit", "123@mail.com", 100]);
     })
 
     it('.pullFromTo receives all the data', async () => {

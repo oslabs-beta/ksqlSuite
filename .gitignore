@@ -104,4 +104,11 @@ dist
 .tern-port
 
 # Local
-./ksqljsTest.js
+ksqljsTest.js
+package-lock.json
+local_ignore/
+.gitignore
+
+# KSQLDB docker server settings
+ksqldb_server_config/
+
