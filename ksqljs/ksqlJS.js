@@ -224,13 +224,13 @@ class ksqljs {
   }
 
   /**
-   * 
-   * @param {string} streamName 
-   * @param {string[]} selectColumns 
-   * @param {string} sourceStream 
-   * @param {object} propertiesObj 
-   * @param {string} conditions 
-   * @param {string} partitionBy 
+   *
+   * @param {string} streamName
+   * @param {string[]} selectColumns
+   * @param {string} sourceStream
+   * @param {object} propertiesObj
+   * @param {string} conditions
+   * @param {string} partitionBy
    * @returns {Promise}
    */
   createStreamAs = (streamName, selectColumns, sourceStream, propertiesObj, conditions, partitionBy) => {
@@ -488,9 +488,10 @@ class ksqljs {
    *
    * <p>This method may be used to terminate a ksqlDB cluster. First, shut down all the servers except one.
    *
+   * @param {string[]} topicsToDelete an array of topic names or regular expressions for topic names to delete.
    * @return {Promise} this method returns a promise that returns a response object.
    */
-  terminateCluster() {
+  terminateCluster(topicsToDelete = []) {
     return axios.post(this.ksqldbURL + `/ksql/terminate`, {}, {
       headers: {
         // 'application/json' is the modern content-type for JSON, but some
