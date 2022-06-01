@@ -492,7 +492,9 @@ class ksqljs {
    * @return {Promise} this method returns a promise that returns a response object.
    */
   terminateCluster(topicsToDelete = []) {
-    return axios.post(this.ksqldbURL + `/ksql/terminate`, {}, {
+    return axios.post(this.ksqldbURL + `/ksql/terminate`, {
+      "deleteTopicList": topicsToDelete
+    }, {
       headers: {
         // 'application/json' is the modern content-type for JSON, but some
         // older servers may use 'text/json'.
