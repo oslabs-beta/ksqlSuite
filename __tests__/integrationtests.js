@@ -107,20 +107,24 @@ describe('--Integration Tests--', () => {
       
   //   })
   //   it('materialized table view updates with source stream', async () => {
-  //     await client.insertStream('TESTJESTSTREAM', [{"NAME":"firstTester", "AGE":25, "LOCATION": "Seattle", "WEIGHT": 130}, {"NAME":"secondTester", "AGE":30, "LOCATION": "Cali", "WEIGHT": 150}, {"NAME":"firstTester", "AGE":28, "LOCATION": "Seattle", "WEIGHT": 145}, {"NAME":"thirdTester", "AGE":19, "LOCATION": "Colorado", "WEIGHT": 110}])      
+  //     let rowCheck = false;
+  //     // push query for the table
+  //     await client.push('SELECT * FROM TABLEOFSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
+  //       if (Array.isArray(JSON.parse(data))){
+  //         console.log(JSON.parse(data))
+  //         if (JSON.parse(data)[0] === "firstTester" && JSON.parse(data)[1] === 25 && JSON.parse(data)[2] === "Seattle" && JSON.parse(data)[3] === 130){
+  //           rowCheck = true;
+  //         }
+  //         expect
+  //       }
+  //     })
+  //     await client.insertStream('TESTJESTSTREAM', [{"NAME":"firstTester", "AGE":25, "LOCATION": "Seattle", "WEIGHT": 130}])      
   //     const matTable = await client.pull('SELECT * FROM TABLEOFSTREAM;');
   //     // console.log('table list', matTable)
-  //     let rowCheck = false;
-  //     for (let i = 1; i < matTable.length; i++){
-  //       if (matTable[i][0] === "firstTester" && matTable[i][1] === "25" && matTable[i][2] === 130){
-  //         rowCheck = true;
-  //         break;
-  //       }
-  //     }
+
   //     expect(rowCheck).toEqual(true);
   //   })
   // })
-  
 
   describe('--Health Tests--', () => {
     beforeAll((done) => {
