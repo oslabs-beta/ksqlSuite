@@ -12,76 +12,76 @@ server using the command 'docker compose-up'. This will spin up a ksqlDB server 
 // Once the ksqlDB server is running, tests can be run with terminal line: (npm test)
 
 describe('--Integration Tests--', () => {
-/*   describe('--Method Tests--', () => {
-    beforeAll((done) => {
-      client = new ksqljs({ ksqldbURL: 'http://localhost:8088' });
-      done();
-    });
+  // describe('--Method Tests--', () => {
+  //   beforeAll((done) => {
+  //     client = new ksqljs({ ksqldbURL: 'http://localhost:8088' });
+  //     done();
+  //   });
 
-    afterAll(async () => {
-      await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
-    })
+  //   afterAll(async () => {
+  //     await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
+  //   })
 
-    it('.createStream properly creates a stream', async () => {
-      const result = await client.createStream('TESTJESTSTREAM', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testJestTopic', 'json', 1);
-      const streams = await client.ksql('LIST STREAMS;');
-      const allStreams = streams.streams;
-      let streamExists = false;
-      for (let i = 0; i < allStreams.length; i++) {
-        if (allStreams[i].name === "TESTJESTSTREAM") {
-          streamExists = true;
-          break;
-        }
-      }
-      expect(streamExists).toEqual(true);
-    })
+  //   it('.createStream properly creates a stream', async () => {
+  //     const result = await client.createStream('TESTJESTSTREAM', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testJestTopic', 'json', 1);
+  //     const streams = await client.ksql('LIST STREAMS;');
+  //     const allStreams = streams.streams;
+  //     let streamExists = false;
+  //     for (let i = 0; i < allStreams.length; i++) {
+  //       if (allStreams[i].name === "TESTJESTSTREAM") {
+  //         streamExists = true;
+  //         break;
+  //       }
+  //     }
+  //     expect(streamExists).toEqual(true);
+  //   })
   
-    it('.push properly creates a push query', () => {
-      let pushActive = false;
-      client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
-        if (JSON.parse(data).queryId) {
-          pushActive = true;
-        }
-        expect(pushActive).toEqual(true)
-      });
-    })
+  //   it('.push properly creates a push query', () => {
+  //     let pushActive = false;
+  //     client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
+  //       if (JSON.parse(data).queryId) {
+  //         pushActive = true;
+  //       }
+  //       expect(pushActive).toEqual(true)
+  //     });
+  //   })
   
-    it('.terminate properly terminates a push query', () => {
-      client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 3;', async (data) => {
-        const terminateRes = await client.terminate(JSON.parse(data).queryId);
-        expect(terminateRes.wasTerminated).toEqual(true);
-      })
-    })
+  //   it('.terminate properly terminates a push query', () => {
+  //     client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 3;', async (data) => {
+  //       const terminateRes = await client.terminate(JSON.parse(data).queryId);
+  //       expect(terminateRes.wasTerminated).toEqual(true);
+  //     })
+  //   })
   
-    it('.insertStream properly inserts a row into a stream', async () => {
-      const response = await client.insertStream('TESTJESTSTREAM', [
-        { "name": "stab-rabbit", "email": "123@mail.com", "age": 100 }
-      ]);
-      console.log(response);
-      const data = [];
-      await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES;', async (chunk) => {
-        data.push(JSON.parse(chunk));
-        if (data[1]) {
-          client.terminate(data[0].queryId);
-          expect(data[1]).toEqual(["stab-rabbit", "123@mail.com", 100])
-        }
-      });
-    })
+  //   it('.insertStream properly inserts a row into a stream', async () => {
+  //     const response = await client.insertStream('TESTJESTSTREAM', [
+  //       { "name": "stab-rabbit", "email": "123@mail.com", "age": 100 }
+  //     ]);
+  //     console.log(response);
+  //     const data = [];
+  //     await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES;', async (chunk) => {
+  //       data.push(JSON.parse(chunk));
+  //       if (data[1]) {
+  //         client.terminate(data[0].queryId);
+  //         expect(data[1]).toEqual(["stab-rabbit", "123@mail.com", 100])
+  //       }
+  //     });
+  //   })
   
-    it('.pull receives the correct data from a pull query', async () => {
-      const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
-      console.log(pullData[1]);
-      expect(pullData[1]).toEqual(["stab-rabbit", "123@mail.com", 100]);
-    })
+  //   it('.pull receives the correct data from a pull query', async () => {
+  //     const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
+  //     console.log(pullData[1]);
+  //     expect(pullData[1]).toEqual(["stab-rabbit", "123@mail.com", 100]);
+  //   })
 
-    it('.pullFromTo receives all the data', async () => {
-      const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
-      const data = await client.pullFromTo('TESTJESTSTREAM', 'America/Los_Angeles', ['2022-01-01', '00', '00', '00']);
-      const expectPullData = pullData[1];
-      const expectData = data[0].slice(0, 3);
-      expect(expectPullData).toEqual(expectData);
-    })
-  }) */
+  //   it('.pullFromTo receives all the data', async () => {
+  //     const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
+  //     const data = await client.pullFromTo('TESTJESTSTREAM', 'America/Los_Angeles', ['2022-01-01', '00', '00', '00']);
+  //     const expectPullData = pullData[1];
+  //     const expectData = data[0].slice(0, 3);
+  //     expect(expectPullData).toEqual(expectData);
+  //   })
+  // })
 
   describe('--Materialized Views Test--', () => {
     beforeAll( async () => {
@@ -106,24 +106,23 @@ describe('--Integration Tests--', () => {
       expect(tableCheck).toEqual(true);
       
     })
-    // it('materialized table view updates with source stream', async () => {
-    //   let rowCheck = false;
-    //   // push query for the table
-    //   await client.push('SELECT * FROM TABLEOFSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
-    //     if (Array.isArray(JSON.parse(data))){
-    //       console.log(JSON.parse(data))
-    //       if (JSON.parse(data)[0] === "firstTester" && JSON.parse(data)[1] === 25 && JSON.parse(data)[2] === "Seattle" && JSON.parse(data)[3] === 130){
-    //         rowCheck = true;
-    //       }
-    //       expect(rowCheck).toEqual(true);
-    //     }
-    //   })
-    //   await client.insertStream('TESTJESTSTREAM', [{"NAME":"firstTester", "AGE":25, "LOCATION": "Seattle", "WEIGHT": 130}]);
-            
-    // })
+    it('materialized table view updates with source stream', async () => {
+      let rowCheck = false;
+      // push query for the table
+      await client.push('SELECT * FROM TABLEOFSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
+        if (Array.isArray(JSON.parse(data))){
+          console.log('PARSED DATA HERE', JSON.parse(data))
+          if (JSON.parse(data)[0] === "firstTester" && JSON.parse(data)[1] === 25 && JSON.parse(data)[2] === "Seattle" && JSON.parse(data)[3] === 130){
+            rowCheck = true;
+          }
+        }
+      })
+      await client.insertStream('TESTJESTSTREAM', [{"NAME":"firstTester", "AGE":25, "LOCATION": "Seattle", "WEIGHT": 130}]);
+      await waitFor(() => expect(rowCheck).toEqual(true));
+    })
   })
 
-/*   describe('--Health Tests--', () => {
+  /* describe('--Health Tests--', () => {
     beforeAll((done) => {
       client = new ksqljs({ ksqldbURL: 'http://localhost:8088' });
       done();

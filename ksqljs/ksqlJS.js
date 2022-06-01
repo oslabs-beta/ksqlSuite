@@ -317,6 +317,7 @@ class ksqljs {
       partitions: 1
     };
     Object.assign(defaultProps, propertiesObj);
+    
     // if there's no properties Obj, assign them all default values
 
     // expect user to input a conditions object of format {WHERE: condition, GROUP_BY: condition, HAVING: condition};
