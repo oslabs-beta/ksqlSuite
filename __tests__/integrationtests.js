@@ -32,9 +32,9 @@ describe('--Integration Tests--', () => {
       expect(streamExists).toEqual(true);
     })
   
-    it('.push properly creates a push query', () => {
+    it('.push properly creates a push query', async () => {
       let pushActive = false;
-      client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
+      await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
         if (JSON.parse(data).queryId) {
           pushActive = true;
         }
@@ -42,11 +42,18 @@ describe('--Integration Tests--', () => {
       });
     })
   
-    it('.terminate properly terminates a push query', () => {
-      client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 3;', async (data) => {
-        const terminateRes = await client.terminate(JSON.parse(data).queryId);
+    it('.terminate properly terminates a push query', async () => {
+      let terminateRes;
+      await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 3;', async (data) => {
+        terminateRes = await client.terminate(JSON.parse(data).queryId);
         expect(terminateRes.wasTerminated).toEqual(true);
       })
+      // console.log("this is terminate", terminateRes);
+      // const queriesList = await client.ksql("LIST QUERIES;");
+      // console.log(queriesList);
+      // const queryIdDelete = (queriesList.queries[0]).id;
+      // const response = await client.terminate(queryIdDelete);
+      // console.log(response);
     })
   
     it('.insertStream properly inserts a row into a stream', async () => {
@@ -65,7 +72,6 @@ describe('--Integration Tests--', () => {
   
     it('.pull receives the correct data from a pull query', async () => {
       const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
-      console.log(pullData[1]);
       expect(pullData[1]).toEqual(["stab-rabbit", "123@mail.com", 100]);
     })
 
