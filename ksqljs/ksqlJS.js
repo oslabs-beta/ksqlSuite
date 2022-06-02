@@ -276,8 +276,8 @@ class ksqljs {
       });
 
       req.on("end", () => {
-        resolve(msgOutput);
         session.close();
+        resolve(msgOutput);
       });
     })
   }

@@ -81,7 +81,7 @@ pullFromTo(); */
 
 //---------------------Test Stream Creation As-------------------
 
-const createStreamAsTest = async () => {
+/* const createStreamAsTest = async () => {
     const queryId = await client.createStreamAs('TestAsStream', ['latitude', 'longitude'], 'riderLocations', {
         kafka_topic: 'TestAsStream',
         value_format: 'json',
@@ -91,7 +91,7 @@ const createStreamAsTest = async () => {
     console.log('this is the queryId: ', queryId);
 };
 
-createStreamAsTest();
+createStreamAsTest(); */
 
 // (streamName, selectColumns, sourceStream, propertiesObj, conditionsObj)
 //   const defaultProps = {

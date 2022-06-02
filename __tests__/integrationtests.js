@@ -9,9 +9,9 @@ server using the command 'docker compose-up'. This will spin up a ksqlDB server 
 describe('--Integration Tests--', () => {
 
   describe('--Method Tests--', () => {
-    beforeAll((done) => {
+    beforeAll(async () => {
       client = new ksqljs({ ksqldbURL: 'http://localhost:8088' });
-      done();
+      await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
     });
 
     afterAll(async () => {
@@ -75,7 +75,37 @@ describe('--Integration Tests--', () => {
       const expectData = data[0].slice(0, 3);
       expect(expectPullData).toEqual(expectData);
     })
+
+    describe('materialized streams utilizing createStreamAs', () => {
+      beforeAll(async () => {
+        await client.ksql('DROP STREAM IF EXISTS testAsStream;')
+        await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
+
+        newStreamQueryId = await client.createStream('newTestStream', ['name VARCHAR', 'age INTEGER'], 'newTestTopic', 'json', 1);
+        testAsQueryId = await client.createStreamAs('testAsStream', ['name', 'age'], 'newTestStream', {
+          kafka_topic: 'newTestTopic',
+          value_format: 'json',
+          partitions: 1
+      }, 'age > 50');
+      })
+
+      afterAll(async () => {
+        await client.ksql('DROP STREAM IF EXISTS testAsStream;')
+        await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
+      })
+
+      it('creates materialized stream', async () => {
+        let streamFound = false;
+        const {streams} = await client.ksql('LIST STREAMS;');
+
+        for (let i = 0; i < streams.length; i++) {
+          if (streams[i].name, streams[i].name === 'TESTASSTREAM') streamFound = true;
+        }
+        expect(streamFound).toBe(true);
+      });
+    })
   })
+  
   describe('--Health Tests--', () => {
     beforeAll((done) => {
       client = new ksqljs({ ksqldbURL: 'http://localhost:8088' });

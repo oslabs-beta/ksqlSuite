@@ -4,7 +4,7 @@
   "description": "",
   "main": "ksqljsTest.js",
   "scripts": {
-    "test": "jest --verbose"
+    "test": "jest --verbose --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
