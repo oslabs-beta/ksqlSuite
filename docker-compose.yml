@@ -1,5 +1,5 @@
 ---
-version: "2"
+version: "3.2"
 
 services:
   zookeeper:
@@ -34,6 +34,10 @@ services:
     image: confluentinc/ksqldb-server:0.25.1
     hostname: ksqldb-server
     container_name: ksqldb-server
+    volumes:
+      - type: bind
+        source: ./
+        target: /home/appuser
     depends_on:
       - broker
     ports:
@@ -43,6 +47,16 @@ services:
       KSQL_BOOTSTRAP_SERVERS: broker:9092
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: "true"
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: "true"
+      # KSQL_KSQL_OPTS: "-Djava.security.auth.login.config=/jaas_config.file"
+      # KSQL_AUTHENTICATION_METHOD: BASIC
+      # KSQL_AUTHENTICATION_REALM: KsqlServer-Props
+      # KSQL_AUTHENTICATION_ROLES: admin,developer,user
+      # KSQL_SSL_CLIENT_AUTHENTICATION: NONE
+      # KSQL_SSL_TRUSTSTORE_LOCATION: ksqldb_server_config/kafka.server.truststore.jks
+      # KSQL_SSL_TRUSTSTORE_PASSWORD: ${SSL_PASSWORD}
+      # KSQL_SSL_KEYSTORE_LOCATION: ksqldb_server_config/kafka.server.keystore.jks
+      # KSQL_SSL_KEYSTORE_PASSWORD: ${SSL_PASSWORD}
+      # KSQL_SSL_KEY_PASSWORD: ${SSL_PASSWORD}
       KSQL_KSQL_HEARTBEAT_ENABLE: "true"
       KSQL_KSQL_LAG_REPORTING_ENABLE: "true"
 
