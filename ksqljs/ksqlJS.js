@@ -305,7 +305,73 @@ class ksqljs {
       });
   }
 
+  //---------------------Create tables as select-----------------
   /**
+   * Execute a query to create a new materialized table view of an existing table or stream
+   * 
+   * <p>This method is used to create a materialized table view
+   * 
+   * <p>This method is sql injection protected with the use of queryBuilder.
+   * 
+   * @param {string} tableName name of the table to be created 
+   * @param {string} source name of the source stream / table materialized view is based on
+   * @param {array} selectArray an array that contains the values (strings, aggregate functions) of the columns for the materialized view table
+   * @param {object} propertiesObj an object containing key value pairs for supported table properties e.g {topic: 'myTopic', value_format: 'json', partitions: '1'}. {} for default values
+   * @param {object} conditionsObj an object containing key value pairs for supported query conditions e.g {WHERE: 'a is not null', GROUP_BY: 'profileID', HAVING: 'COUNT(a) > 5' }
+   * @returns {Promise} a promise that completes once the server response is received, returning a response object
+   */
+  createTableAs = (tableName, source, selectArray, propertiesObj, conditionsObj) => {
+    let selectColStr = selectArray.reduce((result, current) => result + ', ' + current);
+
+    // expect user to input properties object of format {topic: ... , value_format: ..., partitions: ...}
+    // check for properties object, look for properties, if any are missing assign it a default value, if there's no property 
+    const defaultProps = {
+      topic: tableName,
+      value_format: 'json',
+      partitions: 1
+    };
+    Object.assign(defaultProps, propertiesObj);
+    
+    // if there's no properties Obj, assign them all default values
+
+    // expect user to input a conditions object of format {WHERE: condition, GROUP_BY: condition, HAVING: condition};
+    // generate conditions string based on object
+    // const builder = new queryBuilder();
+
+    let conditionQuery = '';
+    if (conditionsObj){
+      const conditionsArr = ['WHERE', 'GROUP_BY', 'HAVING'];
+      const sqlClauses = [];
+    
+      let i = 0;
+      while (conditionsArr.length){
+        if (conditionsObj[conditionsArr[0]]){
+          sqlClauses[i] = [conditionsArr[0].replace('_',' ')]; // clause values are set as arrays for query builder
+          sqlClauses[i+1] =[' ' + conditionsObj[conditionsArr[0]] + ' '];
+        }
+        else {
+          sqlClauses[i] = [''];
+          sqlClauses[i+1] = [''];
+        }
+        i+=2;
+        conditionsArr.shift()
+      }
+      conditionQuery = builder.build('??????', sqlClauses[0], sqlClauses[1], sqlClauses[2], sqlClauses[3], sqlClauses[4], sqlClauses[5]);
+    }
+  
+
+    // reformat for builder
+    tableName = [tableName];
+    selectColStr = [selectColStr];
+    source = [source];
+    conditionQuery = [conditionQuery]
+
+
+    const query = builder.build(`CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? ?EMIT CHANGES;`, tableName, defaultProps.topic, defaultProps.value_format, defaultProps.partitions, selectColStr, source, conditionQuery)
+    return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
+    .catch(error => console.log(error));
+  }
+    /**
    * Inserts rows of data into a stream.
    *
    * <p>This method may be used to insert new rows of data into a stream.
@@ -316,6 +382,7 @@ class ksqljs {
    * @param {object} rows an array that contains data that is being inserted into the stream.
    * @return {Promise} this method returns a promise that resolves into an array describing the status of the row inserted.
    */
+  //---------------------Insert Rows Into Existing Streams-----------------
   insertStream = (stream, rows) => {
     return new Promise((resolve, reject) => {
       const msgOutput = [];
