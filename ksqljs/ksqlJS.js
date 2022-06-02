@@ -306,6 +306,20 @@ class ksqljs {
   }
 
   //---------------------Create tables as select-----------------
+  /**
+   * Execute a query to create a new materialized table view of an existing table or stream
+   * 
+   * <p>This method is used to create a materialized table view
+   * 
+   * <p>This method is sql injection protected with the use of queryBuilder.
+   * 
+   * @param {string} tableName name of the table to be created 
+   * @param {string} source name of the source stream / table materialized view is based on
+   * @param {array} selectArray an array that contains the values (strings, aggregate functions) of the columns for the materialized view table
+   * @param {object} propertiesObj an object containing key value pairs for supported table properties e.g {topic: 'myTopic', value_format: 'json', partitions: '1'}. {} for default values
+   * @param {object} conditionsObj an object containing key value pairs for supported query conditions e.g {WHERE: 'a is not null', GROUP_BY: 'profileID', HAVING: 'COUNT(a) > 5' }
+   * @returns {Promise} a promise that completes once the server response is received, returning a response object
+   */
   createTableAs = (tableName, source, selectArray, propertiesObj, conditionsObj) => {
     let selectColStr = selectArray.reduce((result, current) => result + ', ' + current);
 
