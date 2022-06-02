@@ -87,12 +87,17 @@ createTableTest(); */
 //---------------------Test Table Create As-------------------
 const createTableAsTest = async () => {
 
-    await client.ksql('CREATE STREAM RIDERLOCATIONS (PROFILEID VARCHAR, LATITUDE DOUBLE, LONGITUDE DOUBLE) WITH (KAFKA_TOPIC=\'locations\', value_format=\'json\', partitions=1);')
-    await client.createTableAs('currentLocation', 'riderlocations', ['profileId', 'LATEST_BY_OFFSET(latitude) AS la', 'LATEST_BY_OFFSET(longitude) AS lo'], {}, {GROUP_BY: 'profileId'})
+    // await client.ksql('CREATE STREAM RIDERLOCATIONS (PROFILEID VARCHAR, LATITUDE DOUBLE, LONGITUDE DOUBLE) WITH (KAFKA_TOPIC=\'locations\', value_format=\'json\', partitions=1);')
+    // await client.createTableAs('currentlocation', 'riderlocations', ['profileid','LATEST_BY_OFFSET(latitude) AS la', 'LATEST_BY_OFFSET(longitude) AS lo'], {}, {GROUP_BY: 'profileId'})
     // let x;
-    // x = await client.push('SELECT * FROM CURRENTLOCATION EMIT CHANGES LIMIT 20;', async (data) => {
-    //     console.log('push query data', JSON.parse(data))
+    await client.push('SELECT * FROM CURRENTLOCATION EMIT CHANGES LIMIT 3;', async (data) => {
+        console.log('push query data', JSON.parse(data))
+    })
+    //     // x = await client.ksql('LIST QUERIES;');
+    //     // console.log('querylist', x.queries)
     // })
+
+    // console.log(await client.ksql('LIST QUERIES;'));
     // console.log('first x', x)
     // await client.insertStream('RIDERLOCATIONS', [{'PROFILEID':'abc123abcddzzz', 'latitude':9999999,'longitude':999999}])
     // console.log('second x', x)

@@ -1,3 +1,4 @@
+const { default: waitForExpect } = require('wait-for-expect');
 const ksqljs = require('../ksqljs/ksqlJS.js');
 // Pre-requisite: start a docker container
 /* To add to README: Prior to running test with 'npm test', please start the ksqlDB
@@ -86,14 +87,15 @@ describe('--Integration Tests--', () => {
   // describe('--Materialized Views Test--', () => {
   //   beforeAll( async () => {
   //     client = new ksqljs({ ksqldbURL: 'http://localhost:8088'});
-  //     await client.ksql('CREATE STREAM TESTJESTSTREAM (NAME VARCHAR, AGE INTEGER, LOCATION VARCHAR, WEIGHT INTEGER) WITH (kafka_topic= \'testJestTopic\', value_format=\'json\', partitions=1);')
+  //     const waitForExpect = require('wait-for-expect');
+  //     await client.ksql('CREATE STREAM NEWTESTSTREAM (NAME VARCHAR, AGE INTEGER, LOCATION VARCHAR, WEIGHT INTEGER) WITH (kafka_topic= \'testJestTopic2\', value_format=\'json\', partitions=1);')
   //   });
   //   afterAll(async () => {
   //     await client.ksql('DROP TABLE IF EXISTS TABLEOFSTREAM DELETE TOPIC;')
-  //     await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;')
+  //     await client.ksql('DROP STREAM IF EXISTS NEWTESTSTREAM DELETE TOPIC;')
   //   })
   //   it('creates a materialized table view of a stream', async () => {
-  //     await client.createTableAs('TABLEOFSTREAM', 'TESTJESTSTREAM', ['name', 'LATEST_BY_OFFSET(age) AS recentAge', 'LATEST_BY_OFFSET(weight) AS recentweight'], {topic:'newTopic'},{WHERE: 'age >= 21', GROUP_BY: 'name'});
+  //     await client.createTableAs('TABLEOFSTREAM', 'NEWTESTSTREAM', ['name', 'LATEST_BY_OFFSET(age) AS recentAge', 'LATEST_BY_OFFSET(weight) AS recentweight'], {topic:'newTopic'},{WHERE: 'age >= 21', GROUP_BY: 'name'});
   //     const tables = await client.ksql('LIST TABLES;');
   //     const allTables = tables.tables;
   //     let tableCheck = false;
@@ -109,20 +111,17 @@ describe('--Integration Tests--', () => {
   //   it('materialized table view updates with source stream', async () => {
   //     let rowCheck = false;
   //     // push query for the table
+  //     // console.log('testing materialized view')
   //     await client.push('SELECT * FROM TABLEOFSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
+  //       console.log('QUERY INFO',data)
   //       if (Array.isArray(JSON.parse(data))){
-  //         console.log(JSON.parse(data))
-  //         if (JSON.parse(data)[0] === "firstTester" && JSON.parse(data)[1] === 25 && JSON.parse(data)[2] === "Seattle" && JSON.parse(data)[3] === 130){
+  //         if (JSON.parse(data)[0] === "firstTester" && JSON.parse(data)[1] === 25 &&  JSON.parse(data)[2] === 130){
   //           rowCheck = true;
   //         }
-  //         expect
   //       }
   //     })
-  //     await client.insertStream('TESTJESTSTREAM', [{"NAME":"firstTester", "AGE":25, "LOCATION": "Seattle", "WEIGHT": 130}])      
-  //     const matTable = await client.pull('SELECT * FROM TABLEOFSTREAM;');
-  //     // console.log('table list', matTable)
-
-  //     expect(rowCheck).toEqual(true);
+  //     await client.insertStream('NEWTESTSTREAM', [{"NAME":"firstTester", "AGE":25, "LOCATION": "Seattle", "WEIGHT": 130}]);
+  //     await waitForExpect(() => expect(rowCheck).toEqual(true))
   //   })
   // })
 

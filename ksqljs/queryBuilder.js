@@ -33,11 +33,7 @@ class queryBuilder {
         return param;
       case "object":
         if (Array.isArray(param)) {
-          //check if spaces
-          if (param[0].includes(" ")) {
-            throw new InappropriateStringParamError("string params not wrapped in quotes should not include spaces");
-          }
-          else if (param[0].includes(";")) {
+          if (param[0].includes(";")) {
             throw new InappropriateStringParamError("string params not wrapped in quotes should not include semi-colons");
           }
           return `${param[0].replaceAll("'", "''")}`
