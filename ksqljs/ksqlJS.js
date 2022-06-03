@@ -371,6 +371,7 @@ class ksqljs {
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
     .catch(error => console.log(error));
   }
+
     /**
    * Inserts rows of data into a stream.
    *
