@@ -15,9 +15,9 @@ need to be removed first.
 
 describe('--Integration Tests--', () => {
   describe('--Method Tests--', () => {
-    beforeAll((done) => {
+    beforeAll(async () => {
       client = new ksqljs({ ksqldbURL: 'http://localhost:8088' });
-      done();
+      await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
     });
 
     afterAll(async () => {
@@ -59,7 +59,6 @@ describe('--Integration Tests--', () => {
       const response = await client.insertStream('TESTJESTSTREAM', [
         { "name": "stab-rabbit", "email": "123@mail.com", "age": 100 }
       ]);
-      console.log(response);
       const data = [];
       await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES;', async (chunk) => {
         data.push(JSON.parse(chunk));
@@ -72,7 +71,6 @@ describe('--Integration Tests--', () => {
 
     it('.pull receives the correct data from a pull query', async () => {
       const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
-      console.log(pullData[1]);
       expect(pullData[1]).toEqual(["stab-rabbit", "123@mail.com", 100]);
     })
 
@@ -83,48 +81,90 @@ describe('--Integration Tests--', () => {
       const expectData = data[0].slice(0, 3);
       expect(expectPullData).toEqual(expectData);
     })
+
+    describe('--Materialized Streams and Tables--', () => {
+      beforeAll(async () => {
+        await client.ksql('DROP STREAM IF EXISTS testAsStream;')
+        await client.ksql('DROP TABLE IF EXISTS testAsTable;');
+        await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
+        await client.createStream('newTestStream', ['name VARCHAR', 'age INTEGER'], 'newTestTopic', 'json', 1);
+      });
+
+      afterAll(async () => {
+        await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
+      })
+
+      describe('--Materialized Streams Tests--', () => {
+        beforeAll(async () => {
+          // await client.ksql('DROP STREAM IF EXISTS testAsStream;')
+          // await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
+  
+          // await client.createStream('newTestStream', ['name VARCHAR', 'age INTEGER'], 'newTestTopic', 'json', 1);
+          testAsQueryId = await client.createStreamAs('testAsStream', ['name', 'age'], 'newTestStream', {
+            kafka_topic: 'newTestTopic',
+            value_format: 'json',
+            partitions: 1
+        }, 'age > 50');
+        })
+  
+        afterAll(async () => {
+          await client.ksql('DROP STREAM IF EXISTS testAsStream;')
+          // await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
+        })
+  
+        it('creates materialized stream', async () => {
+          let streamFound = false;
+          const {streams} = await client.ksql('LIST STREAMS;');
+  
+          for (let i = 0; i < streams.length; i++) {
+            if (streams[i].name, streams[i].name === 'TESTASSTREAM') {
+              streamFound = true;
+              break;
+            }
+          }
+          expect(streamFound).toBe(true);
+        });
+      });
+
+
+      describe('--Materialized Tables Tests--', () => {
+        beforeAll( async () => {
+          await client.createTableAs('testAsTable', 'newTestStream', ['name', 'LATEST_BY_OFFSET(age) AS recentAge'], {topic:'newTestTopic'},{WHERE: 'age >= 21', GROUP_BY: 'name'});
+        });
+        afterAll(async () => {
+          await client.ksql('DROP TABLE IF EXISTS testAsTable;');
+          // await client.ksql('DROP TABLE IF EXISTS TABLEOFSTREAM DELETE TOPIC;')
+          // await client.ksql('DROP STREAM IF EXISTS NEWTESTSTREAM DELETE TOPIC;')
+        })
+
+        it('creates a materialized table view of a stream', async () => {
+          const {tables} = await client.ksql('LIST TABLES;');
+          let tableFound = false;
+          for (let i = 0; i < tables.length; i++){
+            if (tables[i].name === 'TESTASTABLE') {
+              tableFound = true;
+              break;
+            }
+          }
+          expect(tableFound).toEqual(true);
+        })
+
+        it('receives updates from source stream', async () => {
+          let rowReceived = false;
+          await client.push('SELECT * FROM testAsTable EMIT CHANGES LIMIT 1;', async (data) => {
+            if (Array.isArray(JSON.parse(data))){
+              if (JSON.parse(data)[0] === "firstTester" && JSON.parse(data)[1] === 25){
+                rowReceived = true;
+              }
+            }
+          })
+          await client.insertStream('NEWTESTSTREAM', [{"NAME":"firstTester", "AGE":25}]);
+          await waitForExpect(() => expect(rowReceived).toEqual(true))
+        })
+      })
+    })
   })
 
-  // describe('--Materialized Views Test--', () => {
-  //   beforeAll( async () => {
-  //     client = new ksqljs({ ksqldbURL: 'http://localhost:8088'});
-  //     const waitForExpect = require('wait-for-expect');
-  //     await client.ksql('CREATE STREAM NEWTESTSTREAM (NAME VARCHAR, AGE INTEGER, LOCATION VARCHAR, WEIGHT INTEGER) WITH (kafka_topic= \'testJestTopic2\', value_format=\'json\', partitions=1);')
-  //   });
-  //   afterAll(async () => {
-  //     await client.ksql('DROP TABLE IF EXISTS TABLEOFSTREAM DELETE TOPIC;')
-  //     await client.ksql('DROP STREAM IF EXISTS NEWTESTSTREAM DELETE TOPIC;')
-  //   })
-  //   it('creates a materialized table view of a stream', async () => {
-  //     await client.createTableAs('TABLEOFSTREAM', 'NEWTESTSTREAM', ['name', 'LATEST_BY_OFFSET(age) AS recentAge', 'LATEST_BY_OFFSET(weight) AS recentweight'], {topic:'newTopic'},{WHERE: 'age >= 21', GROUP_BY: 'name'});
-  //     const tables = await client.ksql('LIST TABLES;');
-  //     const allTables = tables.tables;
-  //     let tableCheck = false;
-  //     for (let i = 0; i < allTables.length; i++){
-  //       if (allTables[i].name === 'TABLEOFSTREAM') {
-  //         tableCheck = true;
-  //         break;
-  //       }
-  //     }
-  //     expect(tableCheck).toEqual(true);
-      
-  //   })
-  //   it('materialized table view updates with source stream', async () => {
-  //     let rowCheck = false;
-  //     // push query for the table
-  //     // console.log('testing materialized view')
-  //     await client.push('SELECT * FROM TABLEOFSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
-  //       console.log('QUERY INFO',data)
-  //       if (Array.isArray(JSON.parse(data))){
-  //         if (JSON.parse(data)[0] === "firstTester" && JSON.parse(data)[1] === 25 &&  JSON.parse(data)[2] === 130){
-  //           rowCheck = true;
-  //         }
-  //       }
-  //     })
-  //     await client.insertStream('NEWTESTSTREAM', [{"NAME":"firstTester", "AGE":25, "LOCATION": "Seattle", "WEIGHT": 130}]);
-  //     await waitForExpect(() => expect(rowCheck).toEqual(true))
-  //   })
-  // })
 
   describe('--Health Tests--', () => {
     beforeAll((done) => {
