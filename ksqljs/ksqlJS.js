@@ -150,47 +150,6 @@ class ksqljs {
         console.error(error);
         throw new ksqlDBError(error);
       });
-    // return new Promise((resolve, reject) => {
-    //   const session = http2.connect(
-    //     this.ksqldbURL,
-    //     this.httpsAgentHttp2 ? this.httpsAgentHttp2 : {}
-    //   );
-  
-    //   session.on("error", (err) => reject(err));
-  
-    //   const req = session.request(
-    //     this.secret && this.API ?
-    //       {
-    //         ":path": "/ksql",
-    //         ":method": "POST",
-    //         "Authorization": this.API && this.secret ? `Basic ${Buffer.from(this.API + ":" + this.secret, 'utf8').toString('base64')}` : '',
-    //       }
-    //       :
-    //       {
-    //         ":path": "/ksql",
-    //         ":method": "POST",
-    //       }
-    //   );
-      
-    //   const query = builder.build("TERMINATE ?;", queryId);
-
-    //   const reqBody = {
-    //     sql: query,
-    //     Accept: "application/json, application/vnd.ksqlapi.delimited.v1",
-    //   };
-  
-    //   req.write(JSON.stringify(reqBody), "utf8");
-    //   req.end();
-    //   req.setEncoding("utf8");
-  
-    //   req.on("data", (data) => {
-    //     console.log("Here's the response", data);
-    //     resolve();
-    //   });
-  
-    //   req.on("end", () => {
-    //     session.close()});
-    // })
   }
 
   /**
@@ -412,6 +371,7 @@ class ksqljs {
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
     .catch(error => console.log(error));
   }
+
     /**
    * Inserts rows of data into a stream.
    *
