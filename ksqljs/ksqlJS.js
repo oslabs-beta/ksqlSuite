@@ -265,14 +265,14 @@ class ksqljs {
   }
 
   /**
-   *
-   * @param {string} streamName
-   * @param {string[]} selectColumns
-   * @param {string} sourceStream
-   * @param {object} propertiesObj
-   * @param {string} conditions
-   * @param {string} partitionBy
-   * @returns {Promise}
+   * 
+   * @param {string} streamName - the name of the stream to be created
+   * @param {string[]} selectColumns - the columns from the underlying stream to be included in the new materialized stream
+   * @param {string} sourceStream - the underlying stream from which the new materialized stream will be created
+   * @param {object} propertiesObj - an object whose keys are property names and values are the associated values
+   * @param {string} conditions - a string containing the conditional statement (i.e., the 'WHERE' statement)
+   * @param {string} partitionBy - column by which data will be distributed
+   * @returns {Promise} - a promise that completes once the server response is received, and returns a query ID
    */
   createStreamAs = (streamName, selectColumns, sourceStream, propertiesObj, conditions, partitionBy) => {
     const propertiesArgs = [];
@@ -464,8 +464,8 @@ class ksqljs {
       });
 
       req.on("end", () => {
-        resolve(msgOutput);
         session.close();
+        resolve(msgOutput);
       });
     })
   }

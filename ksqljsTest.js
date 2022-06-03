@@ -146,6 +146,24 @@ pullFromTo();
 
 // insertStreamTest();
 
+/* const createStreamAsTest = async () => {
+    const queryId = await client.createStreamAs('TestAsStream', ['latitude', 'longitude'], 'riderLocations', {
+        kafka_topic: 'TestAsStream',
+        value_format: 'json',
+        partitions: 1
+    },
+    'latitude > 37');
+    console.log('this is the queryId: ', queryId);
+};
+
+createStreamAsTest(); */
+
+// (streamName, selectColumns, sourceStream, propertiesObj, conditionsObj)
+//   const defaultProps = {
+//       kafka_topic: streamName,
+//       value_format: 'json',
+//       partitions: 1
+//     };
 
 //---------------------Test Inspect query status -------------------
 // const inspectQueryStatusTest = async () => {
