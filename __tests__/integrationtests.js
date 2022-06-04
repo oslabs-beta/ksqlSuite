@@ -61,7 +61,6 @@ describe('--Integration Tests--', () => {
       const data = [];
       await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES;', async (chunk) => {
         data.push(JSON.parse(chunk));
-        console.log(data);
         if (data[1]) {
           client.terminate(data[0].queryId);
           expect(data[1]).toEqual(["stab-rabbit", "123@mail.com", 100])
