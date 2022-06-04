@@ -45,8 +45,8 @@ npm install ksqldb-js
 Create a client in the application file:
 
 ```
-const ksqljs = require('ksqldb-js');
-const client = new ksqljs({ksqldbURL: '<url to ksqlDB server>'})
+const ksqldb = require('ksqldb-js');
+const client = new ksqldb({ksqldbURL: '<url to ksqlDB server>'})
 ```
 
 To run tests initiate Docker containers included in yaml file:

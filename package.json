@@ -2,7 +2,7 @@
   "name": "ksqldb-js",
   "version": "1.0.0",
   "description": "Javascript KsqlDB client for Node.js",
-  "main": "./ksqljs/ksqlJS",
+  "main": "./ksqldb/ksqldb",
   "scripts": {
     "test": "jest --verbose"
   },
