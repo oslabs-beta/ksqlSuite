@@ -1,5 +1,5 @@
 const { default: waitForExpect } = require('wait-for-expect');
-const ksqljs = require('../ksqljs/ksqlJS.js');
+const ksqldb = require('../ksqldb/ksqldb');
 // Pre-requisite: start a docker container
 /* To add to README: Prior to running test with 'npm test', please start the ksqlDB
 server using the command 'docker-compose up'. This will spin up a ksqlDB server on
@@ -16,7 +16,7 @@ need to be removed first.
 describe('--Integration Tests--', () => {
   describe('--Method Tests--', () => {
     beforeAll((done) => {
-      client = new ksqljs({ ksqldbURL: 'http://localhost:8088' });
+      client = new ksqldb({ ksqldbURL: 'http://localhost:8088' });
       done();
     });
 
@@ -168,7 +168,7 @@ describe('--Integration Tests--', () => {
 
   describe('--Health Tests--', () => {
     beforeAll((done) => {
-      client = new ksqljs({ ksqldbURL: 'http://localhost:8088' });
+      client = new ksqldb({ ksqldbURL: 'http://localhost:8088' });
       done();
     });
 

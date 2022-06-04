@@ -103,17 +103,5 @@ dist
 # TernJS port file
 .tern-port
 
-<<<<<<< HEAD
-# Local
-ksqljsTest.js
-package-lock.json
-local_ignore/
-.gitignore
 
-# KSQLDB docker server settings
-ksqldb_server_config/
 
-=======
-# Local files
-./ksqljs.js
->>>>>>> jonTest

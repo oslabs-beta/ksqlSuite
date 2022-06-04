@@ -1,20 +1,26 @@
 {
-  "name": "ksqldb-test-setup",
+  "name": "ksqldb-js",
   "version": "1.0.0",
-  "description": "",
-  "main": "ksqljsTest.js",
+  "description": "Javascript KsqlDB client for Node.js",
+  "main": "./ksqljs/ksqlJS",
   "scripts": {
     "test": "jest --verbose"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oslabs-beta/ksqljs.git"
+  },
   "keywords": [],
-  "author": "",
+  "author": "Michael Synder, Matthew Xing, Jonathan Luu, Gerry Bong, Javan Ang",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oslabs-beta/ksqljs/issues"
+  },
+  "homepage": "https://github.com/oslabs-beta/ksqljs#readme",
   "dependencies": {
-    "axios": "^0.27.2",
-    "wait-for-expect": "^3.0.2"
+    "axios": "^0.27.2"
   },
   "devDependencies": {
-    "dotenv": "^16.0.1",
     "jest": "^28.1.0"
   }
 }

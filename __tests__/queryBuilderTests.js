@@ -1,5 +1,5 @@
-const queryBuilder = require('../ksqljs/queryBuilder.js');
-const { QueryBuilderError, EmptyQueryError, NumParamsError, InappropriateStringParamError } = require('../ksqljs/customErrors.js');
+const queryBuilder = require('../ksqldb/queryBuilder.js');
+const { QueryBuilderError, EmptyQueryError, NumParamsError, InappropriateStringParamError } = require('../ksqldb/customErrors.js');
 
 
 describe('Unit tests for query builder class', () => {
