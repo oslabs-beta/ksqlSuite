@@ -28,7 +28,7 @@ ksqlDB-JS - a ksqlDB client for Node.js
 
 > Node.js - https://nodejs.org/en/
 >
-> Apache Kafka - https://ksqldb.io/
+> ksqlDB - https://ksqldb.io/
 >
 > Docker (for tests) -https://www.docker.com/
 
@@ -105,7 +105,7 @@ client.createStream('testStream',
     partitions = 1);
 ```
 
-- ### For custom SQL statements including complex joins use the .ksql method
+- #### For custom SQL statements including complex joins use the .ksql method
 
 ```
 client.ksql('DROP STREAM IF EXISTS testStream;');
