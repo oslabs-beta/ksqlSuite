@@ -51,8 +51,7 @@ class ksqljs {
         })
       .then((res) => res.data)
       .catch((error) => {
-        console.error(error);
-        throw new ksqlDBError(error);
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
       });
   }
 
@@ -104,6 +103,9 @@ class ksqljs {
       req.setEncoding("utf8");
 
       req.on("data", (chunk) => {
+        // check for chunk containing errors
+        if (JSON.parse(chunk)['@type']?.includes('error')) throw new ksqlDBError(JSON.parse(chunk));
+        // continue if chunk indicates a healthy response
         if (!sentQueryId) {
           sentQueryId = true;
           cb(chunk);
@@ -147,8 +149,7 @@ class ksqljs {
       })
       .then(res => res.data[0])
       .catch(error => {
-        console.error(error);
-        throw new ksqlDBError(error);
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
       });
   }
 
@@ -179,8 +180,7 @@ class ksqljs {
       })
       .then(res => res.data[0])
       .catch(error => {
-        console.error(error);
-        throw new ksqlDBError(error);
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
       });
   }
 
@@ -218,8 +218,7 @@ class ksqljs {
     })
       .then(res => res)
       .catch(error => {
-        console.error(error);
-        throw new ksqlDBError(error);
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
       });
   }
 
@@ -263,7 +262,9 @@ class ksqljs {
 
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
       .then(res => res.data[0].commandStatus.queryId)
-      .catch(error => console.log(error));
+      .catch(error => {
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
+      });
   }
 
   //---------------------Create tables-----------------
@@ -300,8 +301,7 @@ class ksqljs {
         httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
       })
       .catch(error => {
-        console.error(error);
-        throw new ksqlDBError(error);
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
       });
   }
 
@@ -369,7 +369,9 @@ class ksqljs {
 
     const query = builder.build(`CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? ?EMIT CHANGES;`, tableName, defaultProps.topic, defaultProps.value_format, defaultProps.partitions, selectColStr, source, conditionQuery)
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
-    .catch(error => console.log(error));
+    .catch(error =>{
+      throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
+    });
   }
 
     /**
@@ -420,6 +422,9 @@ class ksqljs {
       req.setEncoding("utf8");
 
       req.on("data", (chunk) => {
+        // check for chunk containing errors
+        if (JSON.parse(chunk)['@type']?.includes('error')) throw new ksqlDBError(JSON.parse(chunk));
+        // continue if chunk indicates a healthy response
         msgOutput.push(JSON.parse(chunk));
       });
 
@@ -489,8 +494,7 @@ class ksqljs {
     return axios.get(this.ksqldbURL + `/status/${commandId}`)
       .then(response => response)
       .catch(error => {
-        console.error(error);
-        throw new ksqlDBError(error);
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
       });
   }
 
@@ -507,8 +511,7 @@ class ksqljs {
     return axios.get(this.ksqldbURL + `/info`)
       .then(response => response)
       .catch(error => {
-        console.error(error);
-        throw new ksqlDBError(error);
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error;
       });
   }
 
@@ -525,8 +528,7 @@ class ksqljs {
     return axios.get(this.ksqldbURL + `/healthcheck`)
       .then(response => response)
       .catch(error => {
-        console.error(error);
-        throw new ksqlDBError(error);
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error;
       });
   }
 
@@ -544,8 +546,7 @@ class ksqljs {
     return axios.get(this.ksqldbURL + `/clusterStatus`)
       .then(response => response)
       .catch(error => {
-        console.error(error);
-        throw new ksqlDBError(error);
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error;
       });
   }
 
@@ -572,8 +573,7 @@ class ksqljs {
     })
       .then(response => response)
       .catch(error => {
-        console.error(error);
-        throw new ksqlDBError(error);
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error;
       });
   }
 
@@ -597,8 +597,7 @@ class ksqljs {
     return axios.get(this.ksqldbURL + `/is_valid_property/${propertyName}`)
       .then(response => response)
       .catch(error => {
-        console.error(error);
-        throw new ksqlDBError(error);
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error;
       });
   }
 };
