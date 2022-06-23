@@ -10,12 +10,13 @@ class ksqlDBError extends Error {
 
     // Ensure the name of this error is the same as the class name
     this.name = this.constructor.name
-
+    
     // capturing the stack trace keeps the reference to your error class
     Error.captureStackTrace(this, this.constructor);
-
+    
     // you may also assign additional properties to your error
     //this.status = 404
+    Object.keys(error).forEach(property => {this[property] = error[property]});
   }
 }
 
@@ -46,10 +47,22 @@ class InappropriateStringParamError extends QueryBuilderError {
   }
 }
 
+class invalidArgumentTypes extends Error {
+  constructor(message) {
+    super(message);
+
+    this.name = this.constructor.name;
+    // necessary?
+    Error.captureStackTrace(this, this.constructor);
+
+  }
+}
+
 module.exports = {
   ksqlDBError,
   QueryBuilderError,
   EmptyQueryError,
   NumParamsError,
-  InappropriateStringParamError
+  InappropriateStringParamError,
+  invalidArgumentTypes
 };
