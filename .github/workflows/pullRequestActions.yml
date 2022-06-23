@@ -12,9 +12,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js
+      - name: Install Node
         uses: actions/setup-node@v3
         with:
           node-version: "12.x"
+      - name: Install npm packages and dependencies
       - run: npm install
+      - name: Spin up ksqlDB server using docker-compose
+      - run: docker-compose up -f "docker-compose.yml" -d
+      - name: Running Jest test
       - run: npm run test
+      - name: Stopping containers
+      - run: docker-compose -f "docker-compose.yml" down
