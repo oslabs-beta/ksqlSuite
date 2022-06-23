@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "watch": true,
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "types": ["node", "jest"]
+  }
+}
