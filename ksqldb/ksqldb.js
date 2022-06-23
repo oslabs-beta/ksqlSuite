@@ -6,7 +6,21 @@ const validateInputs = require('./validateInputs.js');
 const queryBuilder = require('./queryBuilder.js');
 const builder = new queryBuilder();
 
-class ksqljs {
+class ksqldb {
+  /**
+   * Constructor
+   * @param {object} config 
+   * 
+   * Config object can have these properties 
+   * 
+   * ksqldbURL: Connection URL or address
+   * 
+   * API: Username or API key for basic authentication
+   * 
+   * secret: Password or secret for basic authentication
+   * 
+   * httpsAgent: httpsAgent for setting TLS properties
+   */
   constructor(config) {
     this.ksqldbURL = config.ksqldbURL;
     this.API = config.API ? config.API : null;
@@ -274,7 +288,16 @@ class ksqljs {
     // utilize query with variables to build actual query
     const query = builder.build(builderQuery, [streamName], ...propertiesArgs, [sourceStream]);
 
-    return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
+    return axios.post(this.ksqldbURL + '/ksql', { ksql: query }, {
+      headers:
+        this.API && this.secret ?
+          {
+            "Authorization": `Basic ${Buffer.from(this.API + ":" + this.secret, 'utf8').toString('base64')}`,
+          }
+          :
+          {},
+      httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
+    })
       .then(res => res.data[0].commandStatus.queryId)
       .catch(error => {
         throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
@@ -349,7 +372,7 @@ class ksqljs {
       partitions: 1
     };
     Object.assign(defaultProps, propertiesObj);
-    
+
     // if there's no properties Obj, assign them all default values
 
     // expect user to input a conditions object of format {WHERE: condition, GROUP_BY: condition, HAVING: condition};
@@ -357,26 +380,26 @@ class ksqljs {
     // const builder = new queryBuilder();
 
     let conditionQuery = '';
-    if (conditionsObj){
+    if (conditionsObj) {
       const conditionsArr = ['WHERE', 'GROUP_BY', 'HAVING'];
       const sqlClauses = [];
-    
+
       let i = 0;
-      while (conditionsArr.length){
-        if (conditionsObj[conditionsArr[0]]){
-          sqlClauses[i] = [conditionsArr[0].replace('_',' ')]; // clause values are set as arrays for query builder
-          sqlClauses[i+1] =[' ' + conditionsObj[conditionsArr[0]] + ' '];
+      while (conditionsArr.length) {
+        if (conditionsObj[conditionsArr[0]]) {
+          sqlClauses[i] = [conditionsArr[0].replace('_', ' ')]; // clause values are set as arrays for query builder
+          sqlClauses[i + 1] = [' ' + conditionsObj[conditionsArr[0]] + ' '];
         }
         else {
           sqlClauses[i] = [''];
-          sqlClauses[i+1] = [''];
+          sqlClauses[i + 1] = [''];
         }
-        i+=2;
+        i += 2;
         conditionsArr.shift()
       }
       conditionQuery = builder.build('??????', sqlClauses[0], sqlClauses[1], sqlClauses[2], sqlClauses[3], sqlClauses[4], sqlClauses[5]);
     }
-  
+
 
     // reformat for builder
     tableName = [tableName];
@@ -386,23 +409,30 @@ class ksqljs {
 
 
     const query = builder.build(`CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? ?EMIT CHANGES;`, tableName, defaultProps.topic, defaultProps.value_format, defaultProps.partitions, selectColStr, source, conditionQuery)
-    return axios.post(this.ksqldbURL + '/ksql', { ksql: query })
-    .catch(error =>{
-      throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
-    });
+    return axios.post(this.ksqldbURL + '/ksql', { ksql: query }, {
+      headers:
+        this.API && this.secret ?
+          {
+            "Authorization": `Basic ${Buffer.from(this.API + ":" + this.secret, 'utf8').toString('base64')}`,
+          }
+          :
+          {},
+      httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
+    })
+      .catch(error => console.log(error));
   }
 
-    /**
-   * Inserts rows of data into a stream.
-   *
-   * <p>This method may be used to insert new rows of data into a stream.
-   *
-   * <p>This method is sql injection protected with the use of queryBuilder.
-   *
-   * @param {string} stream the name of the stream to insert data into.
-   * @param {object} rows an array that contains data that is being inserted into the stream.
-   * @return {Promise} this method returns a promise that resolves into an array describing the status of the row inserted.
-   */
+  /**
+ * Inserts rows of data into a stream.
+ *
+ * <p>This method may be used to insert new rows of data into a stream.
+ *
+ * <p>This method is sql injection protected with the use of queryBuilder.
+ *
+ * @param {string} stream the name of the stream to insert data into.
+ * @param {object} rows an array that contains data that is being inserted into the stream.
+ * @return {Promise} this method returns a promise that resolves into an array describing the status of the row inserted.
+ */
   //---------------------Insert Rows Into Existing Streams-----------------
   insertStream = (stream, rows) => {
     validateInputs([stream, 'string', 'stream', true], [rows, 'array', 'rows', true]);
@@ -624,4 +654,4 @@ class ksqljs {
   }
 };
 
-module.exports = ksqljs;
+module.exports = ksqldb;

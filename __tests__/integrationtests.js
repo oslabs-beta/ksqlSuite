@@ -1,5 +1,5 @@
 const { default: waitForExpect } = require('wait-for-expect');
-const ksqljs = require('../ksqljs/ksqlJS.js');
+const ksqldb = require('../ksqldb/ksqldb');
 // Pre-requisite: start a docker container
 /* To add to README: Prior to running test with 'npm test', please start the ksqlDB
 server using the command 'docker-compose up'. This will spin up a ksqlDB server on
@@ -16,7 +16,7 @@ need to be removed first.
 describe('--Integration Tests--', () => {
   describe('--Method Tests--', () => {
     beforeAll((done) => {
-      client = new ksqljs({ ksqldbURL: 'http://localhost:8088' });
+      client = new ksqldb({ ksqldbURL: 'http://localhost:8088' });
       done();
     });
 
@@ -25,6 +25,7 @@ describe('--Integration Tests--', () => {
     })
 
     it('.createStream properly creates a stream', async () => {
+      await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;')
       const result = await client.createStream('TESTJESTSTREAM', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testJestTopic', 'json', 1);
       const streams = await client.ksql('LIST STREAMS;');
       const allStreams = streams.streams;
@@ -56,9 +57,7 @@ describe('--Integration Tests--', () => {
     })
 
     it('.insertStream properly inserts a row into a stream', async () => {
-      const response = await client.insertStream('TESTJESTSTREAM', [
-        { "name": "stab-rabbit", "email": "123@mail.com", "age": 100 }
-      ]);
+      
       const data = [];
       await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES;', async (chunk) => {
         data.push(JSON.parse(chunk));
@@ -67,6 +66,9 @@ describe('--Integration Tests--', () => {
           expect(data[1]).toEqual(["stab-rabbit", "123@mail.com", 100])
         }
       });
+      const response = await client.insertStream('TESTJESTSTREAM', [
+        { "name": "stab-rabbit", "email": "123@mail.com", "age": 100 }
+      ]);
     })
 
     it('.pull receives the correct data from a pull query', async () => {
@@ -98,24 +100,24 @@ describe('--Integration Tests--', () => {
         beforeAll(async () => {
           // await client.ksql('DROP STREAM IF EXISTS testAsStream;')
           // await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
-  
+
           // await client.createStream('newTestStream', ['name VARCHAR', 'age INTEGER'], 'newTestTopic', 'json', 1);
           testAsQueryId = await client.createStreamAs('testAsStream', ['name', 'age'], 'newTestStream', {
             kafka_topic: 'newTestTopic',
             value_format: 'json',
             partitions: 1
-        }, 'age > 50');
+          }, 'age > 50');
         })
-  
+
         afterAll(async () => {
           await client.ksql('DROP STREAM IF EXISTS testAsStream;')
           // await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
         })
-  
+
         it('creates materialized stream', async () => {
           let streamFound = false;
-          const {streams} = await client.ksql('LIST STREAMS;');
-  
+          const { streams } = await client.ksql('LIST STREAMS;');
+
           for (let i = 0; i < streams.length; i++) {
             if (streams[i].name, streams[i].name === 'TESTASSTREAM') {
               streamFound = true;
@@ -128,8 +130,8 @@ describe('--Integration Tests--', () => {
 
 
       describe('--Materialized Tables Tests--', () => {
-        beforeAll( async () => {
-          await client.createTableAs('testAsTable', 'newTestStream', ['name', 'LATEST_BY_OFFSET(age) AS recentAge'], {topic:'newTestTopic'},{WHERE: 'age >= 21', GROUP_BY: 'name'});
+        beforeAll(async () => {
+          await client.createTableAs('testAsTable', 'newTestStream', ['name', 'LATEST_BY_OFFSET(age) AS recentAge'], { topic: 'newTestTopic' }, { WHERE: 'age >= 21', GROUP_BY: 'name' });
         });
         afterAll(async () => {
           await client.ksql('DROP TABLE IF EXISTS testAsTable;');
@@ -138,9 +140,9 @@ describe('--Integration Tests--', () => {
         })
 
         it('creates a materialized table view of a stream', async () => {
-          const {tables} = await client.ksql('LIST TABLES;');
+          const { tables } = await client.ksql('LIST TABLES;');
           let tableFound = false;
-          for (let i = 0; i < tables.length; i++){
+          for (let i = 0; i < tables.length; i++) {
             if (tables[i].name === 'TESTASTABLE') {
               tableFound = true;
               break;
@@ -148,19 +150,6 @@ describe('--Integration Tests--', () => {
           }
           expect(tableFound).toEqual(true);
         })
-
-        // it('receives updates from source stream', async () => {
-        //   let rowReceived = false;
-        //   await client.push('SELECT * FROM testAsTable EMIT CHANGES LIMIT 1;', async (data) => {
-        //     if (Array.isArray(JSON.parse(data))){
-        //       if (JSON.parse(data)[0] === "firstTester" && JSON.parse(data)[1] === 25){
-        //         rowReceived = true;
-        //       }
-        //     }
-        //   })
-        //   await client.insertStream('NEWTESTSTREAM', [{"NAME":"firstTester", "AGE":25}]);
-        //   await waitForExpect(() => expect(rowReceived).toEqual(true))
-        // })
       })
     })
   })
@@ -168,7 +157,7 @@ describe('--Integration Tests--', () => {
 
   describe('--Health Tests--', () => {
     beforeAll((done) => {
-      client = new ksqljs({ ksqldbURL: 'http://localhost:8088' });
+      client = new ksqldb({ ksqldbURL: 'http://localhost:8088' });
       done();
     });
 
