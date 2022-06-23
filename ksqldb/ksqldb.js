@@ -228,7 +228,7 @@ class ksqldb {
    * @return {Promise} a promise that completes once the server response is received, and returns a response object.
    */
   createStream(name, columnsType, topic, value_format = 'json', partitions = 1, key) {
-    validateInputs([name, 'string', 'name', true], [columnsType, 'object', 'columnsType', true], [topic, 'string', 'topic'], [partitions, 'number', 'partitions']);
+    validateInputs([name, 'string', 'name', true], [columnsType, 'array', 'columnsType', true], [topic, 'string', 'topic'], [partitions, 'number', 'partitions']);
 
     const columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
     const query = `CREATE STREAM ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`;
