@@ -2,6 +2,7 @@ const axios = require("axios");
 const https = require('node:https');
 const http2 = require("http2");
 const { ksqlDBError } = require("./customErrors.js");
+const validateInputs = require('./validateInputs.js');
 const queryBuilder = require('./queryBuilder.js');
 const builder = new queryBuilder();
 
@@ -34,10 +35,14 @@ class ksqljs {
    *         Example: [{object that contains the metadata}, [data], [data], ...}]
    */
   pull = (query) => {
+    validateInputs([query, 'string', 'query']);
+
+    const validatedQuery = builder.build(query);
+    
     return axios
       .post(this.ksqldbURL + "/query-stream",
         {
-          sql: query,
+          sql: validatedQuery,
         },
         {
           headers:
@@ -70,6 +75,9 @@ class ksqljs {
    *         result if successful.
    */
   push(query, cb) {
+    validateInputs([query, 'string', 'query', true], [cb, 'function', 'cb', true]);
+    const validatedQuery = builder.build(query);
+
     return new Promise((resolve, reject) => {
       let sentQueryId = false;
       const session = http2.connect(
@@ -94,7 +102,7 @@ class ksqljs {
       );
 
       const reqBody = {
-        sql: query,
+        sql: validatedQuery,
         Accept: "application/json, application/vnd.ksqlapi.delimited.v1",
       };
 
@@ -133,6 +141,8 @@ class ksqljs {
    *         if the termination was successful.
    */
   terminate(queryId) {
+    validateInputs([queryId, 'string', 'queryId']);
+
     return axios.post(this.ksqldbURL + '/ksql',
       {
         ksql: `TERMINATE ${queryId};`
@@ -164,9 +174,13 @@ class ksqljs {
    * @return {Promise} a promise that completes once the server response is received, and returns the requested data.
    */
   ksql(query) {
+    validateInputs([query, 'string', 'query']);
+
+    const validatedQuery = builder.build(query);
+    
     return axios.post(this.ksqldbURL + '/ksql',
       {
-        ksql: query
+        ksql: validatedQuery
       },
       {
         headers:
@@ -200,9 +214,8 @@ class ksqljs {
    * @return {Promise} a promise that completes once the server response is received, and returns a response object.
    */
   createStream(name, columnsType, topic, value_format = 'json', partitions = 1, key) {
-    if (typeof name !== 'string' || typeof columnsType !== 'object' || typeof topic !== 'string' || typeof partitions !== 'number') {
-      return console.log("invalid input(s)")
-    }
+    validateInputs([name, 'string', 'name', true], [columnsType, 'object', 'columnsType', true], [topic, 'string', 'topic'], [partitions, 'number', 'partitions']);
+
     const columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
     const query = `CREATE STREAM ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`;
 
@@ -216,7 +229,6 @@ class ksqljs {
           {},
       httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
     })
-      .then(res => res)
       .catch(error => {
         throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
       });
@@ -233,6 +245,8 @@ class ksqljs {
    * @returns {Promise} - a promise that completes once the server response is received, and returns a query ID
    */
   createStreamAs = (streamName, selectColumns, sourceStream, propertiesObj, conditions, partitionBy) => {
+    validateInputs([streamName, 'string', 'streamName', true], [selectColumns, 'array', 'selectColumns', true], [sourceStream, 'string', 'sourceStream', true], [propertiesObj, 'object', 'propertiesObj'], [conditions, 'string', 'conditions'], [partitionBy, 'string', 'partitionBy']);
+
     const propertiesArgs = [];
     const selectColStr = selectColumns.reduce((result, current) => result + ', ' + current);
     // begin with first consistent portion of query
@@ -283,6 +297,8 @@ class ksqljs {
    * @return {Promise} a promise that completes once the server response is received, and returns a response object.
    */
   createTable = (name, columnsType, topic, value_format = 'json', partitions) => {
+    validateInputs([name, 'string', 'name', true], [columnsType, 'array', 'columnsType', true], [topic, 'string', 'topic', true], [value_format, 'string', 'value_format', true], [partitions, 'number', 'partitions']);
+
     const columnsTypeString = columnsType.reduce((result, currentType) => result + ', ' + currentType);
     const query = `CREATE TABLE ${name} (${columnsTypeString}) WITH (kafka_topic='${topic}', value_format='${value_format}', partitions=${partitions});`
 
@@ -321,6 +337,8 @@ class ksqljs {
    * @returns {Promise} a promise that completes once the server response is received, returning a response object
    */
   createTableAs = (tableName, source, selectArray, propertiesObj, conditionsObj) => {
+    validateInputs([tableName, 'string', 'tableName', true], [source, 'string', 'source', true], [selectArray, 'array', 'selectArray', true], [propertiesObj, 'object', 'propertiesObj'], [conditionsObj, 'object', 'conditionsObj']);
+
     let selectColStr = selectArray.reduce((result, current) => result + ', ' + current);
 
     // expect user to input properties object of format {topic: ... , value_format: ..., partitions: ...}
@@ -387,6 +405,8 @@ class ksqljs {
    */
   //---------------------Insert Rows Into Existing Streams-----------------
   insertStream = (stream, rows) => {
+    validateInputs([stream, 'string', 'stream', true], [rows, 'array', 'rows', true]);
+
     return new Promise((resolve, reject) => {
       const msgOutput = [];
 
@@ -453,13 +473,8 @@ class ksqljs {
    *         the end of the array that includes the time that the data was inserted into the ksqldb.
    */
   pullFromTo = async (streamName, timezone = 'Greenwich', from = [undefined, '00', '00', '00'], to = ['2200-03-14', '00', '00', '00']) => {
-    if (!streamName || typeof timezone !== 'string' || !from
-      || typeof from[0] !== 'string' || typeof from[1] !== 'string' || typeof from[2] !== 'string' || typeof from[3] !== 'string'
-      || typeof to[0] !== 'string' || typeof to[1] !== 'string' || typeof to[2] !== 'string' || typeof to[3] !== 'string'
-      || from[0].length !== 10 || to[0].length !== 10 || from[1].length !== 2 || to[1].length !== 2 || from[2].length !== 2 || to[2].length !== 2 || from[3].length !== 2 || to[3].length !== 2
-    ) {
-      return new Error('invalid inputs');
-    }
+    validateInputs([streamName, 'string', 'streamName', true], [timezone, 'string', 'timezone', true], [from, 'array', 'from', true], [to, 'array', 'to', true]);
+
     const userFrom = `${from[0]}T${from[1]}:${from[2]}:${from[3]}`;
     const userTo = `${to[0]}T${to[1]}:${to[2]}:${to[3]}`;
     const userFromUnix = new Date(userFrom).getTime();
@@ -491,6 +506,8 @@ class ksqljs {
    *         message (string): Detailed message regarding the status of the execution statement.
    */
   inspectQueryStatus(commandId) {
+    validateInputs([commandId, 'string', 'commandId', true]);
+
     return axios.get(this.ksqldbURL + `/status/${commandId}`)
       .then(response => response)
       .catch(error => {
@@ -561,6 +578,8 @@ class ksqljs {
    * @return {Promise} this method returns a promise that returns a response object.
    */
   terminateCluster(topicsToDelete = []) {
+    validateInputs([topicsToDelete, 'array', 'topicsToDelete', true]);
+
     return axios.post(this.ksqldbURL + `/ksql/terminate`, {
       "deleteTopicList": topicsToDelete
     }, {
@@ -591,9 +610,12 @@ class ksqljs {
  *   "message": "One or more properties overrides set locally are prohibited by the KSQL server (use UNSET to reset their default value): [ksql.service.id]"
  * }
  *
+ * @param {string} propertyName - the name of the property to validate
  * @return {Promise} this method returns a promise that resolves to a boolean true if the property is allowed to be changed.
  */
   isValidProperty(propertyName) {
+    validateInputs([propertyName, 'string', 'propertyName', true]);
+
     return axios.get(this.ksqldbURL + `/is_valid_property/${propertyName}`)
       .then(response => response)
       .catch(error => {

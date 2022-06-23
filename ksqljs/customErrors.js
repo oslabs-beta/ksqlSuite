@@ -47,10 +47,22 @@ class InappropriateStringParamError extends QueryBuilderError {
   }
 }
 
+class invalidArgumentTypes extends Error {
+  constructor(message) {
+    super(message);
+
+    this.name = this.constructor.name;
+    // necessary?
+    Error.captureStackTrace(this, this.constructor);
+
+  }
+}
+
 module.exports = {
   ksqlDBError,
   QueryBuilderError,
   EmptyQueryError,
   NumParamsError,
-  InappropriateStringParamError
+  InappropriateStringParamError,
+  invalidArgumentTypes
 };

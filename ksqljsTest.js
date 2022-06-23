@@ -12,18 +12,18 @@ const client = new ksqljs({ ksqldbURL: 'http://localhost:8088' })
 let metadata;
 
 //---------------------Test PUll Queries-------------------
-const pullTest = async () => {
-    const result = await client.pull('SELECT * FROM riderlocations;');
+/* const pullTest = async () => {
+    const result = await client.pull('SELECT * FROM whatever;');
     console.log('this is the result', result);
 }
 
-pullTest();
+pullTest(); */
 
 //---------------------Test Push Queries-------------------
 /* const pushTest = async () => {
     try {
-        metadata = await client.push('SELECT * FROM riderlocations EMIT CHANGES LIMIT 1;', (row) => console.log(row));
-        console.log('this is the metadata returned ', metadata);
+        queryId = await client.push('SELECT * FROM whatever EMIT CHANGES LIMIT 1;', (row) => console.log(row));
+        console.log('this is the queryId returned ', queryId);
     } catch (error) {
         console.log(error);
     }
@@ -33,10 +33,10 @@ pushTest(); */
 
 //---------------------Test Termination of Queries-------------------
 /* const terminateTest = async () => {
-    client.terminate(metadata);
+    client.terminate(queryId);
 };
 
-setTimeout(() => terminateTest(metadata), 2000); */
+setTimeout(() => terminateTest(queryId), 2000); */
 
 //---------------------Test List Queries-------------------
 /* const listQueries = async () => {
@@ -67,7 +67,7 @@ createTableTest(); */
     await client.createTableAs('currentlocation', 'riderlocations', ['profileid','LATEST_BY_OFFSET(latitude) AS la', 'LATEST_BY_OFFSET(longitude) AS lo'], {}, {GROUP_BY: 'profileId'})
 }
 
-createTableAsTest() */
+createTableAsTest(); */
 
 //---------------------Test Insert Stream-------------------
 /* const insertStreamTest = async () => {
