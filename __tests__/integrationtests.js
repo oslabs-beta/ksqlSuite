@@ -14,6 +14,7 @@ need to be removed first.
 // Once the ksqlDB server is running, tests can be run with terminal line: (npm test)
 
 describe('--Integration Tests--', () => {
+  jest.setTimeout(30000);
   describe('--Method Tests--', () => {
     beforeAll((done) => {
       client = new ksqldb({ ksqldbURL: 'http://localhost:8088' });
