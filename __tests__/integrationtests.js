@@ -16,27 +16,114 @@ need to be removed first.
 describe('--Integration Tests--', () => {
   jest.setTimeout(30000);
 
-  describe('--Method Tests--', () => {
-    beforeAll((done) => {
-      client = new ksqldb({ ksqldbURL: 'http://localhost:8088' });
-      done();
+  describe('--Materialized Streams and Tables--', () => {
+    beforeAll(async () => {
+      await client.ksql('DROP STREAM IF EXISTS testAsStream;')
+      await client.ksql('DROP TABLE IF EXISTS testAsTable;');
+      await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
+      await client.createStream('newTestStream', ['name VARCHAR', 'age INTEGER'], 'newTestTopic', 'json', 1);
     });
 
     afterAll(async () => {
-      await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
+      await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
     })
 
-    describe('--Materialized Streams and Tables--', () => {
-      beforeAll(async () => {
-        await client.ksql('DROP STREAM IF EXISTS testAsStream;')
-        await client.ksql('DROP TABLE IF EXISTS testAsTable;');
-        await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
-        await client.createStream('newTestStream', ['name VARCHAR', 'age INTEGER'], 'newTestTopic', 'json', 1);
+    describe('--Health Tests--', () => {
+      beforeAll((done) => {
+        client = new ksqldb({ ksqldbURL: 'http://localhost:8088' });
+        done();
       });
 
       afterAll(async () => {
-        await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
+        await client.ksql('DROP STREAM IF EXISTS TESTSTREAM2;');
       })
+
+      it('.inspectQueryStatus checks if a stream is created successfully', async () => {
+        const streamName = 'TESTSTREAM2'
+        const create = await client.ksql(`CREATE STREAM IF NOT EXISTS ${streamName}
+                        (name VARCHAR,
+                        email varchar,
+                        age INTEGER)
+                     WITH (
+                         KAFKA_TOPIC = 'testJestTopic',
+                         VALUE_FORMAT = 'json',
+                         PARTITIONS = 1
+                     );`);
+        const commandId = create ? create.commandId : `stream/${streamName}/create`;
+        const status = await client.inspectQueryStatus(commandId);
+        // response should be { status: 'SUCCESS', message: 'Stream created', queryId: null }
+        expect(status.data).toEqual(expect.objectContaining({
+          status: expect.any(String),
+          message: expect.any(String),
+          queryId: null
+        }));
+      })
+
+      it('.inspectServerInfo returns the server info and status', async () => {
+        const status = await client.inspectServerInfo();
+        // should return something like: {
+        //   KsqlServerInfo: {
+        //     version: '0.25.1',
+        //     kafkaClusterId: '0Yxd6N5OSKGDUalltPWvXg',
+        //     ksqlServiceId: 'default_',
+        //     serverStatus: 'RUNNING'
+        //   }
+        // }
+        expect(status.data).toEqual(expect.objectContaining({
+          KsqlServerInfo: expect.objectContaining({
+            version: expect.any(String),
+            kafkaClusterId: expect.any(String),
+            serverStatus: expect.any(String)
+          })
+        }));
+      })
+
+      it('.inspectServerHealth returns the server health', async () => {
+        const status = await client.inspectServerHealth();
+        // should return something like: {
+        //   isHealthy: true,
+        //   details: {
+        //     metastore: { isHealthy: true },
+        //     kafka: { isHealthy: true },
+        //     commandRunner: { isHealthy: true }
+        //   }
+        // }
+        expect(status.data).toEqual(expect.objectContaining({
+          isHealthy: expect.any(Boolean),
+          details: expect.objectContaining({
+            metastore: expect.anything(),
+            kafka: expect.anything(),
+            commandRunner: expect.anything()
+          })
+        })
+        );
+      })
+
+      it('.inspectClusterStatus returns the cluster status', async () => {
+        const status = await client.inspectClusterStatus();
+        // should return something like: {
+        //   clusterStatus: {
+        //     'ksqldb-server:8088': {
+        //       hostAlive: true,
+        //       lastStatusUpdateMs: 1653164479237,
+        //       activeStandbyPerQuery: [Object],
+        //       hostStoreLags: [Object]
+        //     }
+        //   }}
+        expect(status.data).toEqual(expect.objectContaining({
+          clusterStatus: expect.anything()
+        })
+        );
+      })
+
+      it('.isValidProperty returns true if a server configuration property is not prohibited from setting', async () => {
+        const status = await client.isValidProperty('test');
+        // should return true
+        expect(status.data).toEqual(true);
+      })
+
+
+
 
       describe('--Materialized Streams Tests--', () => {
         beforeAll(async () => {
@@ -96,101 +183,15 @@ describe('--Integration Tests--', () => {
     })
   })
 
-
-  describe('--Health Tests--', () => {
+  describe('--Method Tests--', () => {
     beforeAll((done) => {
       client = new ksqldb({ ksqldbURL: 'http://localhost:8088' });
       done();
     });
 
     afterAll(async () => {
-      await client.ksql('DROP STREAM IF EXISTS TESTSTREAM2;');
+      await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
     })
-
-    it('.inspectQueryStatus checks if a stream is created successfully', async () => {
-      const streamName = 'TESTSTREAM2'
-      const create = await client.ksql(`CREATE STREAM IF NOT EXISTS ${streamName}
-                      (name VARCHAR,
-                      email varchar,
-                      age INTEGER)
-                   WITH (
-                       KAFKA_TOPIC = 'testJestTopic',
-                       VALUE_FORMAT = 'json',
-                       PARTITIONS = 1
-                   );`);
-      const commandId = create ? create.commandId : `stream/${streamName}/create`;
-      const status = await client.inspectQueryStatus(commandId);
-      // response should be { status: 'SUCCESS', message: 'Stream created', queryId: null }
-      expect(status.data).toEqual(expect.objectContaining({
-        status: expect.any(String),
-        message: expect.any(String),
-        queryId: null
-      }));
-    })
-
-    it('.inspectServerInfo returns the server info and status', async () => {
-      const status = await client.inspectServerInfo();
-      // should return something like: {
-      //   KsqlServerInfo: {
-      //     version: '0.25.1',
-      //     kafkaClusterId: '0Yxd6N5OSKGDUalltPWvXg',
-      //     ksqlServiceId: 'default_',
-      //     serverStatus: 'RUNNING'
-      //   }
-      // }
-      expect(status.data).toEqual(expect.objectContaining({
-        KsqlServerInfo: expect.objectContaining({
-          version: expect.any(String),
-          kafkaClusterId: expect.any(String),
-          serverStatus: expect.any(String)
-        })
-      }));
-    })
-
-    it('.inspectServerHealth returns the server health', async () => {
-      const status = await client.inspectServerHealth();
-      // should return something like: {
-      //   isHealthy: true,
-      //   details: {
-      //     metastore: { isHealthy: true },
-      //     kafka: { isHealthy: true },
-      //     commandRunner: { isHealthy: true }
-      //   }
-      // }
-      expect(status.data).toEqual(expect.objectContaining({
-        isHealthy: expect.any(Boolean),
-        details: expect.objectContaining({
-          metastore: expect.anything(),
-          kafka: expect.anything(),
-          commandRunner: expect.anything()
-        })
-      })
-      );
-    })
-
-    it('.inspectClusterStatus returns the cluster status', async () => {
-      const status = await client.inspectClusterStatus();
-      // should return something like: {
-      //   clusterStatus: {
-      //     'ksqldb-server:8088': {
-      //       hostAlive: true,
-      //       lastStatusUpdateMs: 1653164479237,
-      //       activeStandbyPerQuery: [Object],
-      //       hostStoreLags: [Object]
-      //     }
-      //   }}
-      expect(status.data).toEqual(expect.objectContaining({
-        clusterStatus: expect.anything()
-      })
-      );
-    })
-
-    it('.isValidProperty returns true if a server configuration property is not prohibited from setting', async () => {
-      const status = await client.isValidProperty('test');
-      // should return true
-      expect(status.data).toEqual(true);
-    })
-
 
     it('.createStream properly creates a stream', async () => {
       jest.setTimeout(30000);
