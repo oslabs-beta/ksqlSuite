@@ -1,4 +1,4 @@
-const { default: waitForExpect } = require('wait-for-expect');
+// const { default: waitForExpect } = require('wait-for-expect');
 const ksqldb = require('../ksqldb/ksqldb');
 // Pre-requisite: start a docker container
 /* To add to README: Prior to running test with 'npm test', please start the ksqlDB
@@ -57,7 +57,7 @@ describe('--Integration Tests--', () => {
     })
 
     it('.insertStream properly inserts a row into a stream', async () => {
-      
+
       const data = [];
       await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES;', async (chunk) => {
         data.push(JSON.parse(chunk));
