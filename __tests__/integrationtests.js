@@ -13,8 +13,162 @@ need to be removed first.
 // Steps to starting the ksqldb server can be found here: (https://ksqldb.io/quickstart.html)
 // Once the ksqlDB server is running, tests can be run with terminal line: (npm test)
 
+async function my_asyncFunction() {
+  console.log("Some Code we want to be executed");
+  await sleep(4000);
+  console.log("Some other code we want to be executed after some seconds");
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+my_asyncFunction();
 describe('--Integration Tests--', () => {
   jest.setTimeout(30000);
+  sleep(20000);
+  describe('--Method Tests--', () => {
+    beforeAll((done) => {
+      client = new ksqldb({ ksqldbURL: 'http://localhost:8088' });
+      done();
+    });
+
+    afterAll(async () => {
+      await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
+    })
+
+    it('.createStream properly creates a stream', async () => {
+      await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;')
+      const result = await client.createStream('TESTJESTSTREAM', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testJestTopic', 'json', 1);
+      const streams = await client.ksql('LIST STREAMS;');
+      const allStreams = streams.streams;
+      let streamExists = false;
+      for (let i = 0; i < allStreams.length; i++) {
+        if (allStreams[i].name === "TESTJESTSTREAM") {
+          streamExists = true;
+          break;
+        }
+      }
+      expect(streamExists).toEqual(true);
+    })
+
+    it('.push properly creates a push query', async () => {
+      let pushActive = false;
+      await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
+        if (JSON.parse(data).queryId) {
+          pushActive = true;
+        }
+        expect(pushActive).toEqual(true)
+      });
+    })
+
+    it('.terminate properly terminates a push query', () => {
+      client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 3;', async (data) => {
+        const terminateRes = await client.terminate(JSON.parse(data).queryId);
+        expect(terminateRes.wasTerminated).toEqual(true);
+      })
+    })
+
+    it('.insertStream properly inserts a row into a stream', async () => {
+      const data = [];
+      await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES;', async (chunk) => {
+        data.push(JSON.parse(chunk));
+        if (data[1]) {
+          client.terminate(data[0].queryId);
+          expect(data[1]).toEqual(["stab-rabbit", "123@mail.com", 100])
+        }
+      });
+      const response = await client.insertStream('TESTJESTSTREAM', [
+        { "name": "stab-rabbit", "email": "123@mail.com", "age": 100 }
+      ]);
+    })
+
+    it('.pull receives the correct data from a pull query', async () => {
+      jest.setTimeout(30000);
+      const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
+      expect(pullData[1]).toEqual(["stab-rabbit", "123@mail.com", 100]);
+    })
+
+    it('.pullFromTo receives all the data', async () => {
+      const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
+      const data = await client.pullFromTo('TESTJESTSTREAM', 'America/Los_Angeles', ['2022-01-01', '00', '00', '00']);
+      const expectPullData = pullData[1];
+      const expectData = data[0].slice(0, 3);
+      expect(expectPullData).toEqual(expectData);
+    })
+
+    describe('--Materialized Streams and Tables--', () => {
+      beforeAll(async () => {
+        await client.ksql('DROP STREAM IF EXISTS testAsStream;')
+        await client.ksql('DROP TABLE IF EXISTS testAsTable;');
+        await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
+        await client.createStream('newTestStream', ['name VARCHAR', 'age INTEGER'], 'newTestTopic', 'json', 1);
+      });
+
+      afterAll(async () => {
+        await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
+      })
+
+      describe('--Materialized Streams Tests--', () => {
+        beforeAll(async () => {
+          // await client.ksql('DROP STREAM IF EXISTS testAsStream;')
+          // await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
+
+          // await client.createStream('newTestStream', ['name VARCHAR', 'age INTEGER'], 'newTestTopic', 'json', 1);
+          testAsQueryId = await client.createStreamAs('testAsStream', ['name', 'age'], 'newTestStream', {
+            kafka_topic: 'newTestTopic',
+            value_format: 'json',
+            partitions: 1
+          }, 'age > 50');
+        })
+
+        afterAll(async () => {
+          await client.ksql('DROP STREAM IF EXISTS testAsStream;')
+          // await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
+        })
+
+        it('creates materialized stream', async () => {
+          let streamFound = false;
+          const { streams } = await client.ksql('LIST STREAMS;');
+
+          for (let i = 0; i < streams.length; i++) {
+            if (streams[i].name, streams[i].name === 'TESTASSTREAM') {
+              streamFound = true;
+              break;
+            }
+          }
+          expect(streamFound).toBe(true);
+        });
+      });
+
+
+      describe('--Materialized Tables Tests--', () => {
+        beforeAll(async () => {
+          await client.createTableAs('testAsTable', 'newTestStream', ['name', 'LATEST_BY_OFFSET(age) AS recentAge'], { topic: 'newTestTopic' }, { WHERE: 'age >= 21', GROUP_BY: 'name' });
+        });
+        afterAll(async () => {
+          await client.ksql('DROP TABLE IF EXISTS testAsTable;');
+          // await client.ksql('DROP TABLE IF EXISTS TABLEOFSTREAM DELETE TOPIC;')
+          // await client.ksql('DROP STREAM IF EXISTS NEWTESTSTREAM DELETE TOPIC;')
+        })
+
+        it('creates a materialized table view of a stream', async () => {
+          const { tables } = await client.ksql('LIST TABLES;');
+          let tableFound = false;
+          for (let i = 0; i < tables.length; i++) {
+            if (tables[i].name === 'TESTASTABLE') {
+              tableFound = true;
+              break;
+            }
+          }
+          expect(tableFound).toEqual(true);
+        })
+      })
+    })
+  })
+
 
   describe('--Health Tests--', () => {
     beforeAll((done) => {
@@ -109,84 +263,6 @@ describe('--Integration Tests--', () => {
       // should return true
       expect(status.data).toEqual(true);
     })
-  })
-
-
-  describe('--Method Tests--', () => {
-    beforeAll((done) => {
-      client = new ksqldb({ ksqldbURL: 'http://localhost:8088' });
-      done();
-    });
-
-    afterAll(async () => {
-      await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
-    })
-
-    it('.createStream properly creates a stream', async () => {
-      jest.setTimeout(30000);
-      await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;')
-      const result = await client.createStream('TESTJESTSTREAM', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testJestTopic', 'json', 1);
-      const streams = await client.ksql('LIST STREAMS;');
-      const allStreams = streams.streams;
-      let streamExists = false;
-      for (let i = 0; i < allStreams.length; i++) {
-        if (allStreams[i].name === "TESTJESTSTREAM") {
-          streamExists = true;
-          break;
-        }
-      }
-      expect(streamExists).toEqual(true);
-    })
-
-    it('.push properly creates a push query', async () => {
-      jest.setTimeout(30000);
-      let pushActive = false;
-      await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
-        if (JSON.parse(data).queryId) {
-          pushActive = true;
-        }
-        expect(pushActive).toEqual(true)
-      });
-    })
-
-    it('.terminate properly terminates a push query', () => {
-      jest.setTimeout(30000);
-      client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 3;', async (data) => {
-        const terminateRes = await client.terminate(JSON.parse(data).queryId);
-        expect(terminateRes.wasTerminated).toEqual(true);
-      })
-    })
-
-    it('.insertStream properly inserts a row into a stream', async () => {
-      jest.setTimeout(30000);
-      const data = [];
-      await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES;', async (chunk) => {
-        data.push(JSON.parse(chunk));
-        if (data[1]) {
-          client.terminate(data[0].queryId);
-          expect(data[1]).toEqual(["stab-rabbit", "123@mail.com", 100])
-        }
-      });
-      const response = await client.insertStream('TESTJESTSTREAM', [
-        { "name": "stab-rabbit", "email": "123@mail.com", "age": 100 }
-      ]);
-    })
-
-    it('.pull receives the correct data from a pull query', async () => {
-      jest.setTimeout(30000);
-      const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
-      expect(pullData[1]).toEqual(["stab-rabbit", "123@mail.com", 100]);
-    })
-
-    it('.pullFromTo receives all the data', async () => {
-      jest.setTimeout(30000);
-      const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
-      const data = await client.pullFromTo('TESTJESTSTREAM', 'America/Los_Angeles', ['2022-01-01', '00', '00', '00']);
-      const expectPullData = pullData[1];
-      const expectData = data[0].slice(0, 3);
-      expect(expectPullData).toEqual(expectData);
-    })
-
 
     // it('isValidProperty returns an error if the server property is prohibited from setting', async () => {
     //   const status = await client.isValidProperty('ksql.connect.url');
@@ -202,73 +278,5 @@ describe('--Integration Tests--', () => {
     //     message: expect.any(String),
     //   }));
     // })
-  })
-
-  describe('--Materialized Streams and Tables--', () => {
-    beforeAll(async () => {
-      await client.ksql('DROP STREAM IF EXISTS testAsStream;')
-      await client.ksql('DROP TABLE IF EXISTS testAsTable;');
-      await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
-      await client.createStream('newTestStream', ['name VARCHAR', 'age INTEGER'], 'newTestTopic', 'json', 1);
-    });
-
-    afterAll(async () => {
-      await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
-    })
-    describe('--Materialized Streams Tests--', () => {
-      beforeAll(async () => {
-        // await client.ksql('DROP STREAM IF EXISTS testAsStream;')
-        // await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
-
-        // await client.createStream('newTestStream', ['name VARCHAR', 'age INTEGER'], 'newTestTopic', 'json', 1);
-        testAsQueryId = await client.createStreamAs('testAsStream', ['name', 'age'], 'newTestStream', {
-          kafka_topic: 'newTestTopic',
-          value_format: 'json',
-          partitions: 1
-        }, 'age > 50');
-      })
-
-      afterAll(async () => {
-        await client.ksql('DROP STREAM IF EXISTS testAsStream;')
-        // await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
-      })
-
-      it('creates materialized stream', async () => {
-        let streamFound = false;
-        const { streams } = await client.ksql('LIST STREAMS;');
-
-        for (let i = 0; i < streams.length; i++) {
-          if (streams[i].name, streams[i].name === 'TESTASSTREAM') {
-            streamFound = true;
-            break;
-          }
-        }
-        expect(streamFound).toBe(true);
-      });
-    });
-
-
-    describe('--Materialized Tables Tests--', () => {
-      beforeAll(async () => {
-        await client.createTableAs('testAsTable', 'newTestStream', ['name', 'LATEST_BY_OFFSET(age) AS recentAge'], { topic: 'newTestTopic' }, { WHERE: 'age >= 21', GROUP_BY: 'name' });
-      });
-      afterAll(async () => {
-        await client.ksql('DROP TABLE IF EXISTS testAsTable;');
-        // await client.ksql('DROP TABLE IF EXISTS TABLEOFSTREAM DELETE TOPIC;')
-        // await client.ksql('DROP STREAM IF EXISTS NEWTESTSTREAM DELETE TOPIC;')
-      })
-
-      it('creates a materialized table view of a stream', async () => {
-        const { tables } = await client.ksql('LIST TABLES;');
-        let tableFound = false;
-        for (let i = 0; i < tables.length; i++) {
-          if (tables[i].name === 'TESTASTABLE') {
-            tableFound = true;
-            break;
-          }
-        }
-        expect(tableFound).toEqual(true);
-      })
-    })
   })
 })
