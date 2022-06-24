@@ -25,6 +25,7 @@ describe('--Integration Tests--', () => {
     })
 
     it('.createStream properly creates a stream', async () => {
+      jest.setTimeout(30000);
       await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;')
       const result = await client.createStream('TESTJESTSTREAM', ['name VARCHAR', 'email varchar', 'age INTEGER'], 'testJestTopic', 'json', 1);
       const streams = await client.ksql('LIST STREAMS;');
@@ -40,6 +41,7 @@ describe('--Integration Tests--', () => {
     })
 
     it('.push properly creates a push query', async () => {
+      jest.setTimeout(30000);
       let pushActive = false;
       await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;', async (data) => {
         if (JSON.parse(data).queryId) {
@@ -50,6 +52,7 @@ describe('--Integration Tests--', () => {
     })
 
     it('.terminate properly terminates a push query', () => {
+      jest.setTimeout(30000);
       client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 3;', async (data) => {
         const terminateRes = await client.terminate(JSON.parse(data).queryId);
         expect(terminateRes.wasTerminated).toEqual(true);
@@ -57,7 +60,7 @@ describe('--Integration Tests--', () => {
     })
 
     it('.insertStream properly inserts a row into a stream', async () => {
-
+      jest.setTimeout(30000);
       const data = [];
       await client.push('SELECT * FROM TESTJESTSTREAM EMIT CHANGES;', async (chunk) => {
         data.push(JSON.parse(chunk));
@@ -72,11 +75,13 @@ describe('--Integration Tests--', () => {
     })
 
     it('.pull receives the correct data from a pull query', async () => {
+      jest.setTimeout(30000);
       const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
       expect(pullData[1]).toEqual(["stab-rabbit", "123@mail.com", 100]);
     })
 
     it('.pullFromTo receives all the data', async () => {
+      jest.setTimeout(30000);
       const pullData = await client.pull("SELECT * FROM TESTJESTSTREAM;");
       const data = await client.pullFromTo('TESTJESTSTREAM', 'America/Los_Angeles', ['2022-01-01', '00', '00', '00']);
       const expectPullData = pullData[1];
