@@ -4,7 +4,8 @@
   "description": "Javascript KsqlDB client for Node.js",
   "main": "./ksqldb/ksqldb",
   "scripts": {
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "sleeper": "node sleep.js"
   },
   "repository": {
     "type": "git",

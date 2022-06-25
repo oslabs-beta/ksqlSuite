@@ -13,18 +13,6 @@ need to be removed first.
 // Steps to starting the ksqldb server can be found here: (https://ksqldb.io/quickstart.html)
 // Once the ksqlDB server is running, tests can be run with terminal line: (npm test)
 
-async function my_asyncFunction() {
-  console.log("NOT SLEEP");
-  await sleep(30000);
-  console.log("SLEEP COMPLETED");
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
 
 describe('--Integration Tests--', () => {
   jest.setTimeout(30000);
@@ -43,7 +31,7 @@ describe('--Integration Tests--', () => {
     })
 
     //sleep
-    my_asyncFunction();
+    // my_asyncFunction();
 
     it('.createStream properly creates a stream', async () => {
       await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;')
