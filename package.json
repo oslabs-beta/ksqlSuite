@@ -4,7 +4,7 @@
   "description": "Javascript KsqlDB client for Node.js",
   "main": "./ksqldb/ksqldb",
   "scripts": {
-    "test": "jest --verbose",
+    "test": "jest --verbose --detectOpenHandles",
     "sleeper": "node sleep.js"
   },
   "repository": {
