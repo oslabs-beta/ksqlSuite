@@ -14,9 +14,9 @@ need to be removed first.
 // Once the ksqlDB server is running, tests can be run with terminal line: (npm test)
 
 async function my_asyncFunction() {
-  console.log("Some Code we want to be executed");
-  await sleep(4000);
-  console.log("Some other code we want to be executed after some seconds");
+  console.log("NOT SLEEP");
+  await sleep(30000);
+  console.log("SLEEP COMPLETED");
 }
 
 function sleep(ms) {
@@ -25,10 +25,13 @@ function sleep(ms) {
   });
 }
 
-my_asyncFunction();
+
 describe('--Integration Tests--', () => {
   jest.setTimeout(30000);
-  sleep(20000);
+
+  //sleep
+  // my_asyncFunction();
+
   describe('--Method Tests--', () => {
     beforeAll((done) => {
       client = new ksqldb({ ksqldbURL: 'http://localhost:8088' });
@@ -38,6 +41,9 @@ describe('--Integration Tests--', () => {
     afterAll(async () => {
       await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;');
     })
+
+    //sleep
+    my_asyncFunction();
 
     it('.createStream properly creates a stream', async () => {
       await client.ksql('DROP STREAM IF EXISTS TESTJESTSTREAM DELETE TOPIC;')
