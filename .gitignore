@@ -103,5 +103,10 @@ dist
 # TernJS port file
 .tern-port
 
+# Local
+ksqljsTest.js
+package-lock.json
+local_ignore/
+.gitignore
 
 
