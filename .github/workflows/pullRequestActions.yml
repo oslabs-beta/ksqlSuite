@@ -32,6 +32,8 @@ jobs:
           node-version: 16.x
       - name: Install dependencies
         run: npm install
+      - name: Sleep before test
+        run: npm run sleeper
       - name: Run tests
         run: npm run test
       - name: Stop containers
