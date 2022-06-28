@@ -5,9 +5,11 @@ class queryBuilder {
   }
 
   build = (query, ...params) => {
-    // consider building custom errors
+    // check for empty query
     if (this._checkEmptyQuery(query)) throw new EmptyQueryError();
+
     let output = this._bind(query, ...params);
+
     return output;
   }
   _bind = (query, ...params) => {
@@ -33,10 +35,10 @@ class queryBuilder {
         return param;
       case "object":
         if (Array.isArray(param)) {
-          if (param[0].includes(";")) {
+          if (param[0]?.includes(";")) {
             throw new InappropriateStringParamError("string params not wrapped in quotes should not include semi-colons");
           }
-          return `${param[0].replaceAll("'", "''")}`
+          return `${param[0]?.replaceAll("'", "''")}`
         }
         throw new QueryBuilderError("object should not be passed in as query argument");
       case "function":
