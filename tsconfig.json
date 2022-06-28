@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es6",
     "watch": true,
     "module": "CommonJS",
+    "lib": ["ES2021.String"],
     "esModuleInterop": true,
-    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
     "allowJs": true,
     "moduleResolution": "node",
     "types": ["node", "jest"]

@@ -1,5 +1,5 @@
-const { default: waitForExpect } = require("wait-for-expect");
-const ksqljs = require("../ksqljs/ksqlJS.js");
+const ksqldb = require("../ksqldb/ksqldb");
+import { Iksqldb } from "../types";
 // Pre-requisite: start a docker container
 /* To add to README: Prior to running test with 'npm test', please start the ksqlDB
 server using the command 'docker-compose up'. This will spin up a ksqlDB server on
@@ -12,12 +12,11 @@ need to be removed first.
 // Prior to running the test files, please ensure an instance of the ksqldb server is running
 // Steps to starting the ksqldb server can be found here: (https://ksqldb.io/quickstart.html)
 // Once the ksqlDB server is running, tests can be run with terminal line: (npm test)
-
+let client: Iksqldb;
 describe("--Integration Tests--", () => {
-  let client;
   describe("--Method Tests--", () => {
     beforeAll((done) => {
-      client = new ksqljs({ ksqldbURL: "http://localhost:8088" });
+      client = new ksqldb({ ksqldbURL: "http://localhost:8088" });
       done();
     });
 
@@ -50,7 +49,7 @@ describe("--Integration Tests--", () => {
       let pushActive = false;
       await client.push(
         "SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 1;",
-        async (data) => {
+        async (data: string) => {
           if (JSON.parse(data).queryId) {
             pushActive = true;
           }
@@ -62,7 +61,7 @@ describe("--Integration Tests--", () => {
     it(".terminate properly terminates a push query", () => {
       client.push(
         "SELECT * FROM TESTJESTSTREAM EMIT CHANGES LIMIT 3;",
-        async (data) => {
+        async (data: string) => {
           const terminateRes = await client.terminate(JSON.parse(data).queryId);
           expect(terminateRes.wasTerminated).toEqual(true);
         }
@@ -70,12 +69,11 @@ describe("--Integration Tests--", () => {
     });
 
     it(".insertStream properly inserts a row into a stream", async () => {
-      const data = [];
+      const data: { queryId?: string }[] = [];
       await client.push(
         "SELECT * FROM TESTJESTSTREAM EMIT CHANGES;",
-        async (chunk) => {
+        async (chunk: string) => {
           data.push(JSON.parse(chunk));
-          console.log(data);
           if (data[1]) {
             client.terminate(data[0].queryId);
             expect(data[1]).toEqual(["stab-rabbit", "123@mail.com", 100]);
@@ -123,7 +121,7 @@ describe("--Integration Tests--", () => {
       });
 
       describe("--Materialized Streams Tests--", () => {
-        let testAsQueryId;
+        let testAsQueryId: string;
         beforeAll(async () => {
           // await client.ksql('DROP STREAM IF EXISTS testAsStream;')
           // await client.ksql('DROP STREAM IF EXISTS newTestStream DELETE TOPIC;');
@@ -194,7 +192,7 @@ describe("--Integration Tests--", () => {
 
   describe("--Health Tests--", () => {
     beforeAll((done) => {
-      client = new ksqljs({ ksqldbURL: "http://localhost:8088" });
+      client = new ksqldb({ ksqldbURL: "http://localhost:8088" });
       done();
     });
 
