@@ -1,10 +1,10 @@
 const queryBuilder = require("../ksqldb/queryBuilder.ts");
-// const {
-//   QueryBuilderError,
-//   EmptyQueryError,
-//   NumParamsError,
-//   InappropriateStringParamError,
-// } = require("../ksqldb/customErrors.js");
+const {
+  QueryBuilderError,
+  EmptyQueryError,
+  NumParamsError,
+  InappropriateStringParamError,
+} = require("../ksqldb/customErrors.ts");
 
 import { IqueryBuilder } from "../types";
 
