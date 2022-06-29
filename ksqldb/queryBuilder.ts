@@ -3,7 +3,7 @@ const {
   EmptyQueryError,
   NumParamsError,
   InappropriateStringParamError,
-} = require("./customErrors.js");
+} = require("./customErrors.ts");
 import { IqueryBuilder } from "../types";
 
 class queryBuilder implements IqueryBuilder {
