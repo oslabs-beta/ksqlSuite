@@ -1,3 +1,23 @@
+/**
+ * Executes a query to create a stream.
+ *
+ * <p>This method is used to create a stream.
+ *
+ * <p>This method is sql injection protected with the use of queryBuilder.
+ *
+ * @param {...array} args - a variable number of arrays (one for each argument to validate) that contains the following 4 possible elements:
+ * <p>0: the argument to be validated</p>
+ * 
+ * 1: a string representing the intended data type of the argument
+ * 
+ * 2: a string representing the name of the argument (for helpful errors)
+ * 
+ * 3: an optional boolean indicating whether this argument is required - defaults to false if not provided. If required, the argument MUST be of tye type indicated. If not required, the argument can be of the type indicated, undefined, or null. 
+ * 
+ * @returns {void}
+ * 
+ */
+
 const { invalidArgumentTypes } = require("./customErrors");
 
 const validateInputs = (...args) => {

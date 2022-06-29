@@ -211,7 +211,6 @@ class ksqldb {
         throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
       });
   }
-
   /**
    * Executes a query to create a stream.
    *
