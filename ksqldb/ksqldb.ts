@@ -24,11 +24,11 @@ class ksqldb implements Iksqldb {
    * httpsAgent: httpsAgent for setting TLS properties
    */
 
-  private ksqldbURL;
-  private API;
-  private secret;
-  private httpsAgentAxios;
-  private httpsAgentHttp2;
+  ksqldbURL;
+  API;
+  secret;
+  httpsAgentAxios;
+  httpsAgentHttp2;
 
   constructor(config: ksqlConfig) {
     this.ksqldbURL = config.ksqldbURL;
@@ -59,7 +59,7 @@ class ksqldb implements Iksqldb {
    *
    *         Example: [{object that contains the metadata}, [data], [data], ...}]
    */
-  pull = (query: string) => {
+  pull(query: string) {
     validateInputs([query, "string", "query"]);
 
     const validatedQuery = builder.build(query);
@@ -89,7 +89,7 @@ class ksqldb implements Iksqldb {
           ? new ksqlDBError(error.response.data)
           : error;
       });
-  };
+  }
 
   /**
    * Executes a push query, and returns the results one row at a time.
@@ -273,7 +273,7 @@ class ksqldb implements Iksqldb {
     value_format: string = "json",
     partitions: number = 1,
     key: number
-  ) {
+  ): Promise<[]> {
     validateInputs(
       [name, "string", "name", true],
       [columnsType, "array", "columnsType", true],
@@ -320,14 +320,14 @@ class ksqldb implements Iksqldb {
    * @param {string} partitionBy - column by which data will be distributed
    * @returns {Promise} - a promise that completes once the server response is received, and returns a query ID
    */
-  createStreamAs = (
-    streamName,
-    selectColumns,
-    sourceStream,
-    propertiesObj,
-    conditions,
-    partitionBy = ""
-  ) => {
+  createStreamAs(
+    streamName: string,
+    selectColumns: string[],
+    sourceStream: string,
+    propertiesObj: object,
+    conditions: string,
+    partitionBy: string = ""
+  ): Promise<string> {
     validateInputs(
       [streamName, "string", "streamName", true],
       [selectColumns, "array", "selectColumns", true],
@@ -385,13 +385,16 @@ class ksqldb implements Iksqldb {
           httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
         }
       )
-      .then((res) => res.data[0].commandStatus.queryId)
-      .catch((error) => {
+      .then(
+        (res: { data?: { commandStatus?: { queryId?: string } }[] }) =>
+          res.data[0].commandStatus.queryId
+      )
+      .catch((error: { response?: { data: { "@type": string } } }) => {
         throw error.response?.data["@type"]
           ? new ksqlDBError(error.response.data)
           : error;
       });
-  };
+  }
 
   //---------------------Create tables-----------------
   /**
@@ -408,13 +411,13 @@ class ksqldb implements Iksqldb {
    * @param {integer} partitions number of partitions the table should have.
    * @return {Promise} a promise that completes once the server response is received, and returns a response object.
    */
-  createTable = (
-    name,
-    columnsType,
-    topic,
-    value_format = "json",
-    partitions
-  ) => {
+  createTable(
+    name: string,
+    columnsType: string[],
+    topic: string,
+    value_format: string = "json",
+    partitions: number
+  ): void {
     validateInputs(
       [name, "string", "name", true],
       [columnsType, "array", "columnsType", true],
@@ -447,12 +450,12 @@ class ksqldb implements Iksqldb {
           httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
         }
       )
-      .catch((error) => {
+      .catch((error: { response?: { data: { "@type": string } } }) => {
         throw error.response?.data["@type"]
           ? new ksqlDBError(error.response.data)
           : error;
       });
-  };
+  }
 
   //---------------------Create tables as select-----------------
   /**
@@ -469,13 +472,17 @@ class ksqldb implements Iksqldb {
    * @param {object} conditionsObj an object containing key value pairs for supported query conditions e.g {WHERE: 'a is not null', GROUP_BY: 'profileID', HAVING: 'COUNT(a) > 5' }
    * @returns {Promise} a promise that completes once the server response is received, returning a response object
    */
-  createTableAs = (
-    tableName,
-    source,
-    selectArray,
-    propertiesObj,
-    conditionsObj
-  ) => {
+  createTableAs(
+    tableName: string | string[],
+    source: string | string[],
+    selectArray: string[],
+    propertiesObj: object,
+    conditionsObj: {
+      WHERE?: string | null;
+      GROUP_BY?: string | null;
+      HAVING?: string | null;
+    }
+  ): Promise<[]> {
     validateInputs(
       [tableName, "string", "tableName", true],
       [source, "string", "source", true],
@@ -510,9 +517,19 @@ class ksqldb implements Iksqldb {
 
       let i = 0;
       while (conditionsArr.length) {
-        if (conditionsObj[conditionsArr[0]]) {
+        if (
+          conditionsObj[
+            conditionsArr[0] as string as keyof typeof conditionsObj
+          ]
+        ) {
           sqlClauses[i] = [conditionsArr[0].replace("_", " ")]; // clause values are set as arrays for query builder
-          sqlClauses[i + 1] = [" " + conditionsObj[conditionsArr[0]] + " "];
+          sqlClauses[i + 1] = [
+            " " +
+              conditionsObj[
+                conditionsArr[0] as string as keyof typeof conditionsObj
+              ] +
+              " ",
+          ];
         } else {
           sqlClauses[i] = [""];
           sqlClauses[i + 1] = [""];
@@ -531,21 +548,18 @@ class ksqldb implements Iksqldb {
       );
     }
 
-    // reformat for builder
-    tableName = [tableName];
-    selectColStr = [selectColStr];
-    source = [source];
-    conditionQuery = [conditionQuery];
+    // tableName, selectColstr, source, conditionQuery wrapped in array for query builder
+    // to recognize that the string should not include semi-colon
 
     const query = builder.build(
       `CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? ?EMIT CHANGES;`,
-      tableName,
+      [tableName],
       defaultProps.topic,
       defaultProps.value_format,
       defaultProps.partitions,
-      selectColStr,
-      source,
-      conditionQuery
+      [selectColStr],
+      [source],
+      [conditionQuery]
     );
     return axios
       .post(
@@ -564,8 +578,8 @@ class ksqldb implements Iksqldb {
           httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
         }
       )
-      .catch((error) => console.log(error));
-  };
+      .catch((error: Error) => console.log(error));
+  }
 
   /**
    * Inserts rows of data into a stream.
@@ -579,21 +593,21 @@ class ksqldb implements Iksqldb {
    * @return {Promise} this method returns a promise that resolves into an array describing the status of the row inserted.
    */
   //---------------------Insert Rows Into Existing Streams-----------------
-  insertStream = (stream, rows) => {
+  insertStream(stream: string, rows: object[]): Promise<string[]> {
     validateInputs(
       [stream, "string", "stream", true],
       [rows, "array", "rows", true]
     );
 
     return new Promise((resolve, reject) => {
-      const msgOutput = [];
+      const msgOutput: string[] = [];
 
       const session = http2.connect(
         this.ksqldbURL,
         this.httpsAgentHttp2 ? this.httpsAgentHttp2 : {}
       );
 
-      session.on("error", (err) => reject(err));
+      session.on("error", (err: Error) => reject(err));
 
       const req = session.request(
         this.secret && this.API
@@ -624,7 +638,7 @@ class ksqldb implements Iksqldb {
       req.end();
       req.setEncoding("utf8");
 
-      req.on("data", (chunk) => {
+      req.on("data", (chunk: string) => {
         // check for chunk containing errors
         if (JSON.parse(chunk)["@type"]?.includes("error"))
           throw new ksqlDBError(JSON.parse(chunk));
@@ -637,7 +651,7 @@ class ksqldb implements Iksqldb {
         resolve(msgOutput);
       });
     });
-  };
+  }
 
   /**
    * Pulls data between two different time points.
@@ -657,11 +671,11 @@ class ksqldb implements Iksqldb {
    *         the end of the array that includes the time that the data was inserted into the ksqldb.
    */
   pullFromTo = async (
-    streamName,
-    timezone = "Greenwich",
-    from = [undefined, "00", "00", "00"],
-    to = ["2200-03-14", "00", "00", "00"]
-  ) => {
+    streamName: string,
+    timezone: string = "Greenwich",
+    from: (undefined | string)[] = [undefined, "00", "00", "00"],
+    to: (undefined | string)[] = ["2200-03-14", "00", "00", "00"]
+  ): Promise<(string | boolean | number)[][]> => {
     validateInputs(
       [streamName, "string", "streamName", true],
       [timezone, "string", "timezone", true],
@@ -680,8 +694,8 @@ class ksqldb implements Iksqldb {
     );
     const data = await this.pull(query);
     data.shift();
-    const filtered = [];
-    data.map((element) => {
+    const filtered: (string | boolean | number)[][] = [];
+    data.map((element: (string | boolean | number)[]) => {
       if (
         element[element.length - 1] >= userFromUnix &&
         element[element.length - 1] <= userToUnix
@@ -706,13 +720,13 @@ class ksqldb implements Iksqldb {
    *
    *         message (string): Detailed message regarding the status of the execution statement.
    */
-  inspectQueryStatus(commandId) {
+  inspectQueryStatus(commandId: string) {
     validateInputs([commandId, "string", "commandId", true]);
 
     return axios
       .get(this.ksqldbURL + `/status/${commandId}`)
-      .then((response) => response)
-      .catch((error) => {
+      .then((response: string) => response)
+      .catch((error: { response?: { data: { "@type": string } } }) => {
         throw error.response?.data["@type"]
           ? new ksqlDBError(error.response.data)
           : error;
@@ -731,8 +745,8 @@ class ksqldb implements Iksqldb {
   inspectServerInfo() {
     return axios
       .get(this.ksqldbURL + `/info`)
-      .then((response) => response)
-      .catch((error) => {
+      .then((response: string) => response)
+      .catch((error: { response?: { data: { "@type": string } } }) => {
         throw error.response?.data["@type"]
           ? new ksqlDBError(error.response.data)
           : error;
@@ -751,8 +765,8 @@ class ksqldb implements Iksqldb {
   inspectServerHealth() {
     return axios
       .get(this.ksqldbURL + `/healthcheck`)
-      .then((response) => response)
-      .catch((error) => {
+      .then((response: string) => response)
+      .catch((error: { response?: { data: { "@type": string } } }) => {
         throw error.response?.data["@type"]
           ? new ksqlDBError(error.response.data)
           : error;
@@ -772,8 +786,8 @@ class ksqldb implements Iksqldb {
   inspectClusterStatus() {
     return axios
       .get(this.ksqldbURL + `/clusterStatus`)
-      .then((response) => response)
-      .catch((error) => {
+      .then((response: string) => response)
+      .catch((error: { response?: { data: { "@type": string } } }) => {
         throw error.response?.data["@type"]
           ? new ksqlDBError(error.response.data)
           : error;
@@ -790,7 +804,7 @@ class ksqldb implements Iksqldb {
    * @param {string[]} topicsToDelete an array of topic names or regular expressions for topic names to delete.
    * @return {Promise} this method returns a promise that returns a response object.
    */
-  terminateCluster(topicsToDelete = []) {
+  terminateCluster(topicsToDelete: string[] = []) {
     validateInputs([topicsToDelete, "array", "topicsToDelete", true]);
 
     return axios
@@ -808,8 +822,8 @@ class ksqldb implements Iksqldb {
           },
         }
       )
-      .then((response) => response)
-      .catch((error) => {
+      .then((response: string) => response)
+      .catch((error: { response?: { data: { "@type": string } } }) => {
         throw error.response?.data["@type"]
           ? new ksqlDBError(error.response.data)
           : error;
@@ -833,13 +847,13 @@ class ksqldb implements Iksqldb {
    * @param {string} propertyName - the name of the property to validate
    * @return {Promise} this method returns a promise that resolves to a boolean true if the property is allowed to be changed.
    */
-  isValidProperty(propertyName) {
+  isValidProperty(propertyName: string) {
     validateInputs([propertyName, "string", "propertyName", true]);
 
     return axios
       .get(this.ksqldbURL + `/is_valid_property/${propertyName}`)
-      .then((response) => response)
-      .catch((error) => {
+      .then((response: string) => response)
+      .catch((error: { response?: { data: { "@type": string } } }) => {
         throw error.response?.data["@type"]
           ? new ksqlDBError(error.response.data)
           : error;

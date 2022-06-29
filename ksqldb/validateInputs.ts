@@ -1,7 +1,7 @@
 // const { invalidArgumentTypes } = require("./customErrors");
 
 const validateInputs = (...args: []): void => {
-  const invalidArguments = [];
+  const invalidArguments: [] = [];
 
   // iterate through args to verify allowed types are provided
   for (let i = 0; i < args.length; i++) {
