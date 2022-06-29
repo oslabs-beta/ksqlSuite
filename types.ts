@@ -40,21 +40,21 @@ export interface Iksqldb {
     topic: string,
     value_format: string,
     partitions: number
-  ) => Promise<[]>;
+  ) => void;
   createTableAs: (
-    tableName: string,
-    source: string,
+    tableName: string | string[],
+    source: string | string[],
     selectArray: string[],
     propertiesObj: object,
-    conditionsObj: object
+    conditionsObj: { WHERE?: string; GROUP_BY?: string; HAVING?: string }
   ) => Promise<[]>;
-  insertStream: (stream: string, rows: object) => Promise<[]>;
+  insertStream: (stream: string, rows: object[]) => Promise<string[]>;
   pullFromTo: (
     streamName: string,
     timezone?: string,
-    from?: string[],
-    to?: string[]
-  ) => [][];
+    from?: (undefined | string)[],
+    to?: (undefined | string)[]
+  ) => Promise<(string | boolean | number)[][]>;
   inspectQueryStatus: (commandId: string) => Promise<ksqlResponse>;
   inspectServerInfo: () => Promise<ksqlResponse>;
   inspectServerHealth: () => Promise<ksqlResponse>;

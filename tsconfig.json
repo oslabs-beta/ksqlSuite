@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
+    "outDir": "build",
     "watch": true,
     "module": "CommonJS",
     "lib": ["ES2021.String"],
