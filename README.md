@@ -7,6 +7,9 @@
 <a href="https://github.com/oslabs-beta/ksqljs/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/oslabs-beta/ksqljs"></a>
 <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/oslabs-beta/ksqljs">
 
+<a href="https://www.npmjs.com/package/ksqldb-js"><img src="https://img.shields.io/badge/available%20on-npm-lightblue.svg?logo=npm&labelColor=lightgrey" /></a>
+<a href="https://www.npmjs.com/package/ksqldb-js"><img src="https://img.shields.io/badge/npm-v^1.1.0-lightgrey?logo=npm"/></a>
+
    <p align="center"> <strong>A native Node.js client for ksqlDB</strong></p>
    </div>
 
