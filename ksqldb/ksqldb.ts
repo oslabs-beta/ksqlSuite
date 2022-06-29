@@ -59,7 +59,7 @@ class ksqldb implements Iksqldb {
    *
    *         Example: [{object that contains the metadata}, [data], [data], ...}]
    */
-  pull(query: string) {
+  pull(query: string): Promise<(string | object | number | [])[]> {
     validateInputs([query, "string", "query"]);
 
     const validatedQuery = builder.build(query);

@@ -13,6 +13,8 @@ need to be removed first.
 // Steps to starting the ksqldb server can be found here: (https://ksqldb.io/quickstart.html)
 // Once the ksqlDB server is running, tests can be run with terminal line: (npm test)
 let client: Iksqldb;
+jest.setTimeout(20000);
+
 describe("--Integration Tests--", () => {
   describe("--Method Tests--", () => {
     beforeAll((done) => {

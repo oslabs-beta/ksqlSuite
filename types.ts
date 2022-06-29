@@ -14,7 +14,7 @@ export interface Iksqldb {
   secret: string | null;
   httpsAgentAxios: Agent | null;
   httpsAgentHttp2: Object | null;
-  pull: (query: string) => Promise<(string | object | [])[]>;
+  pull: (query: string) => Promise<(string | object | number | [])[]>;
   push: (query: string, cb: Function) => Promise<ksqlResponse>;
   terminate: (queryId: string) => Promise<ksqlResponse>;
   ksql: (query: string) => Promise<ksqlResponse>;
