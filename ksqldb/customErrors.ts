@@ -5,56 +5,58 @@
 
 // used to wrap error received from ksqlDB server
 class ksqlDBError extends Error {
-  constructor(error) {
-    super(error.message)
+  constructor(error: Error) {
+    super(error.message);
 
     // Ensure the name of this error is the same as the class name
-    this.name = this.constructor.name
-    
+    this.name = this.constructor.name;
+
     // capturing the stack trace keeps the reference to your error class
     Error.captureStackTrace(this, this.constructor);
-    
+
     // you may also assign additional properties to your error
     //this.status = 404
-    Object.keys(error).forEach(property => {this[property] = error[property]});
+    Object.keys(error).forEach((property) => {
+      //@ts-ignore
+      this[property] = error[property];
+    });
   }
 }
 
 // for returning error related to use of queryBuilder class
 class QueryBuilderError extends Error {
-  constructor(message) {
-    super(message)
-    this.name = this.constructor.name
+  constructor(message: string) {
+    super(message);
+    this.name = this.constructor.name;
     Error.captureStackTrace(this, this.constructor);
   }
 }
 
 class EmptyQueryError extends QueryBuilderError {
   constructor() {
-    super('Query should not be empty, undefined, or null');
+    super("Query should not be empty, undefined, or null");
   }
 }
 
 class NumParamsError extends QueryBuilderError {
-  constructor(message) {
+  constructor(message: string) {
     super(message);
   }
 }
 
 class InappropriateStringParamError extends QueryBuilderError {
-  constructor(message) {
+  constructor(message: string) {
     super(message);
   }
 }
 
 class invalidArgumentTypes extends Error {
-  constructor(message) {
+  constructor(message: string) {
     super(message);
 
     this.name = this.constructor.name;
     // necessary?
     Error.captureStackTrace(this, this.constructor);
-
   }
 }
 
@@ -64,5 +66,5 @@ module.exports = {
   EmptyQueryError,
   NumParamsError,
   InappropriateStringParamError,
-  invalidArgumentTypes
+  invalidArgumentTypes,
 };
