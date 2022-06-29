@@ -1,14 +1,16 @@
-// const queryBuilder = require('../ksqldb/queryBuilder.js');
-const {
-  QueryBuilderError,
-  EmptyQueryError,
-  NumParamsError,
-  InappropriateStringParamError,
-} = require("../ksqldb/customErrors.js");
+const queryBuilder = require("../ksqldb/queryBuilder.ts");
+// const {
+//   QueryBuilderError,
+//   EmptyQueryError,
+//   NumParamsError,
+//   InappropriateStringParamError,
+// } = require("../ksqldb/customErrors.js");
+
+import { IqueryBuilder } from "../types";
 
 describe("Unit tests for query builder class", () => {
-  let builder;
-  let query;
+  let builder: IqueryBuilder;
+  let query: string;
 
   beforeAll((done) => {
     builder = new queryBuilder();
@@ -41,6 +43,7 @@ describe("Unit tests for query builder class", () => {
 
     it("throws an error if an object is passed in as a param", () => {
       expect(() => {
+        //@ts-ignore
         builder.build(query, 123, { middle: "size" });
       }).toThrow(QueryBuilderError);
     });
