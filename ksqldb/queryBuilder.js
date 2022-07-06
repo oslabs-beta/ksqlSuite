@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const { QueryBuilderError, EmptyQueryError, NumParamsError, InappropriateStringParamError, } = require("./customErrors.ts");
+const { QueryBuilderError, EmptyQueryError, NumParamsError, InappropriateStringParamError, } = require("./customErrors");
 class queryBuilder {
     constructor() {
         this.build = (query, ...params) => {

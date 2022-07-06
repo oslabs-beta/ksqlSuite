@@ -1,4 +1,4 @@
-const queryBuilder = require("../ksqldb/queryBuilder.ts");
+const queryBuilder = require("../ksqldb/queryBuilder");
 const {
   QueryBuilderError,
   EmptyQueryError,

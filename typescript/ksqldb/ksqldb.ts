@@ -1,9 +1,9 @@
 const axios = require("axios");
 const https = require("node:https");
 const http2 = require("http2");
-const { ksqlDBError } = require("./customErrors.ts");
-const validateInputs = require("./validateInputs.ts");
-const queryBuilder = require("./queryBuilder.ts");
+const { ksqlDBError } = require("./customErrors");
+const validateInputs = require("./validateInputs");
+const queryBuilder = require("./queryBuilder");
 const builder = new queryBuilder();
 import { Iksqldb, ksqlConfig, ksqlResponse } from "../types";
 import { Agent } from "node:https";
