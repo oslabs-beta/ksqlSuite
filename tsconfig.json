@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "outDir": "build",
+    "outDir": "",
     "watch": true,
     "module": "CommonJS",
     "lib": ["ES2021.String"],
@@ -11,5 +11,7 @@
     "allowJs": true,
     "moduleResolution": "node",
     "types": ["node", "jest"]
-  }
+  },
+  "include": ["./typescript/**/*"],
+  "exclude": ["./*.js", "./*.yaml", "./*.json"]
 }
