@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const queryBuilder = require("../ksqldb/queryBuilder");
-const { QueryBuilderError, EmptyQueryError, NumParamsError, InappropriateStringParamError, } = require("../ksqldb/customErrors");
+const { QueryBuilderError, EmptyQueryError, NumParamsError, InappropriateStringParamError, } = require("../ksqldb/customErrors.ts");
 describe("Unit tests for query builder class", () => {
     let builder;
     let query;
