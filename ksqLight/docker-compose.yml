@@ -2,6 +2,14 @@
 version: "3.2"
 
 services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - 9090:9090
+      - 8080:8080
+    volumes:
+      - ./prometheus/:/etc/prometheus/
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
     hostname: zookeeper
@@ -35,6 +43,7 @@ services:
     hostname: ksqldb-server
     container_name: ksqldb-server
     volumes:
+      - ./jmx_exporter:/usr/share/jmx_exporter/
       - type: bind
         source: ./
         target: /home/appuser
@@ -42,6 +51,7 @@ services:
       - broker
     ports:
       - "8088:8088"
+      - "1090:1099"
     environment:
       KSQL_LISTENERS: http://0.0.0.0:8088
       KSQL_BOOTSTRAP_SERVERS: broker:9092
@@ -59,7 +69,12 @@ services:
       # KSQL_SSL_KEY_PASSWORD: ${SSL_PASSWORD}
       KSQL_KSQL_HEARTBEAT_ENABLE: "true"
       KSQL_KSQL_LAG_REPORTING_ENABLE: "true"
-
+      KSQL_KSQL_PULL_METRICS_ENABLED: "true"
+      KSQL_JMX_OPTS: >
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Djava.util.logging.config.file=logging.properties
+        -javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-0.17.0.jar=7010:/usr/share/jmx_exporter/ksqldb.yml
   ksqldb-cli:
     image: confluentinc/ksqldb-cli:0.25.1
     container_name: ksqldb-cli
@@ -68,3 +83,19 @@ services:
       - ksqldb-server
     entrypoint: /bin/sh
     tty: true
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - 9090:9090
+      - 8080:8080
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+
+# Possible JMX OPT alternative?
+# -Djava.rmi.server.hostname=localhost
+# -Dcom.sun.management.jmxremote
+# -Dcom.sun.management.jmxremote.port=1099
+# -Dcom.sun.management.jmxremote.authenticate=false
+# -Dcom.sun.management.jmxremote.ssl=false
+# -Dcom.sun.management.jmxremote.rmi.port=1099docke

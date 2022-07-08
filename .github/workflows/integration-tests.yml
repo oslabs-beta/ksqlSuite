@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Start Containers
-        run: docker-compose -f "docker-compose.yml" up -d --build
+        run: docker-compose -f "./ksqljs/docker-compose.yml" up -d --build
       
       - name: Install node
         uses: actions/setup-node@v1
@@ -39,15 +39,15 @@ jobs:
           node-version: 16.x
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --prefix "./ksqljs"
 
       - name: Sleep for 30 seconds
         run: sleep 30s
         shell: bash
 
       - name: Run tests
-        run: npm run test
+        run: npm run test --prefix "./ksqljs"
 
       - name: Stop containers
         if: always()
-        run: docker-compose -f "docker-compose.yml" down
+        run: docker-compose -f "./ksqljs/docker-compose.yml" down
