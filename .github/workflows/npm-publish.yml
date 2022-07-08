@@ -8,9 +8,9 @@ jobs:
   publish-npm:
     runs-on: ubuntu-latest
     steps:
-      - uses: Bhacaz/checkout-files@v2
-        with:
-          files: ksqljs
+      - uses: actions/checkout@V3
+      - name: Change Directory 
+        working-directory: ./ksqljs
       - uses: actions/setup-node@v3
         with:
           node-version: 16
