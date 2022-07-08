@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with: 
-          repository: 'https://github.com/oslabs-beta/ksqljs/ksqljs'
+          repository: 'https://github.com/oslabs-beta/ksqljs/tree/master/ksqljs'
       - uses: actions/setup-node@v3
         with:
           node-version: 16
