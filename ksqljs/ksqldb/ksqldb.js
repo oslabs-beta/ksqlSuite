@@ -52,7 +52,7 @@ class ksqldb {
     validateInputs([query, 'string', 'query']);
 
     const validatedQuery = builder.build(query);
-    
+
     return axios
       .post(this.ksqldbURL + "/query-stream",
         {
@@ -70,7 +70,7 @@ class ksqldb {
         })
       .then((res) => res.data)
       .catch((error) => {
-        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error;
       });
   }
 
@@ -173,7 +173,7 @@ class ksqldb {
       })
       .then(res => res.data[0])
       .catch(error => {
-        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error;
       });
   }
 
@@ -191,7 +191,7 @@ class ksqldb {
     validateInputs([query, 'string', 'query']);
 
     const validatedQuery = builder.build(query);
-    
+
     return axios.post(this.ksqldbURL + '/ksql',
       {
         ksql: validatedQuery
@@ -208,7 +208,7 @@ class ksqldb {
       })
       .then(res => res.data[0])
       .catch(error => {
-        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error;
       });
   }
 
@@ -244,7 +244,7 @@ class ksqldb {
       httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
     })
       .catch(error => {
-        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error;
       });
   }
 
@@ -300,7 +300,7 @@ class ksqldb {
     })
       .then(res => res.data[0].commandStatus.queryId)
       .catch(error => {
-        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error;
       });
   }
 
@@ -340,7 +340,7 @@ class ksqldb {
         httpsAgent: this.httpsAgentAxios ? this.httpsAgentAxios : null,
       })
       .catch(error => {
-        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error;
       });
   }
 
@@ -397,9 +397,8 @@ class ksqldb {
         i += 2;
         conditionsArr.shift()
       }
-      conditionQuery = builder.build('??????', sqlClauses[0], sqlClauses[1], sqlClauses[2], sqlClauses[3], sqlClauses[4], sqlClauses[5]);
+      conditionQuery = builder.build(`${sqlClauses[0][0]}${sqlClauses[1][0]}????`, sqlClauses[2], sqlClauses[3], sqlClauses[4], sqlClauses[5]);
     }
-
 
     // reformat for builder
     tableName = [tableName];
@@ -408,7 +407,7 @@ class ksqldb {
     conditionQuery = [conditionQuery]
 
 
-    const query = builder.build(`CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? ?EMIT CHANGES;`, tableName, defaultProps.topic, defaultProps.value_format, defaultProps.partitions, selectColStr, source, conditionQuery)
+    const query = builder.build(`CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? ${conditionQuery} EMIT CHANGES;`, tableName, defaultProps.topic, defaultProps.value_format, defaultProps.partitions, selectColStr, source)
     return axios.post(this.ksqldbURL + '/ksql', { ksql: query }, {
       headers:
         this.API && this.secret ?
@@ -541,7 +540,7 @@ class ksqldb {
     return axios.get(this.ksqldbURL + `/status/${commandId}`)
       .then(response => response)
       .catch(error => {
-        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error; 
+        throw error.response?.data['@type'] ? new ksqlDBError(error.response.data) : error;
       });
   }
 
