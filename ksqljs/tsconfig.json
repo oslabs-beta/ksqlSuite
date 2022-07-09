@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "outDir": "./",
+    "watch": true,
+    "module": "CommonJS",
+    "lib": ["ES2021.String"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "types": ["node", "jest"]
+  },
+  "include": ["./typescript/**/*"],
+  "exclude": ["./*.js", "./*.yaml", "./*.json"]
+}

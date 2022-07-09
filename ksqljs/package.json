@@ -4,7 +4,8 @@
   "description": "Javascript KsqlDB client for Node.js",
   "main": "./ksqldb/ksqldb",
   "scripts": {
-    "test": "jest --verbose --forceExit"
+    "test": "jest --verbose --forceExit",
+    "jest-start": "ts-jest config:init"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,10 @@
     "axios": "^0.27.2"
   },
   "devDependencies": {
-    "jest": "^28.1.0"
+    "@types/jest": "^28.1.0",
+    "jest": "^28.1.0",
+    "ts-jest": "^28.0.4",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.3"
   }
 }
