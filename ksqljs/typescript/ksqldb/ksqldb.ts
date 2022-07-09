@@ -550,14 +550,15 @@ class ksqldb implements Iksqldb {
     // to recognize that the string should not include semi-colon
 
     const query = builder.build(
-      `CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? $(conditionQuery} EMIT CHANGES;`,
+      `CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? ${[
+        conditionQuery,
+      ]} EMIT CHANGES;`,
       [tableName],
       defaultProps.topic,
       defaultProps.value_format,
       defaultProps.partitions,
       [selectColStr],
-      [source],
-      [conditionQuery]
+      [source]
     );
     return axios
       .post(
