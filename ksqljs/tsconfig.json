@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "ES6",
     "outDir": "./",
     "watch": true,
     "module": "CommonJS",
@@ -13,5 +13,5 @@
     "types": ["node", "jest"]
   },
   "include": ["./typescript/**/*"],
-  "exclude": ["./*.js", "./*.yaml", "./*.json"]
+  "exclude": ["./*.js", "./*.yaml", "./*.json", "*/types.ts"]
 }

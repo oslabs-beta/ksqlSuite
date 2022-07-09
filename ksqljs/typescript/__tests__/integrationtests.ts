@@ -13,7 +13,6 @@ need to be removed first.
 // Steps to starting the ksqldb server can be found here: (https://ksqldb.io/quickstart.html)
 // Once the ksqlDB server is running, tests can be run with terminal line: (npm test)
 let client: Iksqldb;
-jest.setTimeout(30000);
 
 describe("--Integration Tests--", () => {
   describe("--Method Tests--", () => {
@@ -77,7 +76,7 @@ describe("--Integration Tests--", () => {
         async (chunk: string) => {
           data.push(JSON.parse(chunk));
           if (data[1]) {
-            client.terminate(data[0].queryId);
+            client.terminate(data[0].queryId!);
             expect(data[1]).toEqual(["stab-rabbit", "123@mail.com", 100]);
           }
         }

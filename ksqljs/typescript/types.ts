@@ -45,7 +45,7 @@ export interface Iksqldb {
     tableName: string | string[],
     source: string | string[],
     selectArray: string[],
-    propertiesObj: object,
+    propertiesObj: { topic?: string },
     conditionsObj: { WHERE?: string; GROUP_BY?: string; HAVING?: string }
   ) => Promise<[]>;
   insertStream: (stream: string, rows: object[]) => Promise<string[]>;
