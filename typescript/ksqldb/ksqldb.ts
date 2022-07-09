@@ -538,9 +538,7 @@ class ksqldb implements Iksqldb {
         conditionsArr.shift();
       }
       conditionQuery = builder.build(
-        "??????",
-        sqlClauses[0],
-        sqlClauses[1],
+        `${sqlClauses[0][0]}${sqlClauses[1][0]}????`,
         sqlClauses[2],
         sqlClauses[3],
         sqlClauses[4],
@@ -552,7 +550,7 @@ class ksqldb implements Iksqldb {
     // to recognize that the string should not include semi-colon
 
     const query = builder.build(
-      `CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? ?EMIT CHANGES;`,
+      `CREATE TABLE ? WITH (kafka_topic=?, value_format=?, partitions=?) AS SELECT ? FROM ? $(conditionQuery} EMIT CHANGES;`,
       [tableName],
       defaultProps.topic,
       defaultProps.value_format,
