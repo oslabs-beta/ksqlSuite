@@ -397,7 +397,7 @@ class ksqldb {
         i += 2;
         conditionsArr.shift()
       }
-      conditionQuery = builder.build(`${sqlClauses[0][0]}${sqlClauses[1][0]}????`, sqlClauses[2], sqlClauses[3], sqlClauses[4], sqlClauses[5]);
+      conditionQuery = builder.build(`${sqlClauses[0][0]}${sqlClauses[1][0]}??${sqlClauses[4][0]}${sqlClauses[5][0]}`, sqlClauses[2], sqlClauses[3]);
     }
 
     // reformat for builder
