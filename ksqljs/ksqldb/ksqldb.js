@@ -9,16 +9,16 @@ const builder = new queryBuilder();
 class ksqldb {
   /**
    * Constructor
-   * @param {object} config 
-   * 
-   * Config object can have these properties 
-   * 
+   * @param {object} config
+   *
+   * Config object can have these properties
+   *
    * ksqldbURL: Connection URL or address
-   * 
+   *
    * API: Username or API key for basic authentication
-   * 
+   *
    * secret: Password or secret for basic authentication
-   * 
+   *
    * httpsAgent: httpsAgent for setting TLS properties
    */
   constructor(config) {
@@ -249,7 +249,7 @@ class ksqldb {
   }
 
   /**
-   * 
+   *
    * @param {string} streamName - the name of the stream to be created
    * @param {string[]} selectColumns - the columns from the underlying stream to be included in the new materialized stream
    * @param {string} sourceStream - the underlying stream from which the new materialized stream will be created
@@ -347,12 +347,12 @@ class ksqldb {
   //---------------------Create tables as select-----------------
   /**
    * Execute a query to create a new materialized table view of an existing table or stream
-   * 
+   *
    * <p>This method is used to create a materialized table view
-   * 
+   *
    * <p>This method is sql injection protected with the use of queryBuilder.
-   * 
-   * @param {string} tableName name of the table to be created 
+   *
+   * @param {string} tableName name of the table to be created
    * @param {string} source name of the source stream / table materialized view is based on
    * @param {array} selectArray an array that contains the values (strings, aggregate functions) of the columns for the materialized view table
    * @param {object} propertiesObj an object containing key value pairs for supported table properties e.g {topic: 'myTopic', value_format: 'json', partitions: '1'}. {} for default values
@@ -365,7 +365,7 @@ class ksqldb {
     let selectColStr = selectArray.reduce((result, current) => result + ', ' + current);
 
     // expect user to input properties object of format {topic: ... , value_format: ..., partitions: ...}
-    // check for properties object, look for properties, if any are missing assign it a default value, if there's no property 
+    // check for properties object, look for properties, if any are missing assign it a default value, if there's no property
     const defaultProps = {
       topic: tableName,
       value_format: 'json',
@@ -397,7 +397,7 @@ class ksqldb {
         i += 2;
         conditionsArr.shift()
       }
-      conditionQuery = builder.build(`${sqlClauses[0][0]}${sqlClauses[1][0]}????`, sqlClauses[2], sqlClauses[3], sqlClauses[4], sqlClauses[5]);
+      conditionQuery = builder.build(`${sqlClauses[0][0]}${sqlClauses[1][0]}??${sqlClauses[4][0]}${sqlClauses[5][0]}`, sqlClauses[2], sqlClauses[3]);
     }
 
     // reformat for builder
