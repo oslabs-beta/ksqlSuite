@@ -1,23 +1,22 @@
-
-import './App.css';
+import React from "react";
+import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Header } from "./components/Header.js";
+import { Homepage } from "./components/Homepage.js";
+import { Settings } from "./components/Settings.js";
 
 function App() {
+  const [fetchMetrics, setFetchMetrics] = useState(true);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="github-link"
-          href="https://github.com/oslabs-beta/ksqljs/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Check our Github!
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Header fetchMetrics={fetchMetrics} setFetchMetrics={setFetchMetrics}/>
+      <Routes>
+        <Route path="/" element={<Homepage/>}/>
+        <Route path="/settings" element={<Settings/>}/>
+      </Routes>
+    </BrowserRouter>
+    
   );
 }
 
