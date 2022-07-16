@@ -1,8 +1,210 @@
 import React from "react";
+import clsx from "clsx";
+import { useState } from "react";
+import { TextField, Typography, MenuItem, Select, Drawer, Toolbar } from "@mui/material";
 
-export const Settings = () => {
+export const SettingsSidebar = ({ showSettings }) => {
+  const [timeWindowDays, setTimeWindowDays] = useState(0);
+  const [timeWindowHours, setTimeWindowHours] = useState(1);
+  const [timeWindowMinutes, setTimeWindowMinutes] = useState(30);
+  const [refreshRateHours, setRefreshRateHours] = useState(0);
+  const [refreshRateMinutes, setRefreshRateMinutes] = useState(0);
+  const [refreshRateSeconds, setRefreshRateSeconds] = useState(10);
+
+  const handleTimeWindowDays = (event) => {
+    setTimeWindowDays(event.target.value);
+  }
+  const handleTimeWindowHours = (event) => {
+    setTimeWindowHours(event.target.value);
+  }
+  const handleTimeWindowMinutes = (event) => {
+    setTimeWindowMinutes(event.target.value);
+  }
+  const handleRefreshRateHours = (event) => {
+    setRefreshRateHours(event.target.value);
+  }
+  const handleRefreshRateMinutes = (event) => {
+    setRefreshRateMinutes(event.target.value);
+  }
+  const handleRefreshRateSeconds = (event) => {
+    setRefreshRateSeconds(event.target.value);
+  }
+
   return(
+    <Drawer variant="temporary" anchor="right" open={showSettings}>
+      <Toolbar></Toolbar>
     <div className="flex-1 w-full header-viewport bg-slate-800 p-4">
+      <form noValidate autoComplete="off">
+          <Typography variant="h5">Prometheus Connection</Typography>
+            <hr className="w-full mb-3 mt-1"></hr>
+          <TextField
+            variant="outlined"
+            label="Host URL"
+          />
+          <hr className="w-full invisible mb-2 mt-2"></hr>
+          <Typography variant="h5">ksqlDB Connection</Typography>
+          <hr className="w-full mb-3 mt-1"></hr>
+          <TextField
+            variant="outlined"
+            label="Host URL"
+          />
+          <hr className="w-full invisible mb-2 mt-2"></hr>
+          <Typography variant="h5">Time Window</Typography>
+          <hr className="w-full mb-3 mt-1"></hr>
+          <Select
+            id="time-window-days"
+            value={timeWindowDays}
+            label="Days"
+            onChange={handleTimeWindowDays}
+
+          >
+            <MenuItem value={0}>0</MenuItem>
+            <MenuItem value={1}>1</MenuItem>
+            <MenuItem value={2}>3</MenuItem>
+            <MenuItem value={4}>4</MenuItem>
+            <MenuItem value={5}>5</MenuItem>
+            <MenuItem value={6}>6</MenuItem>
+            <MenuItem value={7}>7</MenuItem>
+            <MenuItem value={8}>8</MenuItem>
+            <MenuItem value={9}>9</MenuItem>
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={11}>11</MenuItem>
+            <MenuItem value={12}>12</MenuItem>
+            <MenuItem value={13}>13</MenuItem>
+            <MenuItem value={14}>14</MenuItem>
+            <MenuItem value={15}>15</MenuItem>
+          </Select>
+          <Select
+            id="time-window-hours"
+            value={timeWindowHours}
+            label="Hours"
+            onChange={handleTimeWindowHours}
+            autoWidth
+          >
+            <MenuItem value={0}>0</MenuItem>
+            <MenuItem value={1}>1</MenuItem>
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={3}>3</MenuItem>
+            <MenuItem value={4}>4</MenuItem>
+            <MenuItem value={5}>5</MenuItem>
+            <MenuItem value={6}>6</MenuItem>
+            <MenuItem value={7}>7</MenuItem>
+            <MenuItem value={8}>8</MenuItem>
+            <MenuItem value={9}>9</MenuItem>
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={11}>11</MenuItem>
+            <MenuItem value={12}>12</MenuItem>
+            <MenuItem value={13}>13</MenuItem>
+            <MenuItem value={14}>14</MenuItem>
+            <MenuItem value={15}>15</MenuItem>
+            <MenuItem value={16}>16</MenuItem>
+            <MenuItem value={17}>17</MenuItem>
+            <MenuItem value={18}>18</MenuItem>
+            <MenuItem value={19}>19</MenuItem>
+            <MenuItem value={20}>20</MenuItem>
+            <MenuItem value={21}>21</MenuItem>
+            <MenuItem value={22}>22</MenuItem>
+            <MenuItem value={23}>23</MenuItem>
+          </Select>
+          <Select
+            id="time-window-minutes"
+            value={timeWindowMinutes}
+            label="Minutes"
+            onChange={handleTimeWindowMinutes}
+            autoWidth
+          >
+            <MenuItem value={0}>0</MenuItem>
+            <MenuItem value={5}>5</MenuItem>
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={15}>15</MenuItem>
+            <MenuItem value={20}>20</MenuItem>
+            <MenuItem value={25}>25</MenuItem>
+            <MenuItem value={30}>30</MenuItem>
+            <MenuItem value={35}>35</MenuItem>
+            <MenuItem value={40}>40</MenuItem>
+            <MenuItem value={45}>45</MenuItem>
+            <MenuItem value={50}>50</MenuItem>
+            <MenuItem value={55}>55</MenuItem>
+          </Select>
+          <hr className="w-full invisible mb-2 mt-2"></hr>
+          <Typography variant="h5">Refresh Rate</Typography>
+          <hr className="w-full mb-3 mt-1"></hr>
+          <Select
+            id="refresh-rate-hours"
+            value={refreshRateHours}
+            label="Hours"
+            onChange={handleRefreshRateHours}
+            autoWidth
+          >
+            <MenuItem value={0}>0</MenuItem>
+            <MenuItem value={1}>1</MenuItem>
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={3}>3</MenuItem>
+            <MenuItem value={4}>4</MenuItem>
+            <MenuItem value={5}>5</MenuItem>
+            <MenuItem value={6}>6</MenuItem>
+            <MenuItem value={7}>7</MenuItem>
+            <MenuItem value={8}>8</MenuItem>
+            <MenuItem value={9}>9</MenuItem>
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={11}>11</MenuItem>
+            <MenuItem value={12}>12</MenuItem>
+            <MenuItem value={13}>13</MenuItem>
+            <MenuItem value={14}>14</MenuItem>
+            <MenuItem value={15}>15</MenuItem>
+            <MenuItem value={16}>16</MenuItem>
+            <MenuItem value={17}>17</MenuItem>
+            <MenuItem value={18}>18</MenuItem>
+            <MenuItem value={19}>19</MenuItem>
+            <MenuItem value={20}>20</MenuItem>
+            <MenuItem value={21}>21</MenuItem>
+            <MenuItem value={22}>22</MenuItem>
+            <MenuItem value={23}>23</MenuItem>
+          </Select>
+          <Select
+            id="refresh-rate-minutes"
+            value={refreshRateMinutes}
+            label="Minutes"
+            onChange={handleRefreshRateMinutes}
+            autoWidth
+          >
+            <MenuItem value={0}>0</MenuItem>
+            <MenuItem value={1}>1</MenuItem>
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={3}>3</MenuItem>
+            <MenuItem value={4}>4</MenuItem>
+            <MenuItem value={5}>5</MenuItem>
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={15}>15</MenuItem>
+            <MenuItem value={30}>30</MenuItem>
+            <MenuItem value={45}>45</MenuItem>
+          </Select>
+          <Select
+            id="refresh-rate-seconds"
+            value={refreshRateSeconds}
+            label="Seconds"
+            onChange={handleRefreshRateSeconds}
+            autoWidth
+          >
+            <MenuItem value={0}>0</MenuItem>
+            <MenuItem value={1}>1</MenuItem>
+            <MenuItem value={2}>2</MenuItem>
+            <MenuItem value={3}>3</MenuItem>
+            <MenuItem value={4}>4</MenuItem>
+            <MenuItem value={5}>5</MenuItem>
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={15}>15</MenuItem>
+            <MenuItem value={30}>30</MenuItem>
+            <MenuItem value={45}>45</MenuItem>
+          </Select>
+      </form>
+    </div>
+    </Drawer>
+  )
+}
+
+// eslint-disable-next-line no-lone-blocks
+{/* <div className="flex-1 w-full header-viewport bg-slate-800 p-4">
       <form>
         <div className="mb-6">
           <div className="text-white text-2xl font-mono font-medium p-2">Prometheus Connection</div>
@@ -91,7 +293,7 @@ export const Settings = () => {
           </div>
         </div>
         </div>
-        {/* split */}
+
         <div className="mb-6 ">
         <hr className="w-1/3"></hr>
           <div className="text-white text-2xl font-mono font-medium py-2">Refresh Rate</div>
@@ -159,47 +361,9 @@ export const Settings = () => {
         </div><br></br>
           <hr className="w-1/3"></hr>
         </div>
-        {/* split */}
+
         <div className="mb-6 ">
           <button type="submit" className="text-white bg-cyan-700 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
         </div>
       </form>
-    </div>
-  )
-}
-
-// eslint-disable-next-line no-lone-blocks
-{/* <div className="overflow-x-auto">
-<table className="table-auto w-full rounded-3xl border-slate-600 border-solid border-4 border-spacing-1">
-  <tbody>
-     <tr className=" hover:bg-gray-50">
-        <td className="p-4">
-          Host
-        </td>
-        <td className="p-4">
-          <input type="text" id="fname" name="fname"/>
-        </td>
-     </tr>
-  </tbody>
-</table>
-</div> */}
-
-// eslint-disable-next-line no-lone-blocks
-{/* <div className="flex-1 w-full header-viewport bg-slate-800 p-4">
-      <div className="text-white text-xl p-4">Prometheus Connection</div>
-      <label className="bg-slate-500 text-left text-white box-border h-4 w-4 border-l-4 border-y-4 p-2 rounded-l-lg" for="promHost">Host</label>
-      <input className="text-left " type="url" placeholder="http://localhost:9090/"></input><br></br>
-
-      <div className="text-white text-xl p-4">ksqlDB Connection</div>
-      <label className="text-left text-white p-4" for="promHost">Host</label>
-      <input className="text-left " type="url" placeholder="http://localhost:8088/"></input><br></br>
     </div> */}
-
-    // <label for="timeWindow" className="pl-8 p-2 mb-2 text-left text-md font-medium text-white">Days</label>
-    //         <select id="timeWindow" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-    //           <option selected>Choose a country</option>
-    //           <option value="US">United States</option>
-    //           <option value="CA">Canada</option>
-    //           <option value="FR">France</option>
-    //           <option value="DE">Germany</option>
-    //         </select>

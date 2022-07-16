@@ -1,9 +1,14 @@
 import React from "react";
+import { Typography, Drawer, Toolbar } from "@mui/material";
+import { SettingsSidebar } from "./SettingsSidebar.js";
 
 export const Homepage = () => {
+
   return (
-    <nav className="flex-1 w-full header-viewport bg-slate-800">
-      <div className="text-white">Homepage</div>
-    </nav>
+    <div>
+      <Toolbar></Toolbar>
+      <Typography color="primary">Homepage</Typography>
+    </div>
+
   )
 }
