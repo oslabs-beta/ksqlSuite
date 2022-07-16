@@ -8,7 +8,7 @@ import { Drawer, CssBaseline } from "@mui/material";
 
 function App() {
   const [fetchMetrics, setFetchMetrics] = useState(true);
-  const [showSettings, setShowSettings] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
 
   return (
     <BrowserRouter>
