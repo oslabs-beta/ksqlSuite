@@ -32,7 +32,6 @@ export const SettingsSidebar = ({ showSettings }) => {
 
   return(
     <Drawer variant="temporary" anchor="right" open={showSettings}>
-      <Toolbar></Toolbar>
     <div className="flex-1 w-full header-viewport bg-slate-800 p-4">
       <form noValidate autoComplete="off">
           <Typography variant="h5">Prometheus Connection</Typography>
