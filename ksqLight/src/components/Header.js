@@ -1,33 +1,38 @@
 import React from "react";
+import { Typography, createTheme, Toolbar, AppBar, IconButton } from "@mui/material";
+import SettingsIcon from '@mui/icons-material/Settings';
+import SyncIcon from '@mui/icons-material/Sync';
+import ArticleIcon from '@mui/icons-material/Article';
 import { useNavigate } from "react-router-dom";
-import { Typography, createTheme, Toolbar, AppBar } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-// import { styled } from "@mui/styles";
-
-// const useStyles = makeStyles(() => {
-//   return ({
-//     appBar: {
-//       zIndex: (theme) => theme.zIndex.drawer + 1
-//     }
-//   })
-// })
 
 export const Header = ({ fetchMetrics, setFetchMetrics, showSettings, setShowSettings }) => {
-  let navigate = useNavigate();
-
+  const navigate = useNavigate();
   const ksqLightTheme = createTheme({
     typography:{
       fontFamily: 'Raleway'
     }
   })
-  // const theme = useTheme();
-  // const classes = useStyles(theme);
+  const navGithub = () => {
+    window.open(
+    "https://github.com/oslabs-beta/ksqljs/", "_blank");
+  }
+  const navHome = () => {
+    navigate("/");
+  }
 
   return (
-    
-    <AppBar position="fixed" >
-      <Toolbar>
-        <Typography theme={ksqLightTheme} variant="h3">ksqLight</Typography>
+    <AppBar position="fixed" sx={{ zIndex:"snackbar" }} >
+      <Toolbar className="bg-gradient-to-r h-16 from-cyan-700 to-sky-700 background-animate">
+        <Typography onClick={navHome} theme={ksqLightTheme} variant="h3" sx={{ flexGrow: 1 }}>ksqLight</Typography>
+        <IconButton aria-label="Documentation" onClick={() => {navGithub()}}>
+          <ArticleIcon/>
+        </IconButton>
+        <IconButton aria-label="Refresh">
+          <SyncIcon/>
+        </IconButton>
+        <IconButton aria-label="Hide" sx={{ pr: 0 }} onClick={() => setShowSettings(!showSettings)}>
+          <SettingsIcon/>
+        </IconButton>
       </Toolbar>
     </AppBar>
   )
