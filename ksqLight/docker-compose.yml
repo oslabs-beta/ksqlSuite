@@ -2,14 +2,14 @@
 version: "3.2"
 
 services:
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    ports:
-      - 9090:9090
-      - 8080:8080
-    volumes:
-      - ./prometheus/:/etc/prometheus/
+  # prometheus:
+  #   image: prom/prometheus
+  #   container_name: prometheus
+  #   ports:
+  #     - 9090:9090
+  #     - 8080:8080
+  #   volumes:
+  #     - ./prometheus/:/etc/prometheus/
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
     hostname: zookeeper
@@ -91,7 +91,6 @@ services:
       - 8080:8080
     volumes:
       - ./prometheus/:/etc/prometheus/
-
 # Possible JMX OPT alternative?
 # -Djava.rmi.server.hostname=localhost
 # -Dcom.sun.management.jmxremote
