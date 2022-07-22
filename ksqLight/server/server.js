@@ -27,11 +27,11 @@ const RealTimeType = new GraphQLObjectType({
     fields: () => ({
         x: {
             type: GraphQLInt,
-            resolve: (parent, args, context) => parent[0]
+            resolve: (parent) => parent[0]
         },
         y: {
             type: GraphQLString,
-            resolve: (parent, args, context) => parent[1]
+            resolve: (parent) => parent[1]
         }
     })
 })
