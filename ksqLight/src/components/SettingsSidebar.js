@@ -1,9 +1,10 @@
 import React from "react";
-import clsx from "clsx";
 import { useState } from "react";
-import { TextField, Typography, MenuItem, Select, Drawer, Toolbar } from "@mui/material";
+import { TextField, Typography, MenuItem, Select, Drawer, IconButton } from "@mui/material"
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+;
 
-export const SettingsSidebar = ({ showSettings }) => {
+export const SettingsSidebar = ({ showSettings, setShowSettings }) => {
   const [timeWindowDays, setTimeWindowDays] = useState(0);
   const [timeWindowHours, setTimeWindowHours] = useState(1);
   const [timeWindowMinutes, setTimeWindowMinutes] = useState(30);
@@ -31,9 +32,12 @@ export const SettingsSidebar = ({ showSettings }) => {
   }
 
   return(
-    <Drawer variant="temporary" anchor="right" open={showSettings}>
+    <Drawer variant="temporary" anchor="right" open={showSettings} sx={{ zIndex:"tooltip" }}>
     <div className="flex-1 w-full header-viewport bg-slate-800 p-4">
       <form noValidate autoComplete="off">
+        <IconButton aria-label="Hide" onClick={() => setShowSettings(!showSettings)}>
+          <ArrowBackIosNewIcon/>
+        </IconButton>
           <Typography variant="h5">Prometheus Connection</Typography>
             <hr className="w-full mb-3 mt-1"></hr>
           <TextField
