@@ -10,7 +10,11 @@ function createWindow () {
       enableRemoteModule: true,
     }
   })
-  win.loadURL("http://localhost:3000")
+
+  // open dev tools
+  win.webContents.openDevTools();
+
+  win.loadURL("http://localhost:3000");
 }
 
 app.on('ready', createWindow);
