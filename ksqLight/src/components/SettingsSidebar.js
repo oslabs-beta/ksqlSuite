@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { TextField, Typography, MenuItem, Select, Drawer, IconButton } from "@mui/material"
+import { TextField, Typography, MenuItem, Select, Drawer, IconButton, Container } from "@mui/material"
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 ;
 
@@ -31,15 +31,15 @@ export const SettingsSidebar = ({ showSettings, setShowSettings }) => {
     setRefreshRateSeconds(event.target.value);
   }
 
-  return(
-    <Drawer variant="temporary" anchor="right" open={showSettings} sx={{ zIndex:"tooltip" }}>
-    <div className="flex-1 w-full header-viewport bg-slate-800 p-4">
-      <form noValidate autoComplete="off">
-        <IconButton aria-label="Hide" onClick={() => setShowSettings(!showSettings)}>
-          <ArrowBackIosNewIcon/>
-        </IconButton>
+  return (
+    <Drawer variant="temporary" anchor="right" open={showSettings} sx={{ zIndex: "tooltip" }}>
+      <div className="flex-1 w-full header-viewport bg-slate-800 p-4">
+        <form noValidate autoComplete="off">
+          <IconButton aria-label="Hide" onClick={() => setShowSettings(!showSettings)}>
+            <ArrowBackIosNewIcon />
+          </IconButton>
           <Typography variant="h5">Prometheus Connection</Typography>
-            <hr className="w-full mb-3 mt-1"></hr>
+          <hr className="w-full mb-3 mt-1"></hr>
           <TextField
             variant="outlined"
             label="Host URL"
@@ -200,8 +200,8 @@ export const SettingsSidebar = ({ showSettings, setShowSettings }) => {
             <MenuItem value={30}>30</MenuItem>
             <MenuItem value={45}>45</MenuItem>
           </Select>
-      </form>
-    </div>
+        </form>
+      </div>
     </Drawer>
   )
 }
@@ -223,7 +223,7 @@ export const SettingsSidebar = ({ showSettings, setShowSettings }) => {
         <div className="mb-6">
           <hr className="w-1/3"></hr>
           <div className="text-white text-2xl font-mono font-medium p-2">Time Window</div>
-          
+
         <div className="flex justify-left pl-6">
           <div className="">
             <label htmlFor="days" className="text-mono text-white flex justify-center">Days</label>
@@ -300,7 +300,7 @@ export const SettingsSidebar = ({ showSettings, setShowSettings }) => {
         <div className="mb-6 ">
         <hr className="w-1/3"></hr>
           <div className="text-white text-2xl font-mono font-medium py-2">Refresh Rate</div>
-          
+
         <div className="flex justify-left pl-6">
           <div className="">
             <label htmlFor="refreshHours" className="text-mono text-white flex justify-center">Hours</label>

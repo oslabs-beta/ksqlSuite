@@ -45,15 +45,15 @@ const RootQueryType = new GraphQLObjectType({
             type: new GraphQLList(RealTimeType),
             description: 'ksqlDB Metric',
             args: {
-                metric: { type: GraphQLNonNull(GraphQLString)},
-                start: { type: GraphQLNonNull(GraphQLInt)},
-                end: { type: GraphQLNonNull(GraphQLInt)},
-                resolution: { type: GraphQLNonNull(GraphQLInt)}
+                metric: { type: GraphQLNonNull(GraphQLString) },
+                start: { type: GraphQLNonNull(GraphQLInt) },
+                end: { type: GraphQLNonNull(GraphQLInt) },
+                resolution: { type: GraphQLNonNull(GraphQLInt) }
             },
-            resolve: (parent, {start, end, resolution, metric}) => {
+            resolve: (parent, { start, end, resolution, metric }) => {
                 return axios.get(`http://localhost:9090/api/v1/query_range?step=${resolution}s&end=${end}&start=${start}&query=${queryTypes[metric]}`)
-                .then(res => res.data.data.result[0].values)
-                .catch(error => error);
+                    .then(res => res.data.data.result[0].values)
+                    .catch(error => error);
             }
         }
     })
@@ -68,4 +68,4 @@ app.use('/graphql', graphqlHTTP({
     graphiql: true
 }));
 
-app.listen(5000, () => console.log('Server Running...'));
+app.listen(5001, () => console.log('Server Running...'));

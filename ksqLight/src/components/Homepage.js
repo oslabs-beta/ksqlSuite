@@ -1,12 +1,38 @@
 import React from "react";
 import { useState } from "react";
-import { Typography, Grid, Toolbar } from "@mui/material";
+import { Typography, Grid, Toolbar, Container, CssBaseline } from "@mui/material";
 import { Chart } from "./Chart.js";
 import LineChart from "./LineChart.js";
+import { LivenessCard } from "./LivenessCard.js";
 
-export const Homepage = () => {
+export const Homepage = ({ showQueries, showMessages, showErrors }) => {
   const [content, setContent] = useState('Chart placeholder');
 
+  const queriesCharts = [
+    ["runningQueries", "Number of Running Queries"],
+    ["createdQueries", "Number of Created Queries"],
+    ["numPersistentQueries", "Number of Persistent Queries"],
+    ["numIdleQueries", "Number of Idle Queries"],
+    ["rebalancingQueries", "Number of Rebalancing Queries"],
+    ["numActiveQueries", "Number of Active Queries"],
+    ["notRunningQueries", "Number of Not Running Queries"],
+    ["pendingShutdownQueries", "Number of Pending Shutdown Queries"],
+  ];
+
+  const messagesCharts = [
+    ["messagesConsumedTotal", "Number of Messages Consumed"],
+    ["messagesProducedPerSec", "Number of Messages Produced Per Second"],
+    ["messagesConsumedPerSec", "Number of Messages Consumed Per Second"],
+    ["messagesConsumedMin", "Number of Messages Consumed Min"],
+    ["messagesConsumedMax", "Number of Messages Consumed Max"],
+    ["messagesConsumedAvg", "Number of Messages Consumed Average"],
+  ];
+
+  const errorCharts = [
+    ["errorRate", "Error Rate"],
+    ["errorQueries", "Number of Error Queries"],
+    ["pendingErrorQueries", "Number of Pending Error Queries"],
+  ]
   const queryTypes = [
     ["runningQueries", "Number of Running Queries"],
     ["rebalancingQueries", "Number of Rebalancing Queries"],
@@ -22,7 +48,7 @@ export const Homepage = () => {
     ["messagesConsumedMin", "Number of Messages Consumed Min"],
     ["messagesConsumedMax", "Number of Messages Consumed Max"],
     ["messagesConsumedAvg", "Number of Messages Consumed Average"],
-    ["livenessIndicator", "Liveness Indicator"],
+    // ["livenessIndicator", "Liveness Indicator"],
     ["errorRate", "Error Rate"],
     ["errorQueries", "Number of Error Queries"],
     ["createdQueries", "Number of Created Queries"],
@@ -30,13 +56,46 @@ export const Homepage = () => {
   ];
 
   return (
-    <div>
-      <Toolbar></Toolbar>
-      <Typography color="primary">Homepage</Typography>
-      <Grid container spacing={2} justifyContent="flex-start" alignItems="flex-start" sx={{ pl: 28 }}>
-        {queryTypes.map(([query, description], index) => <LineChart description={description} metric={query} key={index}/>)}
+    <Container disableGutters style={{
+      backgroundColor: "rgb(249, 250, 251)",
+      width: 'auto',
+      height: 'auto', // changed this from auto
+      marginBottom: "-2000px", /* any large number will do */
+      paddingBottom: "2000px",
+      px: 1
+    }}>
+      <CssBaseline />
+      {/* <Toolbar></Toolbar> */}
+      <Typography color="primary">Hi Welcome back</Typography>
+      <Grid container spacing={4} sx={{ display: 'flex', flexDirection: "row", p: 3 }}>
+        <Grid item xs={4} md={4} lg={4}>
+          <LivenessCard />
+        </Grid>
+        <Grid item xs={4} md={4} lg={4}>
+          <LivenessCard />
+        </Grid>
+        <Grid item xs={4} md={4} lg={4}>
+          <LivenessCard />
+        </Grid>
       </Grid>
-    </div>
 
+      <Grid container spacing={2.5} sx={{}}>
+        {showQueries &&
+          queriesCharts.map(([query, description], index) =>
+            <LineChart description={description} metric={query} key={index} />)
+        }
+        {showMessages &&
+          messagesCharts.map(([query, description], index) =>
+            <LineChart description={description} metric={query} key={index} />
+          )
+        }
+        {showErrors &&
+          errorCharts.map(([query, description], index) =>
+            <LineChart description={description} metric={query} key={index} />
+          )
+        }
+        {/* {queryTypes.map(([query, description], index) => <LineChart description={description} metric={query} key={index} />)} */}
+      </Grid>
+    </Container>
   )
 }

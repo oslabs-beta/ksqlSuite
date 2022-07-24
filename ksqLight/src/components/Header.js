@@ -8,33 +8,33 @@ import { useNavigate } from "react-router-dom";
 export const Header = ({ fetchMetrics, setFetchMetrics, showSettings, setShowSettings }) => {
   const navigate = useNavigate();
   const ksqLightTheme = createTheme({
-    typography:{
+    typography: {
       fontFamily: 'Raleway'
     }
   })
   const navGithub = () => {
     window.open(
-    "https://github.com/oslabs-beta/ksqljs/", "_blank");
+      "https://github.com/oslabs-beta/ksqljs/", "_blank");
   }
   const navHome = () => {
     navigate("/");
   }
 
   return (
-    <AppBar position="fixed" sx={{ zIndex:"snackbar" }} >
-      <Toolbar className="bg-gradient-to-r h-16 from-cyan-700 to-sky-700 background-animate">
+    <AppBar position='sticky' sx={{}} >
+      <Toolbar disableGutters className="bg-gradient-to-r h-16 from-cyan-700 to-sky-700 background-animate">
         <Typography onClick={navHome} theme={ksqLightTheme} variant="h3" sx={{ flexGrow: 1 }}>ksqLight</Typography>
-        <IconButton aria-label="Documentation" onClick={() => {navGithub()}}>
-          <ArticleIcon/>
+        <IconButton aria-label="Documentation" onClick={() => { navGithub() }}>
+          <ArticleIcon />
         </IconButton>
         <IconButton aria-label="Refresh">
-          <SyncIcon/>
+          <SyncIcon />
         </IconButton>
         <IconButton aria-label="Hide" sx={{ pr: 0 }} onClick={() => setShowSettings(!showSettings)}>
-          <SettingsIcon/>
+          <SettingsIcon />
         </IconButton>
       </Toolbar>
-    </AppBar>
+    </AppBar >
   )
 }
 
@@ -79,7 +79,7 @@ export const Header = ({ fetchMetrics, setFetchMetrics, showSettings, setShowSet
   // const navHomepage = () => {
   //   navigate("/")
   // }
-  
+
   // const playButtonSVG = () => {
   //   return(<svg className="h-5 w-5" viewBox="0 0 18 18" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM9.555 7.168A1 1 0 0 0 8 8v4a1 1 0 0 0 1.555.832l3-2a1 1 0 0 0 0-1.664l-3-2z" clipRule="evenodd"/></svg>)
   // }
