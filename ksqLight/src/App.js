@@ -6,7 +6,7 @@ import { Homepage } from "./components/Homepage.js";
 import { SettingsSidebar } from "./components/SettingsSidebar.js";
 import { PermanentDrawer } from "./components/PermanentDrawer.js";
 import { QueryPage } from "./components/QueryPage.js";
-import { CssBaseline, Container, Box } from "@mui/material";
+import { Box } from "@mui/material";
 
 function App() {
   const [fetchMetrics, setFetchMetrics] = useState(true);
