@@ -11,12 +11,35 @@ import { CssBaseline } from "@mui/material";
 function App() {
   const [fetchMetrics, setFetchMetrics] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
+  const [duration, setDuration] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 10
+  });
+  const [refreshRate, setRefreshRate] = useState(2);
+  const [prometheusURL, setPrometheusURL] = useState(null);
+  const [ksqlDBURL, setksqlDBURL] = useState(null);
+  const [metricsState, setMetricsState] = useState({
+    prometheusURL: null,
+    ksqlDBURL: null,
+    duration: {
+      days: 0,
+      hours: 0,
+      minutes: 10
+    },
+    refreshRate: 2
+  });
 
   return (
     <BrowserRouter>
       <CssBaseline/>
       <Header fetchMetrics={fetchMetrics} setFetchMetrics={setFetchMetrics} showSettings={showSettings} setShowSettings={setShowSettings}/>
-      <SettingsSidebar showSettings={showSettings} setShowSettings={setShowSettings}></SettingsSidebar>
+      <SettingsSidebar 
+        showSettings={showSettings} 
+        setShowSettings={setShowSettings} 
+        metricsState={metricsState}
+        setMetricsState={setMetricsState}>
+      </SettingsSidebar>
       <PermanentDrawer></PermanentDrawer>
       <Routes>
         <Route path="/" element={<Homepage/>}/>
