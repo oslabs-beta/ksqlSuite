@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Typography, Grid, Toolbar } from "@mui/material";
+import { Typography, Grid, Toolbar, Container, CssBaseline, Box } from "@mui/material";
 import { Chart } from "./Chart.js";
 import LineChart from "./LineChart.js";
 
@@ -30,13 +30,11 @@ export const Homepage = () => {
   ];
 
   return (
-    <div>
-      <Toolbar></Toolbar>
+    <Box>
       <Typography color="primary">Homepage</Typography>
-      <Grid container spacing={2} justifyContent="flex-start" alignItems="flex-start" sx={{ pl: 28 }}>
-        {queryTypes.map(([query, description], index) => <LineChart description={description} metric={query} key={index}/>)}
+      <Grid container spacing={1}>
+        {queryTypes.map(([query, description], index) => <LineChart description={description} metric={query} key={index} />)}
       </Grid>
-    </div>
-
+    </Box>
   )
 }

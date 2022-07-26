@@ -21,8 +21,8 @@ export const Header = ({ fetchMetrics, setFetchMetrics, showSettings, setShowSet
   }
 
   return (
-    <AppBar position="fixed" sx={{ zIndex:"snackbar" }} >
-      <Toolbar className="bg-gradient-to-r h-16 from-cyan-700 to-sky-700 background-animate">
+    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <Toolbar>
         <Typography onClick={navHome} theme={ksqLightTheme} variant="h3" sx={{ flexGrow: 1 }}>ksqLight</Typography>
         <IconButton aria-label="Documentation" onClick={() => {navGithub()}}>
           <ArticleIcon/>
