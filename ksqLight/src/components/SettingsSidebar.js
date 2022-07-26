@@ -87,7 +87,8 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
     event.preventDefault();
 
     // verify prometheus URL
-    // verify ksqlDB URL
+    // verify ksqlDB url
+    // verify metrics exist for duration requested
 
     // idea: set microstates for this component so that values can update on change, but app state does not change until submit
 
@@ -124,6 +125,7 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
               label="URL"
               name="prometheus-url"
               onChange={handleLocalMetrics}
+              value={localMetricsState.prometheusURL}
             />
             <hr className="w-full invisible mb-2 mt-2"></hr>
             <Typography variant="h6" sx={{color: "#333"}}>ksqlDB Connection</Typography>
@@ -134,6 +136,7 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
               label="URL"
               name="ksqldb-url"
               onChange={handleLocalMetrics}
+              value={localMetricsState.ksqlDBURL}
             />
             <hr className="w-full invisible mb-2 mt-2"></hr>
             <Typography variant="h6" sx={{color: "#333"}}>Duration</Typography>
@@ -217,7 +220,7 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
               <MenuItem value={55}>55</MenuItem>
             </Select>
             <hr className="w-full invisible mb-2 mt-2"></hr>
-            <Typography variant="h6" sx={{color: "white"}}>Refresh Rate</Typography>
+            <Typography variant="h6">Refresh Rate</Typography>
             <hr className="w-full mb-3 mt-1"></hr>
             <TextField
               fullWidth 

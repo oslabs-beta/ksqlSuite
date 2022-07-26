@@ -1,3 +1,4 @@
+//-----------Import External Modules-----------
 import React, { useEffect, useState } from "react";
 import { Grid, Typography } from "@mui/material";
 import {
@@ -10,10 +11,12 @@ import Chart from "chart.js/auto";
 import ChartStreaming from "chartjs-plugin-streaming";
 import 'chartjs-adapter-moment';
 
-// import config from './chartConfig.js';
 
+//-----------Import Internal Modules-----------
+import {getUnixRange, getDuration} from "../utils/utilityFunctions.js";
 
 Chart.register(ChartStreaming);
+
 
 const client = new ApolloClient({
   uri: "http://localhost:5000/graphql",
@@ -22,9 +25,8 @@ const client = new ApolloClient({
 
 //   console.log('test: ', Math.round(new Date().getTime() / 1000));
 
-export default function LineChart({ metric, description }) {
+export default function LineChart({ metric, description, metricsState }) {
   useEffect(() => {
-    let delayed;
     // define chart context
     const ctx = document.getElementById(metric).getContext("2d");
 
@@ -38,30 +40,17 @@ export default function LineChart({ metric, description }) {
     type: 'line',
     data: {
         datasets: [{
-        data: [],           // empty at the beginning,
-        borderColor: 'rgba(58, 123, 213, 1)',
-        pointRadius: 0,
-        hitRadius: 30,
-        hoverRadius: 5,
-        fill: true,
-        backgroundColor: gradient,
+          data: [],           // empty at the beginning,
+          borderColor: 'rgba(58, 123, 213, 1)',
+          pointRadius: 0,
+          hitRadius: 30,
+          hoverRadius: 5,
+          fill: true,
+          backgroundColor: gradient,
       }]
     },
     options: {
       responsive: true,
-      animation: {
-        onComplete: () => {
-          delayed = true;
-        },
-        // delay: (context) => {
-        //   let delay = 0;
-        //   if (context.type === "data" && context.mode === "default" && !delayed) {
-        //     delay = context.dataIndex * 300 + context.datasetIndex * 100;
-        //   }
-        //   return delay;
-        // }
-        delay: 3,
-      },
       elements: {
         line: {
             tension: .4
@@ -71,21 +60,22 @@ export default function LineChart({ metric, description }) {
         x: {
           type: 'realtime',   // x axis will auto-scroll from right to left
           realtime: {         // per-axis options
-            duration: 200000,  // data in the past 20000 ms will be displayed
-            refresh: 2000,    // onRefresh callback will be called every 1000 ms
-            delay: 2000,      // delay of 1000 ms, so upcoming values are known before plotting a line
+            duration: getDuration(metricsState.duration.days, metricsState.duration.hours, metricsState.duration.minutes),  // data in the past duration # of ms will be displayed
+            refresh: metricsState.refreshRate * 1000,    // onRefresh callback will be called every refresh # ms
+            delay: 1000,      // delay of 1000 ms, so upcoming values are known before plotting a line
             pause: false,     // chart is not paused
             ttl: undefined,   // data will be automatically deleted as it disappears off the chart
             frameRate: 30,    // data points are drawn 30 times every second
   
             // a callback to update datasets
             onRefresh: chart => {
+              const [unixStart, unixEnd] = getUnixRange(metricsState.duration.days, metricsState.duration.hours, metricsState.duration.minutes);
   
               // query your data source and get the array of {x: timestamp, y: value} objects
               client.query({
                 query: gql`
                     query testQuery {
-                      ksqlDBMetrics(metric: "${metric}", resolution: 2, start: ${Math.round(new Date().getTime() / 1000) - 500}, end: ${Math.round(new Date().getTime() / 1000)}) {
+                      ksqlDBMetrics(prometheusURL: "${metricsState.prometheusURL}" metric: "${metric}", resolution: ${metricsState.refreshRate}, start: ${unixStart}, end: ${unixEnd}) {
                             x,
                             y
                         }
@@ -100,6 +90,7 @@ export default function LineChart({ metric, description }) {
                         y: queryObj.y
                     }
                 });
+                // console.log(data);
                 chart.data.datasets[0].data = data;
               })
               .catch(error => console.log(error));
@@ -133,7 +124,11 @@ export default function LineChart({ metric, description }) {
   // instantiate new instance of a chart
   const realTimeChart = new Chart(ctx, config);
 
-  // populate initial data to avoid having to wait for first refresh
+  // notes on where to go next
+  // look into Line chart.js - 2 component to pass data to
+  // look into the first batch of data coming back and compare it to other batches that successfully update the chart
+
+  // // populate initial data to avoid having to wait for first refresh
   // client.query({
   //   query: gql`
   //       query testQuery {
@@ -152,22 +147,27 @@ export default function LineChart({ metric, description }) {
   //           y: queryObj.y
   //       }
   //   });
-  //   console.log('this is a test');
+  //   console.log('this runs within initial fetch');
   //   realTimeChart.data.datasets[0].data = data;
-  //   realTimeChart.update();
+  //   // realTimeChart.update();
   // })
   // .catch(error => console.log(error));
 
 
     // chart teardown on unmount
     return () => {
-        realTimeChart.destroy();
+      console.log('teardown');
+      realTimeChart.destroy();
     }
-  }, []);
+  }, [metricsState]);
 
   return (
-    <Grid item xs={2}>
-      <canvas id={metric} width="100%" height="100%"></canvas>
-    </Grid>
+    <>
+      <Grid item xs={2}>
+        <canvas id={metric} width="100%" height="100%"></canvas>
+      </Grid>
+      <Grid item xs={10}>
+      </Grid>
+    </>
   );
 }

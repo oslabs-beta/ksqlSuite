@@ -4,11 +4,11 @@ import { Typography, Grid, Toolbar } from "@mui/material";
 import { Chart } from "./Chart.js";
 import LineChart from "./LineChart.js";
 
-export const Homepage = () => {
+export const Homepage = ({ metricsState }) => {
   const [content, setContent] = useState('Chart placeholder');
 
   const queryTypes = [
-    // ["runningQueries", "Number of Running Queries"],
+    ["runningQueries", "Number of Running Queries"],
     // ["rebalancingQueries", "Number of Rebalancing Queries"],
     // ["pendingShutdownQueries", "Number of Pending Shutdown Queries"],
     // ["pendingErrorQueries", "Number of Pending Error Queries"],
@@ -34,7 +34,7 @@ export const Homepage = () => {
       <Toolbar></Toolbar>
       <Typography color="primary">Homepage</Typography>
       <Grid container spacing={2} justifyContent="flex-start" alignItems="flex-start" sx={{ pl: 28 }}>
-        {queryTypes.map(([query, description], index) => <LineChart description={description} metric={query} key={index}/>)}
+        {queryTypes.map(([query, description], index) => <LineChart description={description} metric={query} metricsState={metricsState} key={index}/>)}
       </Grid>
     </div>
 
