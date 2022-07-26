@@ -6,7 +6,8 @@ import { Homepage } from "./components/Homepage.js";
 import { SettingsSidebar } from "./components/SettingsSidebar.js";
 import { PermanentDrawer } from "./components/PermanentDrawer.js";
 import { QueryPage } from "./components/QueryPage.js";
-import { CssBaseline, ThemeProvider, createTheme, Box } from "@mui/material";
+import { CssBaseline, ThemeProvider, createTheme, Box, Grid } from "@mui/material";
+import { LivenessCard } from "./components/LivenessCard.js";
 
 const theme = createTheme({
   palette: {
@@ -17,30 +18,52 @@ const theme = createTheme({
 function App() {
   const [fetchMetrics, setFetchMetrics] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
+  const [showQueries, setShowQueries] = useState(true);
+  const [showMessages, setShowMessages] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+
 
   return (
     <BrowserRouter>
       <ThemeProvider theme={theme}>
-      <CssBaseline />
+        <CssBaseline />
         <Box sx={{
           display: 'flex',
           flexDirection: 'column'
         }}>
-          
+
           <Header fetchMetrics={fetchMetrics} setFetchMetrics={setFetchMetrics} showSettings={showSettings} setShowSettings={setShowSettings} />
           <SettingsSidebar showSettings={showSettings} setShowSettings={setShowSettings}></SettingsSidebar>
           <Box sx={{ display: 'flex' }}>
-            <PermanentDrawer></PermanentDrawer>
-            <Routes>
-              <Route path="/" element={<Homepage />} />
-              <Route path="/queryPage" element={<QueryPage />} />
-            </Routes>
+            <PermanentDrawer
+              setShowQueries={setShowQueries}
+              setShowMessages={setShowMessages}
+              setShowErrors={setShowErrors}
+            />
+            <Box sx={{
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              <Grid container spacing={4} sx={{ display: 'flex', flexDirection: "row", p: 3 }}>
+                <Grid item xs={4} md={4} lg={4}>
+                  <LivenessCard />
+                </Grid>
+                <Grid item xs={4} md={4} lg={4}>
+                  <LivenessCard />
+                </Grid>
+                <Grid item xs={4} md={4} lg={4}>
+                  <LivenessCard />
+                </Grid>
+              </Grid>
+              <Routes>
+                <Route path="/" element={<Homepage showQueries={showQueries} showMessages={showMessages} showErrors={showErrors} />} />
+                <Route path="/queryPage" element={<QueryPage />} />
+              </Routes>
+            </Box>
           </Box>
         </Box>
-
-
       </ThemeProvider>
-    </BrowserRouter>
+    </BrowserRouter >
 
   );
 }

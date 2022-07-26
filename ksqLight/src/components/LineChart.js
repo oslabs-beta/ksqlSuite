@@ -17,7 +17,7 @@ import 'chartjs-adapter-moment';
 Chart.register(ChartStreaming);
 
 const client = new ApolloClient({
-  uri: "http://localhost:5000/graphql",
+  uri: "http://localhost:5001/graphql",
   cache: new InMemoryCache(),
 });
 
@@ -75,13 +75,6 @@ export default function LineChart({ metric, description }) {
       options: {
         responsive: true,
         animation: {
-          // onProgress: (context) => {
-          //   if (context.initial) {
-          //     initProgress.value = context.currentStep / context.numSteps;
-          //   } else {
-          //     progress.value = context.currentStep / context.numSteps;
-          //   }
-          // },
           onComplete: () => {
             delayed = true;
           },
@@ -161,11 +154,12 @@ export default function LineChart({ metric, description }) {
         },
       }
     };
+
     // instantiate new instance of a chart
     const realTimeChart = new Chart(ctx, config);
 
-    // populate initial data to avoid having to wait for first refreshF
-    // client.query({F
+    // populate initial data to avoid having to wait for first refresh
+    // client.query({
     //   query: gql`
     //       query testQuery {
     //         ksqlDBMetrics(metric: "numActiveQueries", resolution: 1, start: ${Math.round(new Date().getTime() / 1000) - 500}, end: ${Math.round(new Date().getTime() / 1000)}) {
@@ -197,7 +191,7 @@ export default function LineChart({ metric, description }) {
   }, []);
 
   return (
-    <Grid item xs={2}>
+    <Grid item xs={4} md={4} lg={4}>
       <canvas id={metric} width="100%" height="100%"></canvas>
     </Grid>
   );
