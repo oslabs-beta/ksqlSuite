@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Drawer, CssBaseline, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ThemeProvider, Toolbar, createTheme, Container } from "@mui/material";
+import { CssBaseline, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ThemeProvider, createTheme, Box } from "@mui/material";
 import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
 import MailIcon from '@mui/icons-material/Mail';
 
@@ -75,15 +75,13 @@ export const PermanentDrawer = ({ setShowQueries, setShowMessages, setShowErrors
     // </ThemeProvider>
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container disableGutters sx={{
-        width: 340,
+      <Box sx={{
+        width: 400,
         height: 'auto', // changed this from auto
-        marginBottom: "-2000px", /* any large number will do */
-        paddingBottom: "2000px",
+        // marginBottom: "-2000px", /* any large number will do */
+        // paddingBottom: "2000px",
         mx: 0
       }}>
-
-
         {/* <Toolbar></Toolbar> */}
         <List>
           <ListItem>
@@ -119,7 +117,7 @@ export const PermanentDrawer = ({ setShowQueries, setShowMessages, setShowErrors
             </ListItemButton>
           </ListItem>
         </List>
-      </Container>
+      </Box>
     </ThemeProvider >
   )
 }
