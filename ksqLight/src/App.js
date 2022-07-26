@@ -7,7 +7,7 @@ import { SettingsSidebar } from "./components/SettingsSidebar.js";
 import { PermanentDrawer } from "./components/PermanentDrawer.js";
 import { QueryPage } from "./components/QueryPage.js";
 import { CssBaseline, ThemeProvider, createTheme, Box, Grid } from "@mui/material";
-import { LivenessCard } from "./components/LivenessCard.js";
+import { MetricCard } from "./components/MetricCard.js";
 
 const theme = createTheme({
   palette: {
@@ -44,15 +44,18 @@ function App() {
               display: 'flex',
               flexDirection: 'column'
             }}>
-              <Grid container spacing={4} sx={{ display: 'flex', flexDirection: "row", p: 3 }}>
-                <Grid item xs={4} md={4} lg={4}>
-                  <LivenessCard />
+              <Grid container columnSpacing={9} rowSpacing={2} sx={{ display: 'flex', flexDirection: "row", p: 3, justifyContents: "center", alignItems: "center" }}>
+                <Grid item xs={3} md={3} lg={3}>
+                  <MetricCard type="livenessIndicator" index={0} />
                 </Grid>
-                <Grid item xs={4} md={4} lg={4}>
-                  <LivenessCard />
+                <Grid item xs={3} md={3} lg={3}>
+                  <MetricCard type="bytesConsumedTotal" index={1} />
                 </Grid>
-                <Grid item xs={4} md={4} lg={4}>
-                  <LivenessCard />
+                <Grid item xs={3} md={3} lg={3} >
+                  <MetricCard type="errorRate" index={2} />
+                </Grid>
+                <Grid item xs={3} md={3} lg={3} >
+                  <MetricCard type="errorQueries" index={3} />
                 </Grid>
               </Grid>
               <Routes>

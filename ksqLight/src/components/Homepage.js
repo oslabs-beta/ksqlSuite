@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Typography, Grid, Toolbar, Container, CssBaseline, Box } from "@mui/material";
 import { Chart } from "./Chart.js";
 import LineChart from "./LineChart.js";
-import { LivenessCard } from "./LivenessCard.js";
+import { LivenessCard } from "./MetricCard.js";
 
 export const Homepage = ({ showQueries, showMessages, showErrors }) => {
   const [content, setContent] = useState('Chart placeholder');
@@ -80,7 +80,7 @@ export const Homepage = ({ showQueries, showMessages, showErrors }) => {
         </Grid>
       </Grid> */}
 
-      <Grid container spacing={2.5} sx={{}}>
+      <Grid container spacing={4} sx={{}}>
         {showQueries &&
           queriesCharts.map(([query, description], index) =>
             <LineChart description={description} metric={query} key={index} />)
@@ -90,11 +90,11 @@ export const Homepage = ({ showQueries, showMessages, showErrors }) => {
             <LineChart description={description} metric={query} key={index} />
           )
         }
-        {showErrors &&
+        {/* {showErrors &&
           errorCharts.map(([query, description], index) =>
             <LineChart description={description} metric={query} key={index} />
           )
-        }
+        } */}
         {/* {queryTypes.map(([query, description], index) => <LineChart description={description} metric={query} key={index} />)} */}
       </Grid>
     </Box>

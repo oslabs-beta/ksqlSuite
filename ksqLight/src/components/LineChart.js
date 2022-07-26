@@ -10,6 +10,8 @@ import {
 import Chart from "chart.js/auto";
 import ChartStreaming from "chartjs-plugin-streaming";
 import 'chartjs-adapter-moment';
+import { CardContent } from "@mui/material";
+
 
 // import config from './chartConfig.js';
 
@@ -191,8 +193,10 @@ export default function LineChart({ metric, description }) {
   }, []);
 
   return (
-    <Grid item xs={4} md={4} lg={4}>
-      <canvas id={metric} width="100%" height="100%"></canvas>
+    <Grid item xs={3} md={3} lg={3}>
+      <CardContent sx={{ bgcolor: "white", boxShadow: 1, borderRadius: '16px' }}>
+        <canvas id={metric} width="100%" height="100%"></canvas>
+      </CardContent>
     </Grid>
   );
 }
