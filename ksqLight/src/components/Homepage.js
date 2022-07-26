@@ -8,7 +8,7 @@ export const Homepage = () => {
   const [content, setContent] = useState('Chart placeholder');
 
   const queryTypes = [
-    ["runningQueries", "Number of Running Queries"],
+    // ["runningQueries", "Number of Running Queries"],
     // ["rebalancingQueries", "Number of Rebalancing Queries"],
     // ["pendingShutdownQueries", "Number of Pending Shutdown Queries"],
     // ["pendingErrorQueries", "Number of Pending Error Queries"],

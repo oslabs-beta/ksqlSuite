@@ -4,6 +4,85 @@ import { TextField, Typography, MenuItem, Select, Drawer, IconButton, Grid, Butt
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, setMetricsState }) => {
+  const [localMetricsState, setLocalMetricsState] = useState({
+    prometheusURL: metricsState.prometheusURL,
+    ksqlDBURL: metricsState.ksqlDBURL,
+    duration: metricsState.duration,
+    refreshRate: metricsState.refreshRate
+  });
+
+  const handleLocalMetrics = (event) => {
+    // if (event.target.name === "duration-hours") {
+    //   setLocalMetricsState({
+    //     ...localMetricsState,
+    //     duration: {
+    //       ...localMetricsState.duration,
+    //       hours: event.target.value
+    //     }
+    //   })
+    // }
+    switch(event.target.name) {
+      case "prometheus-url":
+        setLocalMetricsState({
+          ...localMetricsState,
+          prometheusURL: event.target.value
+        });
+        break;
+      case "ksqldb-url":
+        setLocalMetricsState({
+          ...localMetricsState,
+          ksqlDBURL: event.target.value
+        });
+        break;
+      case "duration-days":
+        setLocalMetricsState({
+          ...localMetricsState,
+          duration: {
+            ...localMetricsState.duration,
+            days: event.target.value
+          }
+        });
+        break;
+      case "duration-hours":
+        setLocalMetricsState({
+          ...localMetricsState,
+          duration: {
+            ...localMetricsState.duration,
+            hours: event.target.value
+          }
+        });
+        break;
+      case "duration-minutes":
+        setLocalMetricsState({
+          ...localMetricsState,
+          duration: {
+            ...localMetricsState.duration,
+            minutes: event.target.value
+          }
+        });
+        break;
+      case "refresh-rate":
+        setLocalMetricsState({
+          ...localMetricsState,
+          refreshRate: event.target.value
+        });
+        break;
+      default:
+        break;
+    }
+  }
+
+  /*{
+    prometheusURL: null,
+    ksqlDBURL: null,
+    duration: {
+      days: 0,
+      hours: 0,
+      minutes: 10
+    },
+    refreshRate: 2
+  }*/
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -14,14 +93,14 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
 
     // change state
     setMetricsState({
-      prometheusURL: event.target[1].value,
-      ksqlDBURL: event.target[3].value,
+      prometheusURL: localMetricsState.prometheusURL,
+      ksqlDBURL: localMetricsState.ksqlDBURL,
       duration: {
-        days: event.target[5].value,
-        hours: event.target[7].value,
-        minutes: event.target[9].value
+        days: localMetricsState.duration.days,
+        hours: localMetricsState.duration.hours,
+        minutes: localMetricsState.duration.minutes
       },
-      refreshRate: event.target[11].value
+      refreshRate: localMetricsState.refreshRate
     });
   }
 
@@ -31,36 +110,41 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
 
   return(
     <Drawer variant="temporary" anchor="right" open={showSettings} PaperProps={{sx: {paddingTop: "3.5em", width: "35%"}}}>
-    <div className="flex-1 w-full header-viewport bg-slate-800 p-4">
+    <div className="flex-1 w-full header-viewport  p-4">
       <form noValidate autoComplete="off" onSubmit={handleSubmit}>
         <Grid container flexDirection="column" justifyContent="flex-start" alignItems="flex-start">
           <IconButton aria-label="Hide" onClick={() => setShowSettings(!showSettings)}>
-            <ArrowForwardIosIcon sx={{color: "white"}}/>
+            <ArrowForwardIosIcon sx={{color: "#333"}}/>
           </IconButton>
-            <Typography variant="h6" sx={{color: "white"}}>Prometheus Connection</Typography>
+            <Typography variant="h6" sx={{color: "#333"}}>Prometheus Connection</Typography>
               <hr className="w-full mb-3 mt-1"></hr>
             <TextField
               fullWidth 
               variant="outlined"
-              label="Host URL"
+              label="URL"
+              name="prometheus-url"
+              onChange={handleLocalMetrics}
             />
             <hr className="w-full invisible mb-2 mt-2"></hr>
-            <Typography variant="h6" sx={{color: "white"}}>ksqlDB Connection</Typography>
+            <Typography variant="h6" sx={{color: "#333"}}>ksqlDB Connection</Typography>
             <hr className="w-full mb-3 mt-1"></hr>
             <TextField
               fullWidth 
               variant="outlined"
-              label="Host URL"
+              label="URL"
+              name="ksqldb-url"
+              onChange={handleLocalMetrics}
             />
             <hr className="w-full invisible mb-2 mt-2"></hr>
-            <Typography variant="h6" sx={{color: "white"}}>Duration</Typography>
+            <Typography variant="h6" sx={{color: "#333"}}>Duration</Typography>
             <hr className="w-full mb-3 mt-1"></hr>
             <Select
               autoWidth 
               id="duration-days"
-              value={metricsState.duration.days ? metricsState.duration.days : 0}
+              value={localMetricsState.duration.days}
               label="Days"
-              name="days"
+              name="duration-days"
+              onChange={handleLocalMetrics}
             >
               <MenuItem value={0}>0</MenuItem>
               <MenuItem value={1}>1</MenuItem>
@@ -80,10 +164,11 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
             </Select>
             <Select
               id="duration-hours"
-              defaultValue={metricsState.duration.hours ? metricsState.duration.hours : 0}
+              value={localMetricsState.duration.hours}
               label="Hours"
               autoWidth
-              name="hours"
+              name="duration-hours"
+              onChange={handleLocalMetrics}
             >
               <MenuItem value={0}>0</MenuItem>
               <MenuItem value={1}>1</MenuItem>
@@ -112,10 +197,11 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
             </Select>
             <Select
               id="duration-minutes"
-              defaultValue={metricsState.duration.minutes ? metricsState.duration.minutes : 0}
+              value={localMetricsState.duration.minutes}
               label="Minutes"
               autoWidth
-              name="minutes"
+              name="duration-minutes"
+              onChange={handleLocalMetrics}
             >
               <MenuItem value={0}>0</MenuItem>
               <MenuItem value={5}>5</MenuItem>
@@ -137,7 +223,9 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
               fullWidth 
               variant="outlined"
               label="seconds"
-              defaultValue={metricsState.refreshRate}
+              value={localMetricsState.refreshRate}
+              name="refresh-rate"
+              onChange={handleLocalMetrics}
             />
             {/* <Select
               id="refresh-rate-hours"
