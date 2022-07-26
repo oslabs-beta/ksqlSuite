@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { TextField, Typography, MenuItem, Select, Drawer, IconButton, Grid, Button } from "@mui/material"
+import { TextField, Typography, MenuItem, Select, Drawer, IconButton, Grid, Button, FormControl, Stack } from "@mui/material"
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, setMetricsState }) => {
@@ -12,15 +12,6 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
   });
 
   const handleLocalMetrics = (event) => {
-    // if (event.target.name === "duration-hours") {
-    //   setLocalMetricsState({
-    //     ...localMetricsState,
-    //     duration: {
-    //       ...localMetricsState.duration,
-    //       hours: event.target.value
-    //     }
-    //   })
-    // }
     switch(event.target.name) {
       case "prometheus-url":
         setLocalMetricsState({
@@ -72,27 +63,15 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
     }
   }
 
-  /*{
-    prometheusURL: null,
-    ksqlDBURL: null,
-    duration: {
-      days: 0,
-      hours: 0,
-      minutes: 10
-    },
-    refreshRate: 2
-  }*/
-
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    // verify prometheus URL
-    // verify ksqlDB url
-    // verify metrics exist for duration requested
+    // ToDo:
+      // 1. verify prometheus URL
+      // 2. verify ksqlDB url
+      // 3. verify metrics exist for duration requested
 
-    // idea: set microstates for this component so that values can update on change, but app state does not change until submit
-
-    // change state
+    // update state
     setMetricsState({
       prometheusURL: localMetricsState.prometheusURL,
       ksqlDBURL: localMetricsState.ksqlDBURL,
@@ -105,206 +84,97 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
     });
   }
 
-  useEffect(() => {
-    console.log('this is the metrics state: ', metricsState);
-  }, [metricsState]);
+  // useEffect(() => {
+  //   console.log('this is the metrics state: ', metricsState);
+  // }, [metricsState]);
+
 
   return(
     <Drawer variant="temporary" anchor="right" open={showSettings} PaperProps={{sx: {paddingTop: "3.5em", width: "35%"}}}>
-    <div className="flex-1 w-full header-viewport  p-4">
-      <form noValidate autoComplete="off" onSubmit={handleSubmit}>
-        <Grid container flexDirection="column" justifyContent="flex-start" alignItems="flex-start">
-          <IconButton aria-label="Hide" onClick={() => setShowSettings(!showSettings)}>
-            <ArrowForwardIosIcon sx={{color: "#333"}}/>
-          </IconButton>
-            <Typography variant="h6" sx={{color: "#333"}}>Prometheus Connection</Typography>
+      <div className="flex-1 w-full header-viewport  p-4">
+        <form noValidate autoComplete="off" onSubmit={handleSubmit}>
+          <Grid container flexDirection="column" justifyContent="flex-start" alignItems="flex-start">
+            <IconButton aria-label="Hide" onClick={() => setShowSettings(!showSettings)}>
+              <ArrowForwardIosIcon sx={{color: "#333"}}/>
+            </IconButton>
+              <Typography variant="h6" sx={{color: "#333"}}>Prometheus Connection</Typography>
+                <hr className="w-full mb-3 mt-1"></hr>
+              <TextField
+                fullWidth 
+                variant="outlined"
+                label="URL"
+                name="prometheus-url"
+                onChange={handleLocalMetrics}
+                value={localMetricsState.prometheusURL}
+              />
+              <hr className="w-full invisible mb-2 mt-2"></hr>
+              <Typography variant="h6" sx={{color: "#333"}}>ksqlDB Connection</Typography>
               <hr className="w-full mb-3 mt-1"></hr>
-            <TextField
-              fullWidth 
-              variant="outlined"
-              label="URL"
-              name="prometheus-url"
-              onChange={handleLocalMetrics}
-              value={localMetricsState.prometheusURL}
-            />
-            <hr className="w-full invisible mb-2 mt-2"></hr>
-            <Typography variant="h6" sx={{color: "#333"}}>ksqlDB Connection</Typography>
-            <hr className="w-full mb-3 mt-1"></hr>
-            <TextField
-              fullWidth 
-              variant="outlined"
-              label="URL"
-              name="ksqldb-url"
-              onChange={handleLocalMetrics}
-              value={localMetricsState.ksqlDBURL}
-            />
-            <hr className="w-full invisible mb-2 mt-2"></hr>
-            <Typography variant="h6" sx={{color: "#333"}}>Duration</Typography>
-            <hr className="w-full mb-3 mt-1"></hr>
-            <Select
-              autoWidth 
-              id="duration-days"
-              value={localMetricsState.duration.days}
-              label="Days"
-              name="duration-days"
-              onChange={handleLocalMetrics}
-            >
-              <MenuItem value={0}>0</MenuItem>
-              <MenuItem value={1}>1</MenuItem>
-              <MenuItem value={2}>3</MenuItem>
-              <MenuItem value={4}>4</MenuItem>
-              <MenuItem value={5}>5</MenuItem>
-              <MenuItem value={6}>6</MenuItem>
-              <MenuItem value={7}>7</MenuItem>
-              <MenuItem value={8}>8</MenuItem>
-              <MenuItem value={9}>9</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={11}>11</MenuItem>
-              <MenuItem value={12}>12</MenuItem>
-              <MenuItem value={13}>13</MenuItem>
-              <MenuItem value={14}>14</MenuItem>
-              <MenuItem value={15}>15</MenuItem>
-            </Select>
-            <Select
-              id="duration-hours"
-              value={localMetricsState.duration.hours}
-              label="Hours"
-              autoWidth
-              name="duration-hours"
-              onChange={handleLocalMetrics}
-            >
-              <MenuItem value={0}>0</MenuItem>
-              <MenuItem value={1}>1</MenuItem>
-              <MenuItem value={2}>2</MenuItem>
-              <MenuItem value={3}>3</MenuItem>
-              <MenuItem value={4}>4</MenuItem>
-              <MenuItem value={5}>5</MenuItem>
-              <MenuItem value={6}>6</MenuItem>
-              <MenuItem value={7}>7</MenuItem>
-              <MenuItem value={8}>8</MenuItem>
-              <MenuItem value={9}>9</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={11}>11</MenuItem>
-              <MenuItem value={12}>12</MenuItem>
-              <MenuItem value={13}>13</MenuItem>
-              <MenuItem value={14}>14</MenuItem>
-              <MenuItem value={15}>15</MenuItem>
-              <MenuItem value={16}>16</MenuItem>
-              <MenuItem value={17}>17</MenuItem>
-              <MenuItem value={18}>18</MenuItem>
-              <MenuItem value={19}>19</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={21}>21</MenuItem>
-              <MenuItem value={22}>22</MenuItem>
-              <MenuItem value={23}>23</MenuItem>
-            </Select>
-            <Select
-              id="duration-minutes"
-              value={localMetricsState.duration.minutes}
-              label="Minutes"
-              autoWidth
-              name="duration-minutes"
-              onChange={handleLocalMetrics}
-            >
-              <MenuItem value={0}>0</MenuItem>
-              <MenuItem value={5}>5</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={15}>15</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={25}>25</MenuItem>
-              <MenuItem value={30}>30</MenuItem>
-              <MenuItem value={35}>35</MenuItem>
-              <MenuItem value={40}>40</MenuItem>
-              <MenuItem value={45}>45</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-              <MenuItem value={55}>55</MenuItem>
-            </Select>
-            <hr className="w-full invisible mb-2 mt-2"></hr>
-            <Typography variant="h6">Refresh Rate</Typography>
-            <hr className="w-full mb-3 mt-1"></hr>
-            <TextField
-              fullWidth 
-              variant="outlined"
-              label="seconds"
-              value={localMetricsState.refreshRate}
-              name="refresh-rate"
-              onChange={handleLocalMetrics}
-            />
-            {/* <Select
-              id="refresh-rate-hours"
-              value={refreshRate.hours}
-              label="Hours"
-              onChange={handleRefreshRate}
-              autoWidth
-              name="hours"
-            >
-              <MenuItem value={0}>0</MenuItem>
-              <MenuItem value={1}>1</MenuItem>
-              <MenuItem value={2}>2</MenuItem>
-              <MenuItem value={3}>3</MenuItem>
-              <MenuItem value={4}>4</MenuItem>
-              <MenuItem value={5}>5</MenuItem>
-              <MenuItem value={6}>6</MenuItem>
-              <MenuItem value={7}>7</MenuItem>
-              <MenuItem value={8}>8</MenuItem>
-              <MenuItem value={9}>9</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={11}>11</MenuItem>
-              <MenuItem value={12}>12</MenuItem>
-              <MenuItem value={13}>13</MenuItem>
-              <MenuItem value={14}>14</MenuItem>
-              <MenuItem value={15}>15</MenuItem>
-              <MenuItem value={16}>16</MenuItem>
-              <MenuItem value={17}>17</MenuItem>
-              <MenuItem value={18}>18</MenuItem>
-              <MenuItem value={19}>19</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={21}>21</MenuItem>
-              <MenuItem value={22}>22</MenuItem>
-              <MenuItem value={23}>23</MenuItem>
-            </Select>
-            <Select
-              id="refresh-rate-minutes"
-              value={refreshRate.minutes}
-              label="Minutes"
-              onChange={handleRefreshRate}
-              autoWidth
-              name="minutes"
-            >
-              <MenuItem value={0}>0</MenuItem>
-              <MenuItem value={1}>1</MenuItem>
-              <MenuItem value={2}>2</MenuItem>
-              <MenuItem value={3}>3</MenuItem>
-              <MenuItem value={4}>4</MenuItem>
-              <MenuItem value={5}>5</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={15}>15</MenuItem>
-              <MenuItem value={30}>30</MenuItem>
-              <MenuItem value={45}>45</MenuItem>
-            </Select>
-            <Select
-              id="refresh-rate-seconds"
-              value={refreshRate.seconds}
-              label="Seconds"
-              onChange={handleRefreshRate}
-              autoWidth
-              name="seconds"
-            >
-              <MenuItem value={0}>0</MenuItem>
-              <MenuItem value={1}>1</MenuItem>
-              <MenuItem value={2}>2</MenuItem>
-              <MenuItem value={3}>3</MenuItem>
-              <MenuItem value={4}>4</MenuItem>
-              <MenuItem value={5}>5</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={15}>15</MenuItem>
-              <MenuItem value={30}>30</MenuItem>
-              <MenuItem value={45}>45</MenuItem>
-            </Select> */}
-          <Button variant="contained" type="submit" sx={{mt: "1em"}}>Submit</Button>
-        </Grid>
-      </form>
-    </div>
+              <TextField
+                fullWidth 
+                variant="outlined"
+                label="URL"
+                name="ksqldb-url"
+                onChange={handleLocalMetrics}
+                value={localMetricsState.ksqlDBURL}
+              />
+              <hr className="w-full invisible mb-2 mt-2"></hr>
+              <Typography variant="h6" sx={{color: "#333"}}>Duration</Typography>
+              <hr className="w-full mb-3 mt-1"></hr>
+              <Grid spacing={2} container justifyContent="flex-start" alignItems="center">
+                <Grid item xs={4}>
+                  <TextField
+                  variant="outlined"
+                  label="Days"
+                  name="duration-days"
+                  onChange={handleLocalMetrics}
+                  value={localMetricsState.duration.days}
+                  type="number"
+                  
+                />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                  variant="outlined"
+                  label="Hours"
+                  name="duration-hours"
+                  onChange={handleLocalMetrics}
+                  value={localMetricsState.duration.hours}
+                  type="number"
+                />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                  variant="outlined"
+                  label="Minutes"
+                  name="duration-minutes"
+                  onChange={handleLocalMetrics}
+                  value={localMetricsState.duration.minutes}
+                  type="number"
+                />
+                </Grid>
+              </Grid>
+              <hr className="w-full invisible mb-2 mt-2"></hr>
+              <Typography variant="h6">Refresh Rate</Typography>
+              <hr className="w-full mb-3 mt-1"></hr>
+              <Grid item xs={4}>
+                <TextField
+                  fullWidth 
+                  variant="outlined"
+                  label="seconds"
+                  value={localMetricsState.refreshRate}
+                  name="refresh-rate"
+                  type="number"
+                  onChange={handleLocalMetrics}
+                />
+              </Grid>
+              <Stack direction="row" spacing={2} sx={{mt: "1.5em"}}>
+                <Button variant="contained" type="submit">Submit</Button>
+                <Button color='secondary' variant="contained" onClick={() => setShowSettings(!showSettings)}>Cancel</Button>
+              </Stack>
+          </Grid>
+        </form>
+      </div>
     </Drawer>
   )
 }

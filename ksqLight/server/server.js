@@ -53,7 +53,6 @@ const RootQueryType = new GraphQLObjectType({
             },
             resolve: (parent, {start, end, resolution, metric, prometheusURL}) => {
                 if (prometheusURL[prometheusURL.length] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length);
-                console.log(prometheusURL);
 
                 return axios.get(`${prometheusURL}/api/v1/query_range?step=${resolution}s&end=${end}&start=${start}&query=${queryTypes[metric]}`)
                 .then(res => res.data.data.result[0].values)

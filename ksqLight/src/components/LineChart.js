@@ -59,6 +59,13 @@ export default function LineChart({ metric, description, metricsState }) {
       scales: {
         x: {
           type: 'realtime',   // x axis will auto-scroll from right to left
+          ticks: {
+            // minTicksLimit: 24
+            autoskip: true,
+            autoSkipPadding: 30,
+            maxRotation: 0,
+            steps: 10
+          },
           realtime: {         // per-axis options
             duration: getDuration(metricsState.duration.days, metricsState.duration.hours, metricsState.duration.minutes),  // data in the past duration # of ms will be displayed
             refresh: metricsState.refreshRate * 1000,    // onRefresh callback will be called every refresh # ms
@@ -163,10 +170,8 @@ export default function LineChart({ metric, description, metricsState }) {
 
   return (
     <>
-      <Grid item xs={2}>
+      <Grid item xs={3}>
         <canvas id={metric} width="100%" height="100%"></canvas>
-      </Grid>
-      <Grid item xs={10}>
       </Grid>
     </>
   );

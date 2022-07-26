@@ -9,9 +9,9 @@ export const Homepage = ({ metricsState }) => {
 
   const queryTypes = [
     ["runningQueries", "Number of Running Queries"],
-    // ["rebalancingQueries", "Number of Rebalancing Queries"],
-    // ["pendingShutdownQueries", "Number of Pending Shutdown Queries"],
-    // ["pendingErrorQueries", "Number of Pending Error Queries"],
+    ["rebalancingQueries", "Number of Rebalancing Queries"],
+    ["pendingShutdownQueries", "Number of Pending Shutdown Queries"],
+    ["pendingErrorQueries", "Number of Pending Error Queries"],
     // ["numPersistentQueries", "Number of Persistent Queries"],
     // ["numIdleQueries", "Number of Idle Queries"],
     // ["numActiveQueries", "Number of Active Queries"],
@@ -34,7 +34,7 @@ export const Homepage = ({ metricsState }) => {
       <Toolbar></Toolbar>
       <Typography color="primary">Homepage</Typography>
       <Grid container spacing={2} justifyContent="flex-start" alignItems="flex-start" sx={{ pl: 28 }}>
-        {queryTypes.map(([query, description], index) => <LineChart description={description} metric={query} metricsState={metricsState} key={index}/>)}
+        {queryTypes.map(([query, description], index) => <LineChart description={description} metric={query} metricsState={metricsState} key={index} />)}
       </Grid>
     </div>
 
