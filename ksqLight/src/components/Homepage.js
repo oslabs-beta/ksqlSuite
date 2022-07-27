@@ -80,7 +80,7 @@ export const Homepage = ({ showQueries, showMessages, showErrors }) => {
         </Grid>
       </Grid> */}
 
-      <Grid container spacing={0} sx={{}}>
+      <Grid container spacing={4} sx={{}}>
         {showQueries &&
           queriesCharts.map(([query, description], index) =>
             <LineChart description={description} metric={query} key={index} />)

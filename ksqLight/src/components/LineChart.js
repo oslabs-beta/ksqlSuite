@@ -65,7 +65,7 @@ export default function LineChart({ metric, description }) {
       data: {
         datasets: [{
           data: initialData,
-          // data: "0",           // empty at the beginning,
+          // data: [],           // empty at the beginning,
           borderColor: 'rgba(58, 123, 213, 1)',
           pointRadius: 0,
           hitRadius: 30,

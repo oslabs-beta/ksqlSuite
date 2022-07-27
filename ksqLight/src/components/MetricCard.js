@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ApolloClient,
   InMemoryCache,
@@ -17,7 +17,7 @@ const client = new ApolloClient({
 
 export const MetricCard = ({ type, index }) => {
 
-  const data = useRef([]);
+  const [data, setData] = useState(null);
 
   const metricType = ["Liveness Indicator", "Error Rate", "Error Queries", "Bytes Consumed"];
   const iconColor = ["rgb(6, 27, 100)", "rgb(4, 41, 122)", "rgb(122, 79, 1)", "rgb(122, 12, 46)"];
@@ -27,7 +27,7 @@ export const MetricCard = ({ type, index }) => {
     `linear-gradient(135deg, rgba(12, 83, 183, 0) 0%, rgba(12, 83, 183, 0.24) 100%)`,
     `linear-gradient(135deg, rgba(183, 129, 3, 0) 0%, rgba(183, 129, 3, 0.24) 100%)`,
     `linear-gradient(135deg, rgba(183, 33, 54, 0) 0%, rgba(183, 33, 54, 0.24) 100%)`];
-  const dataToShow = [];
+  
 
   const flipCard = () => {
     // supposed to flip liveness card here
@@ -40,7 +40,7 @@ export const MetricCard = ({ type, index }) => {
     client.query({
       query: gql`
       query testQuery {
-        ksqlDBMetrics(metric: "${metric}", resolution: 2, start: ${Math.round(new Date().getTime() / 1000) - 3000}, end: ${Math.round(new Date().getTime() / 1000)}) {
+        ksqlDBMetrics(metric: "${metric}", resolution: 2, start: ${Math.round(new Date().getTime() / 1000) - 5}, end: ${Math.round(new Date().getTime() / 1000)}) {
               x,
               y
           }
@@ -48,17 +48,21 @@ export const MetricCard = ({ type, index }) => {
   `
     })
       .then(res => {
+        console.log(res);
         // chart.data.datasets[0].data.push(...[{x: new Date(), y: 1}]);
-        data.current = res.data.ksqlDBMetrics.map((queryObj) => {
-          return {
-            x: new Date(queryObj.x * 1000),
-            y: queryObj.y
-          }
-        });
+        // setData(res.data.ksqlDBMetrics.map((queryObj) => {
+        //   return {
+        //     x: new Date(queryObj.x * 1000),
+        //     y: queryObj.y
+        //   }
+        // }));
         // chart.data.datasets[0].data = data;
+        setData(res);
       })
       .catch(error => console.log(error));
   }, []) //useEffect dependency here
+
+
 
   return (
     <CardContent
@@ -70,16 +74,16 @@ export const MetricCard = ({ type, index }) => {
         onClick={() => console.log('')} // placeholder for flipping card
       >
         {index === 0 && <MonitorHeartIcon />}
-        {index === 1 && <ErrorIcon />}
+        {/* {index === 1 && <ErrorIcon />}
         {index === 2 && <BugReportIcon />}
-        {index === 3 && <DataThresholdingIcon />}
+        {index === 3 && <DataThresholdingIcon />} */}
       </IconButton>
 
       <Typography variant='h3' sx={{ textAlign: 'center', pt: '1.2rem', fontWeight: 700, lineHeight: 1.5, fontSize: '1.8rem', fontFamily: 'Public Sans', color: textColor[index] }}>
-        {index === 0 && (data[data.length - 1] ? 'Running' : 'Down')}
-        {index === 1 && (data[data.length - 1] ? data[data.length - 1] : 0)}
+        {index === 0 && (data?.data?.ksqlDBMetrics[0].y ? 'Running' : 'Down')}
+        {/* {index === 1 && (data[data.length - 1] ? data[data.length - 1] : 0)}
         {index === 2 && (data[data.length - 1] ? data[data.length - 1] : 0)}
-        {index === 3 && (data[data.length - 1] ? data[data.length - 1] : 0)}
+        {index === 3 && (data[data.length - 1] ? data[data.length - 1] : 0)} */}
       </Typography>
 
       <Typography variant='h6' sx={{ fontWeight: 600, lineHeight: 1.5, fontSize: '0.96rem', fontFamily: 'Public Sans', opacity: 0.72, color: textColor[index] }}>

@@ -8,9 +8,19 @@ import { PermanentDrawer } from "./components/PermanentDrawer.js";
 import { QueryPage } from "./components/QueryPage.js";
 import { CssBaseline, ThemeProvider, createTheme, Box, Grid } from "@mui/material";
 import { MetricCard } from "./components/MetricCard.js";
+import { green, purple } from '@mui/material/colors';
 
 const theme = createTheme({
   palette: {
+    // primary: {
+    //   main: purple[500],
+    // },
+    secondary: {
+      main: green[500],
+    },
+    background:{
+      default: "rgb(249, 250, 251)",
+    },
     mode: 'light',
   },
 });
@@ -34,7 +44,7 @@ function App() {
 
           <Header fetchMetrics={fetchMetrics} setFetchMetrics={setFetchMetrics} showSettings={showSettings} setShowSettings={setShowSettings} />
           <SettingsSidebar showSettings={showSettings} setShowSettings={setShowSettings}></SettingsSidebar>
-          <Box sx={{ display: 'flex' }}>
+          {/* <Box sx={{ display: 'flex' }}>
             <PermanentDrawer
               setShowQueries={setShowQueries}
               setShowMessages={setShowMessages}
@@ -63,7 +73,40 @@ function App() {
                 <Route path="/queryPage" element={<QueryPage />} />
               </Routes>
             </Box>
-          </Box>
+          </Box> */}
+          <Grid container spacing={1}>
+            <Grid item lg={2} md={2} sm={2}>
+              <PermanentDrawer
+                setShowQueries={setShowQueries}
+                setShowMessages={setShowMessages}
+                setShowErrors={setShowErrors}
+              />
+            </Grid>
+
+            <Grid item lg={10} md={10} sm={10} sx={{
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              <Grid container columnSpacing={9} rowSpacing={2} sx={{ display: 'flex', flexDirection: "row", p: 3, justifyContents: "center", alignItems: "center" }}>
+                <Grid item xs={3} md={3} lg={3}>
+                  <MetricCard type="livenessIndicator" index={0} />
+                </Grid>
+                <Grid item xs={3} md={3} lg={3}>
+                  <MetricCard type="bytesConsumedTotal" index={1} />
+                </Grid>
+                <Grid item xs={3} md={3} lg={3} >
+                  <MetricCard type="errorRate" index={2} />
+                </Grid>
+                <Grid item xs={3} md={3} lg={3} >
+                  <MetricCard type="errorQueries" index={3} />
+                </Grid>
+              </Grid>
+              <Routes>
+                <Route path="/" element={<Homepage showQueries={showQueries} showMessages={showMessages} showErrors={showErrors} />} />
+                <Route path="/queryPage" element={<QueryPage />} />
+              </Routes>
+            </Grid>
+          </Grid>
         </Box>
       </ThemeProvider>
     </BrowserRouter >

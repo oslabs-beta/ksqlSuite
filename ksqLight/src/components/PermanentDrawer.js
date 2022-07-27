@@ -76,7 +76,7 @@ export const PermanentDrawer = ({ setShowQueries, setShowMessages, setShowErrors
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box sx={{
-        width: 400,
+        width: "100%",
         height: 'auto', // changed this from auto
         // marginBottom: "-2000px", /* any large number will do */
         // paddingBottom: "2000px",
