@@ -8,6 +8,7 @@ import { PermanentDrawer } from "./components/PermanentDrawer.js";
 import { QueryPage } from "./components/QueryPage.js";
 import { CssBaseline, ThemeProvider, createTheme, Box, Grid } from "@mui/material";
 import { LivenessCard } from "./components/LivenessCard.js";
+import { Welcomepage } from "./components/Welcomepage.js";
 
 const theme = createTheme({
   palette: {
@@ -24,46 +25,47 @@ function App() {
 
 
   return (
-    <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Box sx={{
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
+    <Welcomepage></Welcomepage>
+    // <BrowserRouter>
+    //   <ThemeProvider theme={theme}>
+    //     <CssBaseline />
+    //     <Box sx={{
+    //       display: 'flex',
+    //       flexDirection: 'column'
+    //     }}>
 
-          <Header fetchMetrics={fetchMetrics} setFetchMetrics={setFetchMetrics} showSettings={showSettings} setShowSettings={setShowSettings} />
-          <SettingsSidebar showSettings={showSettings} setShowSettings={setShowSettings}></SettingsSidebar>
-          <Box sx={{ display: 'flex' }}>
-            <PermanentDrawer
-              setShowQueries={setShowQueries}
-              setShowMessages={setShowMessages}
-              setShowErrors={setShowErrors}
-            />
-            <Box sx={{
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <Grid container spacing={4} sx={{ display: 'flex', flexDirection: "row", p: 3 }}>
-                <Grid item xs={4} md={4} lg={4}>
-                  <LivenessCard />
-                </Grid>
-                <Grid item xs={4} md={4} lg={4}>
-                  <LivenessCard />
-                </Grid>
-                <Grid item xs={4} md={4} lg={4}>
-                  <LivenessCard />
-                </Grid>
-              </Grid>
-              <Routes>
-                <Route path="/" element={<Homepage showQueries={showQueries} showMessages={showMessages} showErrors={showErrors} />} />
-                <Route path="/queryPage" element={<QueryPage />} />
-              </Routes>
-            </Box>
-          </Box>
-        </Box>
-      </ThemeProvider>
-    </BrowserRouter >
+    //       <Header fetchMetrics={fetchMetrics} setFetchMetrics={setFetchMetrics} showSettings={showSettings} setShowSettings={setShowSettings} />
+    //       <SettingsSidebar showSettings={showSettings} setShowSettings={setShowSettings}></SettingsSidebar>
+    //       <Box sx={{ display: 'flex' }}>
+    //         <PermanentDrawer
+    //           setShowQueries={setShowQueries}
+    //           setShowMessages={setShowMessages}
+    //           setShowErrors={setShowErrors}
+    //         />
+    //         <Box sx={{
+    //           display: 'flex',
+    //           flexDirection: 'column'
+    //         }}>
+    //           <Grid container spacing={4} sx={{ display: 'flex', flexDirection: "row", p: 3 }}>
+    //             <Grid item xs={4} md={4} lg={4}>
+    //               <LivenessCard />
+    //             </Grid>
+    //             <Grid item xs={4} md={4} lg={4}>
+    //               <LivenessCard />
+    //             </Grid>
+    //             <Grid item xs={4} md={4} lg={4}>
+    //               <LivenessCard />
+    //             </Grid>
+    //           </Grid>
+    //           <Routes>
+    //             <Route path="/" element={<Homepage showQueries={showQueries} showMessages={showMessages} showErrors={showErrors} />} />
+    //             <Route path="/queryPage" element={<QueryPage />} />
+    //           </Routes>
+    //         </Box>
+    //       </Box>
+    //     </Box>
+    //   </ThemeProvider>
+    // </BrowserRouter >
 
   );
 }
