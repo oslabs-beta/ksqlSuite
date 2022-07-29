@@ -1,5 +1,3 @@
-const axios = require('axios');
-
 const utilityFunctions = {};
 
 utilityFunctions.getUnixRange = (days, hours, minutes) => {
