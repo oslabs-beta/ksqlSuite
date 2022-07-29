@@ -2,6 +2,17 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { TextField, Typography, MenuItem, Select, Drawer, IconButton, Grid, Button, Stack } from "@mui/material"
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  gql,
+} from "@apollo/client";
+
+const client = new ApolloClient({
+  uri: "http://localhost:5001/graphql",
+  cache: new InMemoryCache(),
+});
 
 export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, setMetricsState }) => {
   const [localMetricsState, setLocalMetricsState] = useState({
@@ -10,6 +21,8 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
     duration: metricsState.duration,
     refreshRate: metricsState.refreshRate
   });
+  const [invalidPrometheusMessage, setInvalidPrometheusMessage] = useState(null);
+  const [showSubmissionConfirmation, setShowSubmissionConfirmation] = useState(false);
 
   const handleLocalMetrics = (event) => {
     switch(event.target.name) {
@@ -63,31 +76,37 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
     }
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // ToDo:
-      // 1. verify prometheus URL
-      // 2. verify ksqlDB url
-      // 3. verify metrics exist for duration requested
-
-    // update state
-    setMetricsState({
-      prometheusURL: localMetricsState.prometheusURL,
-      ksqlDBURL: localMetricsState.ksqlDBURL,
-      duration: {
-        days: localMetricsState.duration.days,
-        hours: localMetricsState.duration.hours,
-        minutes: localMetricsState.duration.minutes
-      },
-      refreshRate: localMetricsState.refreshRate
-    });
+    // Verify Prometheus URL
+    client.query({
+      query: gql`
+          query validatePrometheusURL{
+            isValidPrometheusURL(prometheusURL: "${event.target[1].value}")
+          }
+      `
+      })
+      .then(res => {
+        // update state
+        setMetricsState({
+          prometheusURL: localMetricsState.prometheusURL,
+          ksqlDBURL: localMetricsState.ksqlDBURL,
+          duration: {
+            days: localMetricsState.duration.days,
+            hours: localMetricsState.duration.hours,
+            minutes: localMetricsState.duration.minutes
+          },
+          refreshRate: localMetricsState.refreshRate
+        });
+        setInvalidPrometheusMessage(null);
+        setShowSubmissionConfirmation(true);
+        setTimeout(() => setShowSubmissionConfirmation(false), 3000);
+      })
+      .catch(error => {
+        setInvalidPrometheusMessage(error.message);
+      });
   }
-
-  // useEffect(() => {
-  //   console.log('this is the metrics state: ', metricsState);
-  // }, [metricsState]);
-
 
   return(
     <Drawer variant="temporary" anchor="right" open={showSettings} PaperProps={{sx: {paddingTop: "3.5em", width: "35%"}}}>
@@ -98,15 +117,30 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
               <ArrowForwardIosIcon sx={{color: "#333"}}/>
             </IconButton>
               <Typography variant="h6" sx={{color: "#333"}}>Prometheus Connection</Typography>
-                <hr className="w-full mb-3 mt-1"></hr>
-              <TextField
-                fullWidth 
-                variant="outlined"
-                label="URL"
-                name="prometheus-url"
-                onChange={handleLocalMetrics}
-                value={localMetricsState.prometheusURL}
-              />
+              <hr className="w-full mb-3 mt-1"></hr>
+              {invalidPrometheusMessage ? (
+                <>
+                  <TextField
+                  error
+                  fullWidth 
+                  variant="outlined"
+                  label="URL"
+                  name="prometheus-url"
+                  onChange={handleLocalMetrics}
+                  value={localMetricsState.prometheusURL}
+                  />
+                <Typography variant="h8" sx={{color: "red"}}>{invalidPrometheusMessage}</Typography>
+                </>
+              ) : (
+                <TextField
+                  fullWidth 
+                  variant="outlined"
+                  label="URL"
+                  name="prometheus-url"
+                  onChange={handleLocalMetrics}
+                  value={localMetricsState.prometheusURL}
+                />
+              )}
               <hr className="w-full invisible mb-2 mt-2"></hr>
               <Typography variant="h6" sx={{color: "#333"}}>ksqlDB Connection</Typography>
               <hr className="w-full mb-3 mt-1"></hr>
@@ -172,6 +206,7 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
                 <Button variant="contained" type="submit">Submit</Button>
                 <Button color='secondary' variant="contained" onClick={() => setShowSettings(!showSettings)}>Cancel</Button>
               </Stack>
+              {showSubmissionConfirmation && <Typography variant="h8" sx={{color: "forestgreen", mt: "1em"}}>Settings Saved!</Typography>}
           </Grid>
         </form>
       </div>

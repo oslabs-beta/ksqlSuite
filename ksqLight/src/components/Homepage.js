@@ -32,6 +32,7 @@ export const Homepage = ({ showQueries, showMessages, showErrors, metricsState }
     ["errorRate", "Error Rate"],
     ["errorQueries", "Number of Error Queries"],
     ["pendingErrorQueries", "Number of Pending Error Queries"],
+    
   ]
   const queryTypes = [
     ["runningQueries", "Number of Running Queries"],
@@ -58,7 +59,7 @@ export const Homepage = ({ showQueries, showMessages, showErrors, metricsState }
   return (
     <Box>
       <CssBaseline />
-      <Typography color="primary">Hi Welcome back</Typography>
+      {/* <Typography color="primary">Hi Welcome back</Typography> */}
       <Grid container spacing={4} sx={{}}>
         {showQueries &&
           queriesCharts.map(([query, description], index) =>
@@ -69,11 +70,11 @@ export const Homepage = ({ showQueries, showMessages, showErrors, metricsState }
             <LineChart description={description} metric={query} metricsState={metricsState} key={index} />
           )
         }
-        {/* {showErrors &&
+        {showErrors &&
           errorCharts.map(([query, description], index) =>
-            <LineChart description={description} metric={query} key={index} />
+            <LineChart description={description} metric={query} metricsState={metricsState} key={index} />
           )
-        } */}
+        }
         {/* {queryTypes.map(([query, description], index) => <LineChart description={description} metric={query} key={index} />)} */}
       </Grid>
     </Box>

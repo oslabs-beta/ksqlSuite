@@ -38,6 +38,7 @@ const RealTimeType = new GraphQLObjectType({
 })
 
 //---------------Root Query Types----------------
+// todo: change the Number(val) implementation 
 const RootQueryType = new GraphQLObjectType({
     name: 'Query',
     description: 'Root Query',
@@ -53,7 +54,7 @@ const RootQueryType = new GraphQLObjectType({
                 prometheusURL: { type: GraphQLNonNull(GraphQLString)}
             },
             resolve: (parent, {start, end, resolution, metric, prometheusURL}) => {
-                if (prometheusURL[prometheusURL.length] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length);
+                if (prometheusURL[prometheusURL.length] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length - 1);
 
                 return axios.get(`${prometheusURL}/api/v1/query_range?step=${resolution}s&end=${end}&start=${start}&query=${queryTypes[metric]}`)
                 .then(res => {
@@ -125,6 +126,20 @@ const RootQueryType = new GraphQLObjectType({
                 }
             }
         },
+        isValidPrometheusURL: {
+            type: GraphQLBoolean,
+            description: 'Boolean value representing whether provided Prometheus URL points to valid Prometheus server',
+            args: {
+                prometheusURL: { type: GraphQLNonNull(GraphQLString)}
+            },
+            resolve: async (parent, { prometheusURL }) => {
+                if (prometheusURL[prometheusURL.length] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length - 1);
+
+                return axios.get(`${prometheusURL}/api/v1/status/buildinfo`)
+                .then(res => res.status === 200)
+                .catch(error => error);
+            }
+        }
     })
 });
 
