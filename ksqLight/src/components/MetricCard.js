@@ -50,7 +50,7 @@ export const MetricCard = ({ type, index, metricsState }) => {
     })
       .then(res => setData(res.data[type]))
       .catch(error => console.log(error));
-  }, []);
+  });
 
 
 
