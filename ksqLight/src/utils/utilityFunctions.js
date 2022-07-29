@@ -10,4 +10,8 @@ utilityFunctions.getDuration = (days, hours, minutes) => {
     return (minutes * 60 + hours * 60 * 60 + days * 60 * 60 * 24) * 1000;
 };
 
+utilityFunctions.validateDuration = (duration, resolution) => {
+    return (duration / 1000) / resolution < 11000;
+}
+
 module.exports  = utilityFunctions;
