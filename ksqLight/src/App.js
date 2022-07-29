@@ -18,7 +18,7 @@ const theme = createTheme({
     secondary: {
       main: green[500],
     },
-    background:{
+    background: {
       default: "rgb(249, 250, 251)",
     },
     mode: 'light',
@@ -42,14 +42,14 @@ function App() {
   // return (
   //   <BrowserRouter>
   //     <CssBaseline/>
-  //     <Header 
-  //       fetchMetrics={fetchMetrics} 
-  //       setFetchMetrics={setFetchMetrics} 
-  //       showSettings={showSettings} 
+  //     <Header
+  //       fetchMetrics={fetchMetrics}
+  //       setFetchMetrics={setFetchMetrics}
+  //       showSettings={showSettings}
   //       setShowSettings={setShowSettings}/>
-  //     <SettingsSidebar 
-  //       showSettings={showSettings} 
-  //       setShowSettings={setShowSettings} 
+  //     <SettingsSidebar
+  //       showSettings={showSettings}
+  //       setShowSettings={setShowSettings}
   //       metricsState={metricsState}
   //       setMetricsState={setMetricsState}>
   //     </SettingsSidebar>
@@ -59,7 +59,7 @@ function App() {
   //       <Route path="/queryPage" element={<QueryPage/>}/>
   //     </Routes>
   //   </BrowserRouter>
-    
+
   const [showQueries, setShowQueries] = useState(true);
   const [showMessages, setShowMessages] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
@@ -131,19 +131,19 @@ function App() {
             }}>
               <Grid container columnSpacing={9} rowSpacing={2} sx={{ p: 3, justifyContents: "center", alignItems: "center" }}>
                 <Grid item xs={3} md={3} lg={3}>
-                  <MetricCard type="livenessIndicator" index={0} />
+                  <MetricCard type="livenessIndicator" index={0} metricsState={metricsState} />
                 </Grid>
                 <Grid item xs={3} md={3} lg={3}>
-                  <MetricCard type="bytesConsumed" index={1} />
+                  <MetricCard type="bytesConsumed" index={1} metricsState={metricsState} />
                 </Grid>
                 <Grid item xs={3} md={3} lg={3} >
-                  <MetricCard type="errorRate" index={2} />
+                  <MetricCard type="errorRate" index={2} metricsState={metricsState} />
                 </Grid>
                 <Grid item xs={3} md={3} lg={3} >
-                  <MetricCard type="errorQueries" index={3} />
+                  <MetricCard type="errorQueries" index={3} metricsState={metricsState} />
                 </Grid>
               </Grid>
-              <Grid container justifyContent="center" alignItems="center" sx={{pr: "2em"}}>
+              <Grid container justifyContent="center" alignItems="center" sx={{ pr: "2em" }}>
                 <Routes>
                   <Route path="/" element={<Homepage showQueries={showQueries} showMessages={showMessages} showErrors={showErrors} metricsState={metricsState} />} />
                   <Route path="/queryPage" element={<QueryPage />} />

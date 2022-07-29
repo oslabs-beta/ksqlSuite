@@ -9,29 +9,29 @@ export const Homepage = ({ showQueries, showMessages, showErrors, metricsState }
   const [content, setContent] = useState('Chart placeholder');
 
   const queriesCharts = [
-    ["runningQueries", "Number of Running Queries"],
-    ["createdQueries", "Number of Created Queries"],
-    ["numPersistentQueries", "Number of Persistent Queries"],
-    ["numIdleQueries", "Number of Idle Queries"],
-    ["rebalancingQueries", "Number of Rebalancing Queries"],
-    ["numActiveQueries", "Number of Active Queries"],
-    ["notRunningQueries", "Number of Not Running Queries"],
-    ["pendingShutdownQueries", "Number of Pending Shutdown Queries"],
+    ["runningQueries", "Running Queries"],
+    ["createdQueries", "Created Queries"],
+    ["numPersistentQueries", "Persistent Queries"],
+    ["numIdleQueries", "Idle Queries"],
+    ["rebalancingQueries", "Rebalancing Queries"],
+    ["numActiveQueries", "Active Queries"],
+    ["notRunningQueries", "Not Running Queries"],
+    ["pendingShutdownQueries", "Pending Shutdown Queries"],
   ];
 
   const messagesCharts = [
-    ["messagesConsumedTotal", "Number of Messages Consumed"],
-    ["messagesProducedPerSec", "Number of Messages Produced Per Second"],
-    ["messagesConsumedPerSec", "Number of Messages Consumed Per Second"],
-    ["messagesConsumedMin", "Number of Messages Consumed Min"],
-    ["messagesConsumedMax", "Number of Messages Consumed Max"],
-    ["messagesConsumedAvg", "Number of Messages Consumed Average"],
+    ["messagesConsumedTotal", "Messages Consumed"],
+    ["messagesProducedPerSec", "Messages Produced Per Second"],
+    ["messagesConsumedPerSec", "Messages Consumed Per Second"],
+    ["messagesConsumedMin", "Messages Consumed Min"],
+    ["messagesConsumedMax", "Messages Consumed Max"],
+    ["messagesConsumedAvg", "Messages Consumed Average"],
   ];
 
   const errorCharts = [
     ["errorRate", "Error Rate"],
-    ["errorQueries", "Number of Error Queries"],
-    ["pendingErrorQueries", "Number of Pending Error Queries"],
+    ["errorQueries", "Error Queries"],
+    ["pendingErrorQueries", "Pending Error Queries"],
   ]
   const queryTypes = [
     ["runningQueries", "Number of Running Queries"],
