@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "react-card-flip": "^1.1.5",
     "webpack-dev-server": "^4.9.3"
   }
 }
