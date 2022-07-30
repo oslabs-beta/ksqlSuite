@@ -37,7 +37,7 @@ export default function LineChart({ metric, description, metricsState }) {
     
     initialData = client.query({
       query: gql`
-          query testQuery {
+          query fetchMetric {
             ksqlDBMetrics(prometheusURL: "${metricsState.prometheusURL}" metric: "${metric}", resolution: ${metricsState.refreshRate}, start: ${unixStart}, end: ${unixEnd}) {
                   x,
                   y

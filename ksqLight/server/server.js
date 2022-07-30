@@ -35,6 +35,15 @@ const RealTimeType = new GraphQLObjectType({
             resolve: (parent, args, context) => parent[1]
         }
     })
+});
+
+const ValidationType = new GraphQLObjectType({
+    name: 'inputValidation',
+    description: 'Object indicating input validity status and error message',
+    fields: () => ({
+        isValid: { type: GraphQLBoolean },
+        error: { type: GraphQLString }
+    })
 })
 
 //---------------Root Query Types----------------
@@ -53,7 +62,7 @@ const RootQueryType = new GraphQLObjectType({
                 prometheusURL: { type: GraphQLNonNull(GraphQLString)}
             },
             resolve: (parent, {start, end, resolution, metric, prometheusURL}) => {
-                if (prometheusURL[prometheusURL.length] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length);
+                if (prometheusURL[prometheusURL.length - 1] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length - 1);
 
                 return axios.get(`${prometheusURL}/api/v1/query_range?step=${resolution}s&end=${end}&start=${start}&query=${queryTypes[metric]}`)
                 .then(res => {
@@ -125,6 +134,65 @@ const RootQueryType = new GraphQLObjectType({
                 }
             }
         },
+        isValidPrometheusURL: {
+            type: ValidationType,
+            description: 'Object representing whether provided Prometheus URL points to valid Prometheus server and any errors',
+            args: {
+                prometheusURL: { type: GraphQLNonNull(GraphQLString)}
+            },
+            resolve: async (parent, { prometheusURL }) => {
+                if (prometheusURL[prometheusURL.length - 1] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length - 1);
+
+                return axios.get(`${prometheusURL}/api/v1/status/buildinfo`)
+                .then(res => ({
+                    isValid: true,
+                    error: null
+                }))
+                .catch(error => ({
+                    isValid: false,
+                    error: error.message
+                }));
+            }
+        },
+        isValidKsqlDBURL: {
+            type: ValidationType,
+            description: 'Object representing whether provided ksqlDB URL points to valid Prometheus server and any errors',
+            args: {
+                ksqlDBURL: { type: GraphQLNonNull(GraphQLString)}
+            },
+            resolve: (parent, { ksqlDBURL }) => {
+                if (ksqlDBURL[ksqlDBURL.length - 1] === '/') ksqlDBURL = ksqlDBURL.slice(0, ksqlDBURL.length - 1);
+
+                return axios.get(`${ksqlDBURL}/clusterStatus`)
+                .then(res => ({
+                    isValid: true,
+                    error: null
+                }))
+                .catch(error => ({
+                    isValid: false,
+                    error: error.message
+                }));
+            }
+        },
+        isValidDuration: {
+            type: GraphQLBoolean,
+            description: 'Boolean representing whether Prometheus server accepts user duration.',
+            args: {
+                metric: { type: GraphQLNonNull(GraphQLString)},
+                start: { type: GraphQLNonNull(GraphQLInt)},
+                end: { type: GraphQLNonNull(GraphQLInt)},
+                resolution: { type: GraphQLNonNull(GraphQLInt)},
+                prometheusURL: { type: GraphQLNonNull(GraphQLString)}
+            },
+            resolve: (parent, { start, end, resolution, metric, prometheusURL }) => {
+                if (prometheusURL[prometheusURL.length - 1] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length - 1);
+
+                
+                return axios.get(`${prometheusURL}/api/v1/query_range?step=${resolution}s&end=${end}&start=${start}&query=${queryTypes[metric]}`)
+                .then(res => true)
+                .catch(error => false);
+            }
+        }
     })
 });
 
