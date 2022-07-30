@@ -9,6 +9,8 @@ import { QueryPage } from "./components/QueryPage.js";
 import { CssBaseline, ThemeProvider, createTheme, Box, Grid } from "@mui/material";
 import { MetricCard } from "./components/MetricCard.js";
 import { green, purple } from '@mui/material/colors';
+import { LivenessCard } from "./components/LivenessCard.js";
+import { Welcomepage } from "./components/Welcomepage.js";
 
 const theme = createTheme({
   palette: {
@@ -18,7 +20,7 @@ const theme = createTheme({
     secondary: {
       main: green[500],
     },
-    background:{
+    background: {
       default: "rgb(249, 250, 251)",
     },
     mode: 'light',
@@ -59,7 +61,7 @@ function App() {
   //       <Route path="/queryPage" element={<QueryPage/>}/>
   //     </Routes>
   //   </BrowserRouter>
-    
+
   const [showQueries, setShowQueries] = useState(true);
   const [showMessages, setShowMessages] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
@@ -76,6 +78,7 @@ function App() {
 
 
   return (
+    // <Welcomepage></Welcomepage>
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <CssBaseline />
@@ -143,7 +146,7 @@ function App() {
                   <MetricCard type="errorQueries" index={3} />
                 </Grid>
               </Grid>
-              <Grid container justifyContent="center" alignItems="center" sx={{pr: "2em"}}>
+              <Grid container justifyContent="center" alignItems="center" sx={{ pr: "2em" }}>
                 <Routes>
                   <Route path="/" element={<Homepage showQueries={showQueries} showMessages={showMessages} showErrors={showErrors} metricsState={metricsState} />} />
                   <Route path="/queryPage" element={<QueryPage />} />
