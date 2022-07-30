@@ -34,9 +34,8 @@ export const MetricCard = ({ type, index, metricsState }) => {
     `linear-gradient(135deg, rgba(183, 33, 54, 0) 0%, rgba(183, 33, 54, 0.24) 100%)`];
 
 
-  const flipCard = (e) => {
+  const flipCard = () => {
     // supposed to flip liveness card here
-    e.preventDefault();
     setIsFlipped(!isFlipped);
   }
 
@@ -62,7 +61,7 @@ export const MetricCard = ({ type, index, metricsState }) => {
           size="small"
           style={{ width: "2.9rem", height: "2.9rem", backgroundImage: bgImage[index] }}
           sx={{ color: iconColor[index], borderRadius: '50%' }}
-          onClick={(e) => flipCard(e)} // placeholder for flipping card
+          onClick={() => flipCard()} // placeholder for flipping card
         >
           {index === 0 && <MonitorHeartIcon />}
           {index === 1 && <ErrorIcon />}
@@ -87,7 +86,7 @@ export const MetricCard = ({ type, index, metricsState }) => {
           aria-label="refresh"
           color={textColor[index]}
           sx={{ bgcolor: bgColor[index] }}
-          onClick={(e) => flipCard(e)}
+          onClick={() => flipCard()}
         >
           <RefreshIcon />
         </IconButton>
