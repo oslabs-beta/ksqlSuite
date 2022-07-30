@@ -62,7 +62,7 @@ const RootQueryType = new GraphQLObjectType({
                 prometheusURL: { type: GraphQLNonNull(GraphQLString)}
             },
             resolve: (parent, {start, end, resolution, metric, prometheusURL}) => {
-                if (prometheusURL[prometheusURL.length] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length - 1);
+                if (prometheusURL[prometheusURL.length - 1] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length - 1);
 
                 return axios.get(`${prometheusURL}/api/v1/query_range?step=${resolution}s&end=${end}&start=${start}&query=${queryTypes[metric]}`)
                 .then(res => {
@@ -141,7 +141,7 @@ const RootQueryType = new GraphQLObjectType({
                 prometheusURL: { type: GraphQLNonNull(GraphQLString)}
             },
             resolve: async (parent, { prometheusURL }) => {
-                if (prometheusURL[prometheusURL.length] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length - 1);
+                if (prometheusURL[prometheusURL.length - 1] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length - 1);
 
                 return axios.get(`${prometheusURL}/api/v1/status/buildinfo`)
                 .then(res => ({
@@ -161,7 +161,7 @@ const RootQueryType = new GraphQLObjectType({
                 ksqlDBURL: { type: GraphQLNonNull(GraphQLString)}
             },
             resolve: (parent, { ksqlDBURL }) => {
-                if (ksqlDBURL[ksqlDBURL.length] === '/') ksqlDBURL = ksqlDBURL.slice(0, ksqlDBURL.length - 1);
+                if (ksqlDBURL[ksqlDBURL.length - 1] === '/') ksqlDBURL = ksqlDBURL.slice(0, ksqlDBURL.length - 1);
 
                 return axios.get(`${ksqlDBURL}/clusterStatus`)
                 .then(res => ({
@@ -185,7 +185,7 @@ const RootQueryType = new GraphQLObjectType({
                 prometheusURL: { type: GraphQLNonNull(GraphQLString)}
             },
             resolve: (parent, { start, end, resolution, metric, prometheusURL }) => {
-                if (prometheusURL[prometheusURL.length] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length - 1);
+                if (prometheusURL[prometheusURL.length - 1] === '/') prometheusURL = prometheusURL.slice(0, prometheusURL.length - 1);
 
                 
                 return axios.get(`${prometheusURL}/api/v1/query_range?step=${resolution}s&end=${end}&start=${start}&query=${queryTypes[metric]}`)
