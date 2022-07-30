@@ -23,7 +23,6 @@ function App() {
         <Route path="/queryPage" element={<QueryPage/>}/>
       </Routes>
     </BrowserRouter>
-    
   );
 }
 
