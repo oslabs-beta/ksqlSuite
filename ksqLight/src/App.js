@@ -41,18 +41,34 @@ function App() {
             default: "#f9fafb",
           },
           chartColor: {
-            background: "#FFFFFF"
+            background: "#FFFFFF",
           },
           cardColor: {
-            background1: "rgb(209, 233, 252)",
-            background2: "rgb(208, 242, 255)",
-            background3: "rgb(255, 247, 205)",
-            background4: "rgb(255, 231, 217)",
+            // background1: "rgb(209, 233, 252)",
+            // background2: "rgb(208, 242, 255)",
+            // background3: "rgb(255, 247, 205)",
+            // background4: "rgb(255, 231, 217)",
+            background1: "#FFFFFF",
+            background2: "#FFFFFF",
+            background3: "#FFFFFF",
+            background4: "#FFFFFF",
+            // textColor1: "#061B64",
+            // textColor2: "#04297A",
+            // textColor3: "#7A4F01",
+            // textColor4: "#7A0C2E",
           }
         }
         :
         {
-
+          chartColor: {
+            background: "#1A1A1A"
+          },
+          cardColor: {
+            background1: "#1A1A1A",
+            background2: "#1A1A1A",
+            background3: "#1A1A1A",
+            background4: "#1A1A1A",
+          }
         })
     },
   });
@@ -64,7 +80,7 @@ function App() {
       </Grid>
     )
   });
-  console.log(metricsState);
+
   return (
     !metricsState.prometheusURL ?
       <ThemeProvider theme={theme}>
@@ -92,7 +108,7 @@ function App() {
                 display: 'flex',
                 flexDirection: 'column'
               }}>
-                <Grid container columnSpacing={10} sx={{ p: 3, justifyContents: "center", alignItems: "center" }}>
+                <Grid container columnSpacing={4} sx={{pt: 3, pb: 3, pr: "2em", justifyContents: "center", alignItems: "center" }}>
                   {serverCards}
                 </Grid>
                 <Grid container justifyContent="center" alignItems="center" sx={{ pr: "2em" }}>

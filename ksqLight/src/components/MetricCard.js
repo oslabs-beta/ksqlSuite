@@ -4,7 +4,7 @@ import {
   InMemoryCache,
   gql,
 } from "@apollo/client";
-import { Typography, CardContent, IconButton } from "@mui/material";
+import { Typography, CardContent, IconButton, Box } from "@mui/material";
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import ErrorIcon from '@mui/icons-material/Error';
 import BugReportIcon from '@mui/icons-material/BugReport';
@@ -19,15 +19,11 @@ export const MetricCard = ({ type, index }) => {
   const [data, setData] = useState(null);
 
   const metricType = ["Liveness Indicator", "Error Rate", "Error Queries", "Bytes Consumed"];
-  const iconColor = ["rgb(6, 27, 100)", "rgb(4, 41, 122)", "rgb(122, 79, 1)", "rgb(122, 12, 46)"];
   const bgColor = ["cardColor.background1", "cardColor.background2", "cardColor.background3", "cardColor.background4"];
-  const textColor = ["#061B64", "#04297A", "#7A4F01", "#7A0C2E"];
-  const bgImage = [`linear-gradient(135deg, rgba(16, 57, 150, 0) 0%, rgba(16, 57, 150, 0.24) 100%)`,
-    `linear-gradient(135deg, rgba(12, 83, 183, 0) 0%, rgba(12, 83, 183, 0.24) 100%)`,
-    `linear-gradient(135deg, rgba(183, 129, 3, 0) 0%, rgba(183, 129, 3, 0.24) 100%)`,
-    `linear-gradient(135deg, rgba(183, 33, 54, 0) 0%, rgba(183, 33, 54, 0.24) 100%)`];
-  
+  const textColor = ["cardColor.textColor1", "cardColor.textColor2", "cardColor.textColor3", "cardColor.textColor4"];
+  const bgImage = ["cardColor.iconBg1", "cardColor.iconBg2", "cardColor.iconBg3", "cardColor.iconBg4"];
 
+  console.log(data);
   const flipCard = () => {
     // supposed to flip liveness card here
   }
@@ -48,29 +44,30 @@ export const MetricCard = ({ type, index }) => {
 
   return (
     <CardContent
-      sx={{ display: 'flex', justifyContent: "center", alignItems: "center", flexDirection: "column", bgcolor: bgColor[index], boxShadow: 0, borderRadius: '16px' }}>
-      <IconButton
-        size="small"
-        style={{ width: "2.9rem", height: "2.9rem", backgroundImage: bgImage[index] }}
-        sx={{ color: iconColor[index], borderRadius: '50%' }}
-        onClick={() => console.log('')} // placeholder for flipping card
-      >
-        {index === 0 && <MonitorHeartIcon />}
-        {index === 1 && <ErrorIcon />}
-        {index === 2 && <BugReportIcon />}
-        {index === 3 && <DataThresholdingIcon />}
-      </IconButton>
-
-      <Typography variant='h3' sx={{ textAlign: 'center', pt: '1.2rem', fontWeight: 700, lineHeight: 1.5, fontSize: '1.8rem', color: textColor[index] }}>
+      sx={{ display: 'flex', justifyContent: "center", alignItems: "center", flexDirection: "column", bgcolor: bgColor[index], boxShadow: 1, borderRadius: '16px' }}>
+      <Box width="100%" sx={{ display: 'flex', flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
+        <IconButton
+          size="small"
+          // style={{ width: "2.9rem", height: "2.9rem" }}
+          sx={{ borderRadius: '50%' }}
+          onClick={() => console.log('')} // placeholder for flipping card
+        >
+          {index === 0 && <MonitorHeartIcon />}
+          {index === 1 && <ErrorIcon />}
+          {index === 2 && <BugReportIcon />}
+          {index === 3 && <DataThresholdingIcon />}
+        </IconButton>
+        <Box>
+          <Typography variant='h6' sx={{ verticalAlign: 'center', fontSize: '0.96rem', opacity: 0.72, color: textColor[index] }}>
+            {metricType[index]}</Typography>
+        </Box>
+      </Box>
+      <Typography variant='h3' sx={{ fontSize: '1.8rem'}}>
         {index === 0 && (data ? 'Running' : 'Down')}
         {index === 1 && (data !== null ? data : 'N/A')}
         {index === 2 && (data !== null ? data : 'N/A')}
         {index === 3 && (data !== null ? data : 'N/A')}
       </Typography>
-
-      <Typography variant='h6' sx={{ fontWeight: 600, lineHeight: 1.5, fontSize: '0.96rem', opacity: 0.72, color: textColor[index] }}>
-        {metricType[index]}</Typography>
-
     </CardContent >
 
   )

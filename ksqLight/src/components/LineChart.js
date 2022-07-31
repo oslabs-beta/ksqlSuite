@@ -58,8 +58,8 @@ export default function LineChart({ metric, description, metricsState }) {
 
     // define gradient for background
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(58, 123, 213, 1)');
-    gradient.addColorStop(1, 'rgba(0, 210, 255, 0.3)')
+    gradient.addColorStop(0, 'rgba(78, 67, 118, 1)');
+    gradient.addColorStop(1, 'rgba(43, 88, 118, 0.3)')
 
     // define chart configuration
     const config = {
@@ -69,7 +69,7 @@ export default function LineChart({ metric, description, metricsState }) {
           data: initialData,
           // data: [{x: new Date(), y: '0'}],
           // data: [],           // empty at the beginning,
-          borderColor: 'rgba(58, 123, 213, 1)',
+          borderColor: 'rgba(78, 67, 118, 0.3)',
           pointRadius: 0,
           hitRadius: 30,
           hoverRadius: 5,
@@ -135,7 +135,7 @@ export default function LineChart({ metric, description, metricsState }) {
             beginAtZero: true,
             ticks: {
               // display: false,
-              color: "#999",
+              // color: "#999",
               stepSize: 5
             }
           }
@@ -147,7 +147,7 @@ export default function LineChart({ metric, description, metricsState }) {
           },
           title: {
             fontFamily: 'Raleway',
-            color: '#666',
+            // color: '#999',
             display: true,
             text: description,
           },
@@ -167,7 +167,7 @@ export default function LineChart({ metric, description, metricsState }) {
 
   return (
     <Grid item xs={3} md={3} lg={3}>
-      <CardContent sx={{ bgcolor: "white", boxShadow: 1, borderRadius: '16px' }}>
+      <CardContent sx={{ bgcolor:"chartColor.background", boxShadow: 1, borderRadius: '16px' }}>
         <canvas id={metric} width="100%" height="100%"></canvas>
       </CardContent>
     </Grid>
