@@ -96,10 +96,10 @@ function App() {
                   {serverCards}
                 </Grid>
                 <Grid container justifyContent="center" alignItems="center" sx={{ pr: "2em" }}>
-                  {/* <Routes>
+                  <Routes>
                     <Route path="/" element={<Homepage showQueries={showQueries} showMessages={showMessages} showErrors={showErrors} metricsState={metricsState} />} />
                     <Route path="/queryPage" element={<QueryPage />} />
-                  </Routes> */}
+                  </Routes>
                 </Grid>
               </Grid>
             </Grid>
