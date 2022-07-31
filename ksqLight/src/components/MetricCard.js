@@ -22,6 +22,7 @@ export const MetricCard = ({ type, index }) => {
   const bgColor = ["cardColor.background1", "cardColor.background2", "cardColor.background3", "cardColor.background4"];
   const textColor = ["cardColor.textColor1", "cardColor.textColor2", "cardColor.textColor3", "cardColor.textColor4"];
   const bgImage = ["cardColor.iconBg1", "cardColor.iconBg2", "cardColor.iconBg3", "cardColor.iconBg4"];
+  const iconColor = ["cardColor.iconColor1", "cardColor.iconColor2", "cardColor.iconColor3", "cardColor.iconColor4"];
 
   console.log(data);
   const flipCard = () => {
@@ -49,7 +50,8 @@ export const MetricCard = ({ type, index }) => {
         <IconButton
           size="small"
           // style={{ width: "2.9rem", height: "2.9rem" }}
-          sx={{ borderRadius: '50%' }}
+          
+          sx={{ borderRadius: '50%', color: iconColor[index] }}
           onClick={() => console.log('')} // placeholder for flipping card
         >
           {index === 0 && <MonitorHeartIcon />}
@@ -62,7 +64,7 @@ export const MetricCard = ({ type, index }) => {
             {metricType[index]}</Typography>
         </Box>
       </Box>
-      <Typography variant='h3' sx={{ fontSize: '1.8rem'}}>
+      <Typography variant='h3' sx={{ fontSize: '1.8rem', pt: 1}}>
         {index === 0 && (data ? 'Running' : 'Down')}
         {index === 1 && (data !== null ? data : 'N/A')}
         {index === 2 && (data !== null ? data : 'N/A')}

@@ -58,8 +58,8 @@ export default function LineChart({ metric, description, metricsState }) {
 
     // define gradient for background
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(78, 67, 118, 1)');
-    gradient.addColorStop(1, 'rgba(43, 88, 118, 0.3)')
+    gradient.addColorStop(0, 'rgba(255, 207, 112, 1)');
+    gradient.addColorStop(1, 'rgba(255, 194, 67, 0.3)')
 
     // define chart configuration
     const config = {
@@ -69,7 +69,7 @@ export default function LineChart({ metric, description, metricsState }) {
           data: initialData,
           // data: [{x: new Date(), y: '0'}],
           // data: [],           // empty at the beginning,
-          borderColor: 'rgba(78, 67, 118, 0.3)',
+          borderColor: 'rgba(255, 194, 67, 0.3)',
           pointRadius: 0,
           hitRadius: 30,
           hoverRadius: 5,

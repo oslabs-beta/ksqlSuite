@@ -38,7 +38,7 @@ function App() {
       ...(mode === 'light' ?
         {
           background: {
-            default: "#f9fafb",
+            default: "#fbfaff",
           },
           chartColor: {
             background: "#FFFFFF",
@@ -52,6 +52,10 @@ function App() {
             background2: "#FFFFFF",
             background3: "#FFFFFF",
             background4: "#FFFFFF",
+            iconColor1: "#04724D",
+            iconColor2: "#FFC300",
+            iconColor3: "#540C97",
+            iconColor4: "#C48EF6",
             // textColor1: "#061B64",
             // textColor2: "#04297A",
             // textColor3: "#7A4F01",
