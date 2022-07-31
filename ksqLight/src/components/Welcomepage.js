@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Typography, TextField, Box, Fade, Button, Autocomplete } from "@mui/material";
+import {
+  Typography,
+  TextField,
+  Box,
+  Fade,
+  Button,
+  Autocomplete,
+  Stack,
+} from "@mui/material";
 import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 
 const client = new ApolloClient({
@@ -9,17 +17,26 @@ const client = new ApolloClient({
 
 export const Welcomepage = ({ setMetricsState, metricsState }) => {
   const [showTextBox, setShowTextBox] = useState(false);
-  const [invalidPrometheusMessage, setInvalidPrometheusMessage] = useState(null);
+  const [invalidPrometheusMessage, setInvalidPrometheusMessage] =
+    useState(null);
   const [url, setUrl] = useState("");
 
   const handleClick = () => {
     setShowTextBox(true);
   };
 
-  const handleSubmit = async () => {
-    console.log(url);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
     try {
-      const { data: { isValidPrometheusURL: { isValid: prometheusValid, error: prometheusError } } } = await client.query({
+      const {
+        data: {
+          isValidPrometheusURL: {
+            isValid: prometheusValid,
+            error: prometheusError,
+          },
+        },
+      } = await client.query({
         query: gql`
             query validatePrometheusURL{
               isValidPrometheusURL(prometheusURL: "${url}") {
@@ -27,7 +44,7 @@ export const Welcomepage = ({ setMetricsState, metricsState }) => {
                 error
               }
             }
-        `
+        `,
       });
       if (prometheusError) {
         setInvalidPrometheusMessage(prometheusError);
@@ -37,11 +54,11 @@ export const Welcomepage = ({ setMetricsState, metricsState }) => {
       }
       setMetricsState({
         ...metricsState,
-        prometheusURL: url
+        prometheusURL: url,
       });
     } catch (error) {
       console.log(error);
-    };
+    }
   };
 
   return (
@@ -53,62 +70,98 @@ export const Welcomepage = ({ setMetricsState, metricsState }) => {
           <Box className="big"></Box>
         </Box>
       </Box>
-      <Box sx={{
-        display: "flex",
-        height: "100vh",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center"
-      }}>
-        <Fade in={true} timeout={2000} >
+      <Box
+        sx={{
+          display: "flex",
+          height: "100vh",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Fade in={true} timeout={2000}>
           <Typography
             sx={{
-              fontFamily: 'Raleway',
+              fontFamily: "Raleway",
               fontSize: "165px",
-              color: "#f3e5f5"
+              color: "#f3e5f5",
             }}
-          >ksqLight.</Typography>
+          >
+            ksqLight.
+          </Typography>
         </Fade>
 
-        {showTextBox ?
+        {showTextBox ? (
           <>
-            {
-              !invalidPrometheusMessage ?
-                <Box sx={{ width: 1 / 6, display: "flex", alignItems: "center", justifyContent: "space-around" }}>
+            {!invalidPrometheusMessage ? (
+              <form onSubmit={handleSubmit}>
+                <Stack spacing={2} direction="row">
                   <TextField
                     autoComplete="off"
+                    autoFocus={true}
                     color="mainPage"
+                    inputProps={{
+                      style: { color: "#f3e5f5" },
+                    }}
                     variant="outlined"
                     label="Prometheus URL"
                     name="prometheus-url"
                     onChange={(e) => setUrl(e.target.value)}
                   />
-                  <Button color="mainPage" variant="outlined" sx={{ color: "#f3e5f5" }} onClick={() => handleSubmit()}>Submit</Button>
-                </Box>
-                :
-                <Box sx={{ width: 1 / 6, display: "flex", alignItems: "center", justifyContent: "space-around" }}>
+                  <Button
+                    color="mainPage"
+                    variant="outlined"
+                    // sx={{ color: "#f3e5f5" }}
+                    type="submit"
+                  >
+                    Submit
+                  </Button>
+                </Stack>
+              </form>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <Stack spacing={2} direction="row">
                   <TextField
                     error
                     autoComplete="off"
+                    autoFocus={true}
                     color="mainPage"
+                    inputProps={{
+                      style: { color: "#f3e5f5" },
+                    }}
                     variant="outlined"
                     label="Prometheus URL"
                     name="prometheus-url"
                     onChange={(e) => setUrl(e.target.value)}
                   />
-                  <Button color="mainPage" variant="outlined" sx={{ color: "#f3e5f5" }} onClick={() => handleSubmit()}>Submit</Button>
-                </Box>
-            }
+                  <Button
+                    color="mainPage"
+                    variant="outlined"
+                    // sx={{ color: "#f3e5f5" }}
+                    type="submit"
+                  >
+                    Submit
+                  </Button>
+                </Stack>
+                <Typography variant="h8" sx={{ color: "red" }}>
+                  {invalidPrometheusMessage}
+                </Typography>
+              </form>
+            )}
           </>
-          :
+        ) : (
           <Fade in={true} timeout={2000} style={{ transitionDelay: `1000ms` }}>
-            <Button color="mainPage" variant="outlined" sx={{ color: "#f3e5f5" }} onClick={() => handleClick()}>Get Started</Button>
+            <Button
+              color="mainPage"
+              variant="outlined"
+              sx={{ color: "#f3e5f5" }}
+              onClick={() => handleClick()}
+            >
+              Get Started
+            </Button>
           </Fade>
-        }
+        )}
       </Box>
     </Box>
-
-
   );
 };
-
