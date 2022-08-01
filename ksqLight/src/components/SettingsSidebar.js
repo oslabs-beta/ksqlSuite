@@ -339,7 +339,7 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
               </Grid>
               <Stack direction="row" spacing={2} sx={{mt: "1.5em"}}>
                 <Button variant="contained" type="submit">Submit</Button>
-                <Button color='secondary' variant="contained" onClick={() => setShowSettings(!showSettings)}>Cancel</Button>
+                <Button color='secondary' variant="outlined" onClick={() => setShowSettings(!showSettings)}>Cancel</Button>
               </Stack>
               {showSubmissionConfirmation && <Typography variant="h8" sx={{color: "forestgreen", mt: "1em"}}>Settings Saved!</Typography>}
           </Grid>

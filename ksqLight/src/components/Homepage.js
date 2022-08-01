@@ -1,53 +1,83 @@
 import React from "react";
 import { Grid, CssBaseline, Box, CardContent } from "@mui/material";
 import LineChart from "./LineChart.js";
+import { QueryPage } from "./QueryPage.js";
 
-export const Homepage = ({ showQueries, showMessages, showErrors, metricsState }) => {
+export const Homepage = ({
+  showQueries,
+  showMessages,
+  showErrors,
+  metricsState,
+  showQuery,
+}) => {
   const queriesCharts = [
-    ["runningQueries", "Number of Running Queries"],
-    ["createdQueries", "Number of Created Queries"],
-    ["numPersistentQueries", "Number of Persistent Queries"],
-    ["numIdleQueries", "Number of Idle Queries"],
-    ["rebalancingQueries", "Number of Rebalancing Queries"],
-    ["numActiveQueries", "Number of Active Queries"],
-    ["notRunningQueries", "Number of Not Running Queries"],
-    ["pendingShutdownQueries", "Number of Pending Shutdown Queries"],
+    ["runningQueries", "Running Queries"],
+    ["createdQueries", "Created Queries"],
+    ["numPersistentQueries", "Persistent Queries"],
+    ["numIdleQueries", "Idle Queries"],
+    ["rebalancingQueries", "Rebalancing Queries"],
+    ["numActiveQueries", "Active Queries"],
+    ["notRunningQueries", "Not Running Queries"],
+    ["pendingShutdownQueries", "Pending Shutdown Queries"],
   ];
 
   const messagesCharts = [
-    ["messagesConsumedTotal", "Number of Messages Consumed"],
-    ["messagesProducedPerSec", "Number of Messages Produced Per Second"],
-    ["messagesConsumedPerSec", "Number of Messages Consumed Per Second"],
-    ["messagesConsumedMin", "Number of Messages Consumed Min"],
-    ["messagesConsumedMax", "Number of Messages Consumed Max"],
-    ["messagesConsumedAvg", "Number of Messages Consumed Average"],
+    ["messagesConsumedTotal", "Messages Consumed"],
+    ["messagesProducedPerSec", "Messages Produced Per Second"],
+    ["messagesConsumedPerSec", "Messages Consumed Per Second"],
+    ["messagesConsumedMin", "Messages Consumed Min"],
+    ["messagesConsumedMax", "Messages Consumed Max"],
+    ["messagesConsumedAvg", "Messages Consumed Average"],
   ];
 
   const errorCharts = [
     ["errorRate", "Error Rate"],
-    ["errorQueries", "Number of Error Queries"],
-    ["pendingErrorQueries", "Number of Pending Error Queries"],
-  ]
+    ["errorQueries", "Error Queries"],
+    ["pendingErrorQueries", "Pending Error Queries"],
+  ];
 
   return (
     <Box>
       <CssBaseline />
       <Grid container spacing={4} sx={{}}>
         {showQueries &&
-          queriesCharts.map(([query, description], index) =>
-            <LineChart description={description} metric={query} metricsState={metricsState} key={index} />)
-        }
+          queriesCharts.map(([query, description], index) => (
+            <LineChart
+              description={description}
+              metric={query}
+              metricsState={metricsState}
+              index={index}
+              key={index}
+            />
+          ))}
         {showMessages &&
-          messagesCharts.map(([query, description], index) =>
-            <LineChart description={description} metric={query} metricsState={metricsState} key={index} />
-          )
-        }
+          messagesCharts.map(([query, description], index) => (
+            <LineChart
+              description={description}
+              metric={query}
+              metricsState={metricsState}
+              index={index}
+              key={index}
+            />
+          ))}
         {showErrors &&
-          errorCharts.map(([query, description], index) =>
-            <LineChart description={description} metric={query} metricsState={metricsState} key={index} />
-          ).concat([<Grid item xl={3}><CardContent sx={{ width: "300px" }}></CardContent></Grid>])
-        }
+          errorCharts
+            .map(([query, description], index) => (
+              <LineChart
+                description={description}
+                metric={query}
+                metricsState={metricsState}
+                index={index}
+                key={index}
+              />
+            ))
+            .concat([
+              <Grid item xl={3} key={10}>
+                <CardContent sx={{ width: "300px" }}></CardContent>
+              </Grid>,
+            ])}
+        {showQuery && <QueryPage metricsState={metricsState} />}
       </Grid>
     </Box>
-  )
-}
+  );
+};
