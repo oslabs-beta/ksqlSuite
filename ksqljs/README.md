@@ -1,14 +1,17 @@
-# ksqlDB-JS
+# ksQlient (formerly ksqlDB-JS)
 
 <div align="center">
+<img src="./static/name.png" alt="logo" width="300"/>
+</div>
 
+<div align="center">
 <a href="https://github.com/oslabs-beta/ksqljs"><img src="https://img.shields.io/badge/license-MIT-blue"/></a>
 <a href="https://github.com/oslabs-beta/ksqljs/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/oslabs-beta/ksqljs"></a>
 <a href="https://github.com/oslabs-beta/ksqljs/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/oslabs-beta/ksqljs"></a>
 <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/oslabs-beta/ksqljs">
 
    <p align="center"> <strong>A native Node.js client for ksqlDB</strong></p>
-   </div>
+</div>
 
 ## Table of Contents
 
@@ -22,148 +25,165 @@
 
 ## <a name="about"></a> About the Project
 
-ksqlDB-JS - a ksqlDB client for Node.js
+Need to develop a streaming application in Node.JS? Our client can help.
 
-### Prerequisites
+ksQlient is a lightweight Node.js client for ksqlDB, a database for streaming applications leveraging Kafka infrastructure under the hood.
 
-> Node.js - https://nodejs.org/en/
->
-> ksqlDB - https://ksqldb.io/
->
-> Docker (for tests) -https://www.docker.com/
+With our client, you can deploy stream-processing workloads from within JS applications using simple, declarative SQL statements.
+
+Sample use cases:
+
+1. Build applications that respond immediately to events.
+2. Craft materialized views over streams.
+3. Receive real-time push updates, or pull current state on demand.
 
 ## <a name="getting-started"></a> Getting Started
 
-Install package from Node package manager
+The client is available on Node package manager (npm) ([link](https://www.npmjs.com/package/ksqldb-js))
 
-```
+```bash
 npm install ksqldb-js
 ```
 
-### <a name="usage"></a> Usage
+## <a name="usage"></a> Usage
 
 Create a client in the application file:
 
-```
-const ksqldb = require('ksqldb-js');
-const client = new ksqldb({ksqldbURL: '<url to ksqlDB server>'})
+```javascript
+const ksqldb = require("ksqldb-js");
+const client = new ksqldb({ ksqldbURL: "<url to ksqlDB server>" });
 ```
 
 To run tests initiate Docker containers included in yaml file:
 
-```
+```bash
 docker-compose up
 npm test
 ```
 
 ## <a name="features"></a> Features
 
-- #### Create a pull query
+### Create a pull query
 
-```
+```javascript
 client.pull("SELECT * FROM myTable;");
 ```
 
-- #### Create a push query
+### Create a push query (persistent query that subscribes to a stream)
 
-```
-client.push('SELECT * FROM myTable EMIT CHANGES;',
-  (data) => {
+```javascript
+client.push("SELECT * FROM myTable EMIT CHANGES;", (data) => {
   console.log(data);
 });
 ```
 
-- #### Terminate persistent query
-  e.g. a push query
+### Terminate persistent query (e.g. push query)
 
-```
+```javascript
 client.terminate(queryId);
 ```
 
-- #### Insert rows of data into a stream
+### Insert rows of data into a stream
 
-```
-client.insertStream('myTable', [
-    { "name": "jack", "email": "123@mail.com", "age": 25 },
-    { "name": "john", "email": "456@mail.com", "age": 20 }
+```javascript
+client.insertStream("myTable", [
+  { name: "jack", email: "123@mail.com", age: 25 },
+  { name: "john", email: "456@mail.com", age: 20 },
 ]);
 ```
 
-- #### List streams/queries
+### List streams/queries
 
-```
-client.ksql('LIST STREAMS;');
-```
-
-- #### Create table/streams
-
-```
-client.createStream('testStream',
-    columnsType = ['name VARCHAR', 'email varchar', 'age INTEGER'],
-    topic = 'testTopic',
-    value_format = 'json',
-    partitions = 1);
+```javascript
+client.ksql("LIST STREAMS;");
 ```
 
-- #### For custom SQL statements including complex joins use the .ksql method
+### Create table/streams
 
+```javascript
+client.createStream(
+  "testStream",
+  (columnsType = ["name VARCHAR", "email varchar", "age INTEGER"]),
+  (topic = "testTopic"),
+  (value_format = "json"),
+  (partitions = 1)
+);
 ```
-client.ksql('DROP STREAM IF EXISTS testStream;');
+
+### For custom SQL statements including complex joins use the .ksql method
+
+```javascript
+client.ksql("DROP STREAM IF EXISTS testStream;");
 ```
 
-- #### SQL Query builder
+### SQL Query builder
 
-Please use the built-in query builder to parametrize any SQL query to avoid SQL injection.
+Feel free to use the built-in query builder to parametrize any SQL query to avoid SQL injection.
 
-```
+```javascript
 const builder = new queryBuilder();
-const query = 'SELECT * FROM table WHERE id = ? AND size = ?';
+const query = "SELECT * FROM table WHERE id = ? AND size = ?";
 const finishedQuery = builder.build(query, 123, "middle");
 
 client.ksql(finishedQuery);
 ```
 
-- #### Create table as
+### Create a table (materialized view) from a source stream
 
-Generating a materialized view that can be
-
-```
-client.createTableAs('testTable', 'sourceStream', selectArray = ['name', 'LATEST_BY_OFFSET(age) AS recentAge'],
-    propertiesObj = {topic:'newTestTopic'},
-    conditionsObj = {WHERE: 'age >= 21', GROUP_BY: 'name'});
-```
-
-- #### Create stream as
-
-```
-client.createStreamAs('testStream', selectColumns = ['name', 'age'], 'sourceStream',
-      propertiesObj = {
-        kafka_topic: 'testTopic',
-        value_format: 'json',
-        partitions: 1
-      },
-      conditions = 'age > 50');
+```javascript
+client.createTableAs(
+  "testTable",
+  "sourceStream",
+  (selectArray = ["name", "LATEST_BY_OFFSET(age) AS recentAge"]),
+  (propertiesObj = { topic: "newTestTopic" }),
+  (conditionsObj = { WHERE: "age >= 21", GROUP_BY: "name" })
+);
 ```
 
-- #### Pull from to
+### Create a stream based on an existing stream
 
-Pull stream data between two time points
-
+```javascript
+client.createStreamAs(
+  "testStream",
+  (selectColumns = ["name", "age"]),
+  "sourceStream",
+  (propertiesObj = {
+    kafka_topic: "testTopic",
+    value_format: "json",
+    partitions: 1,
+  }),
+  (conditions = "age > 50")
+);
 ```
-client.pullFromTo('TESTSTREAM', 'America/Los_Angeles',
-    from = ['2022-01-01', '00', '00', '00'],
-    to = ['2022-01-01', '00', '00', '00']);
+
+### Pull stream data between two timestamps
+
+```javascript
+client.pullFromTo(
+  "TESTSTREAM",
+  "America/Los_Angeles",
+  (from = ["2022-01-01", "00", "00", "00"]),
+  (to = ["2022-01-01", "00", "00", "00"])
+);
 ```
 
-- #### Troubleshooting methods (.inspectServerStatus, .inspectQueryStatus, .inspectClusterStatus )
+### Troubleshooting methods to inspect server metrics
+
+- inspectServerStatus
+- inspectQueryStatus
+- inspectClusterStatus
+
+## <a name="developers"></a> Use Case
+
+We have built a demo app to demonstrate how ksQlient can be used to create a streaming [application](https://github.com/stabRabbitDemo/app).
 
 ## <a name="developers"></a> Developers
 
-- [Javan Ang](https://github.com/javanang)
-- [Gerry Bong](https://github.com/ggbong734)
-- [Jonathan Luu](https://github.com/jonathanluu17)
-- [Michael Snyder](https://github.com/MichaelCSnyder)
-- [Matthew Xing](https://github.com/Aengil)
+- Javan Ang - [GitHub](https://github.com/javanang) | [LinkedIn](https://www.linkedin.com/in/javanang/)
+- Michael Snyder - [GitHub](https://github.com/MichaelCSnyder) | [LinkedIn](https://www.linkedin.com/in/michaelcharlessnyder/)
+- Jonathan Luu - [GitHub](https://github.com/jonathanluu17) | [LinkedIn](https://www.linkedin.com/in/jonathanluu17/)
+- Matthew Xing - [GitHub](https://github.com/matthewxing1) | [LinkedIn](https://www.linkedin.com/in/matthew-xing/)
+- Gerry Bong - [GitHub](https://github.com/ggbong734) | [LinkedIn](https://www.linkedin.com/in/gerry-bong-71137420/)
 
 ## <a name="contributions"></a> Contributions
 
