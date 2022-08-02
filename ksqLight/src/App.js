@@ -82,6 +82,9 @@ function App() {
               background3: "#1A1A1A",
               background4: "#1A1A1A",
             },
+            queryPage: {
+              main: "rgb(78, 67, 118, .9)",
+            },
           }),
     },
   });
