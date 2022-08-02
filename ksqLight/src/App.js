@@ -6,154 +6,192 @@ import { Homepage } from "./components/Homepage.js";
 import { SettingsSidebar } from "./components/SettingsSidebar.js";
 import { PermanentDrawer } from "./components/PermanentDrawer.js";
 import { QueryPage } from "./components/QueryPage.js";
-import { CssBaseline, ThemeProvider, createTheme, Box, Grid } from "@mui/material";
+import {
+  CssBaseline,
+  ThemeProvider,
+  createTheme,
+  Box,
+  Grid,
+} from "@mui/material";
 import { MetricCard } from "./components/MetricCard.js";
-import { green, purple } from '@mui/material/colors';
+import { Welcomepage } from "./components/Welcomepage.js";
 
-const theme = createTheme({
-  palette: {
-    // primary: {
-    //   main: purple[500],
-    // },
-    secondary: {
-      main: green[500],
-    },
-    background:{
-      default: "rgb(249, 250, 251)",
-    },
-    mode: 'light',
-  },
-});
-
+// http://localhost:9090
 function App() {
   const [fetchMetrics, setFetchMetrics] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
-  // const [metricsState, setMetricsState] = useState({
-  //   prometheusURL: "http://localhost:9090/",
-  //   ksqlDBURL: "",
-  //   duration: {
-  //     days: 0,
-  //     hours: 0,
-  //     minutes: 10
-  //   },
-  //   refreshRate: 2
-  // });
-
-  // return (
-  //   <BrowserRouter>
-  //     <CssBaseline/>
-  //     <Header 
-  //       fetchMetrics={fetchMetrics} 
-  //       setFetchMetrics={setFetchMetrics} 
-  //       showSettings={showSettings} 
-  //       setShowSettings={setShowSettings}/>
-  //     <SettingsSidebar 
-  //       showSettings={showSettings} 
-  //       setShowSettings={setShowSettings} 
-  //       metricsState={metricsState}
-  //       setMetricsState={setMetricsState}>
-  //     </SettingsSidebar>
-  //     <PermanentDrawer></PermanentDrawer>
-  //     <Routes>
-  //       <Route path="/" element={<Homepage metricsState={metricsState}/>}/>
-  //       <Route path="/queryPage" element={<QueryPage/>}/>
-  //     </Routes>
-  //   </BrowserRouter>
-    
   const [showQueries, setShowQueries] = useState(true);
   const [showMessages, setShowMessages] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
+  const [showQuery, setShowQuery] = useState(false);
+  const [mode, setMode] = useState("light");
   const [metricsState, setMetricsState] = useState({
-    prometheusURL: "http://localhost:9090/",
+    prometheusURL: null,
     ksqlDBURL: "",
     duration: {
       days: 0,
       hours: 0,
-      minutes: 10
+      minutes: 10,
     },
-    refreshRate: 5
+    refreshRate: 5,
   });
 
+  const theme = createTheme({
+    palette: {
+      mainPage: {
+        main: "#f3e5f5",
+      },
+      mode,
+      ...(mode === "light"
+        ? {
+            background: {
+              default: "#fbfaff",
+            },
+            chartColor: {
+              background: "#FFFFFF",
+            },
+            queryPage: {
+              main: "rgb(78, 67, 118, .9)",
+            },
+            cardColor: {
+              // background1: "rgb(209, 233, 252)",
+              // background2: "rgb(208, 242, 255)",
+              // background3: "rgb(255, 247, 205)",
+              // background4: "rgb(255, 231, 217)",
+              background1: "#FFFFFF",
+              background2: "#FFFFFF",
+              background3: "#FFFFFF",
+              background4: "#FFFFFF",
+              iconColor1: "#04724D",
+              iconColor2: "#FFC300",
+              iconColor3: "#540C97",
+              iconColor4: "#C48EF6",
+              // textColor1: "#061B64",
+              // textColor2: "#04297A",
+              // textColor3: "#7A4F01",
+              // textColor4: "#7A0C2E",
+            },
+          }
+        : {
+            chartColor: {
+              background: "#1A1A1A",
+            },
+            cardColor: {
+              background1: "#1A1A1A",
+              background2: "#1A1A1A",
+              background3: "#1A1A1A",
+              background4: "#1A1A1A",
+            },
+            queryPage: {
+              main: "rgb(78, 67, 118, .9)",
+            },
+          }),
+    },
+  });
 
-  return (
+  const serverCards = [
+    "livenessIndicator",
+    "bytesConsumed",
+    "errorRate",
+    "errorQueries",
+  ].map((el, i) => {
+    return (
+      <Grid item xs={3} md={3} lg={3} key={i}>
+        <MetricCard key={i} type={el} index={i} />
+      </Grid>
+    );
+  });
+
+  return !metricsState.prometheusURL ? (
+    <ThemeProvider theme={theme}>
+      <Welcomepage
+        setMetricsState={setMetricsState}
+        metricsState={metricsState}
+      ></Welcomepage>
+    </ThemeProvider>
+  ) : (
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Box sx={{
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-
-          <Header fetchMetrics={fetchMetrics} setFetchMetrics={setFetchMetrics} showSettings={showSettings} setShowSettings={setShowSettings} />
-          <SettingsSidebar showSettings={showSettings} setShowSettings={setShowSettings} metricsState={metricsState} setMetricsState={setMetricsState} />
-          {/* <Box sx={{ display: 'flex' }}>
-            <PermanentDrawer
-              setShowQueries={setShowQueries}
-              setShowMessages={setShowMessages}
-              setShowErrors={setShowErrors}
-            />
-            <Box sx={{
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <Grid container columnSpacing={9} rowSpacing={2} sx={{ display: 'flex', flexDirection: "row", p: 3, justifyContents: "center", alignItems: "center" }}>
-                <Grid item xs={3} md={3} lg={3}>
-                  <MetricCard type="livenessIndicator" index={0} />
-                </Grid>
-                <Grid item xs={3} md={3} lg={3}>
-                  <MetricCard type="bytesConsumedTotal" index={1} />
-                </Grid>
-                <Grid item xs={3} md={3} lg={3} >
-                  <MetricCard type="errorRate" index={2} />
-                </Grid>
-                <Grid item xs={3} md={3} lg={3} >
-                  <MetricCard type="errorQueries" index={3} />
-                </Grid>
-              </Grid>
-              <Routes>
-                <Route path="/" element={<Homepage showQueries={showQueries} showMessages={showMessages} showErrors={showErrors} />} />
-                <Route path="/queryPage" element={<QueryPage />} />
-              </Routes>
-            </Box>
-          </Box> */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Header
+            fetchMetrics={fetchMetrics}
+            setFetchMetrics={setFetchMetrics}
+            showSettings={showSettings}
+            setShowSettings={setShowSettings}
+            mode={mode}
+            setMode={setMode}
+          />
+          <SettingsSidebar
+            showSettings={showSettings}
+            setShowSettings={setShowSettings}
+            metricsState={metricsState}
+            setMetricsState={setMetricsState}
+          />
           <Grid container spacing={1}>
             <Grid item lg={2} md={2} sm={2}>
               <PermanentDrawer
                 setShowQueries={setShowQueries}
                 setShowMessages={setShowMessages}
                 setShowErrors={setShowErrors}
+                setShowQuery={setShowQuery}
               />
             </Grid>
-
-            <Grid item lg={10} md={10} sm={10} sx={{
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <Grid container columnSpacing={9} rowSpacing={2} sx={{ p: 3, justifyContents: "center", alignItems: "center" }}>
-                <Grid item xs={3} md={3} lg={3}>
-                  <MetricCard type="livenessIndicator" index={0} />
-                </Grid>
-                <Grid item xs={3} md={3} lg={3}>
-                  <MetricCard type="bytesConsumed" index={1} />
-                </Grid>
-                <Grid item xs={3} md={3} lg={3} >
-                  <MetricCard type="errorRate" index={2} />
-                </Grid>
-                <Grid item xs={3} md={3} lg={3} >
-                  <MetricCard type="errorQueries" index={3} />
-                </Grid>
+            <Grid
+              item
+              lg={10}
+              md={10}
+              sm={10}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Grid
+                container
+                columnSpacing={4}
+                sx={{
+                  pt: 3,
+                  pb: 3,
+                  pr: "2em",
+                  justifyContents: "center",
+                  alignItems: "center",
+                }}
+              >
+                {serverCards}
               </Grid>
-              <Grid container justifyContent="center" alignItems="center" sx={{pr: "2em"}}>
+              <Grid
+                container
+                justifyContent="center"
+                alignItems="center"
+                sx={{ pr: "2em" }}
+              >
                 <Routes>
-                  <Route path="/" element={<Homepage showQueries={showQueries} showMessages={showMessages} showErrors={showErrors} metricsState={metricsState} />} />
-                  <Route path="/queryPage" element={<QueryPage />} />
+                  <Route
+                    path="/"
+                    element={
+                      <Homepage
+                        showQueries={showQueries}
+                        showMessages={showMessages}
+                        showErrors={showErrors}
+                        metricsState={metricsState}
+                        showQuery={showQuery}
+                      />
+                    }
+                  />
+                  {/* <Route path="/queryPage" element={<QueryPage />} /> */}
                 </Routes>
               </Grid>
             </Grid>
           </Grid>
         </Box>
       </ThemeProvider>
-    </BrowserRouter >
+    </BrowserRouter>
   );
 }
 
