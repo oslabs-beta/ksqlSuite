@@ -11,7 +11,7 @@
 <a href="https://github.com/oslabs-beta/ksqljs/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/oslabs-beta/ksqljs"></a>
 <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/oslabs-beta/ksqljs"> -->
 
-   <p align="center"> <strong>A Node.js client and a metric visualizer for ksqlDB</strong></p>
+   <p align="center" style='font-size:13pt'> <strong>A Node.js client and a metric visualizer for ksqlDB</strong></p>
 </div>
 
 ## About
