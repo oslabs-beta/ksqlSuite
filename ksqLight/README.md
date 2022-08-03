@@ -28,11 +28,22 @@ Quickly toggle between query, message, and error pages.
 
 # Setup
 
+> **Note**
+> This app assumes you have access to a working ksqlDB server and a Prometheus instance scraping metrics from ksqlDB server via JMX exporter. If you need a reference on how to do that, please check out the `ksqLight/exampleContainers` folder.
+
+## Clone repo, cd into it, then run:
+
+```
+
+npm run electron:serve
+
+```
+
 Upon startup, enter the Prometheus url into the pop-up (or you can enter it on the settings modal).
 
 The duration and refresh rate for the time-series charts can be configured on the settings modal.
 
-ksqlDB server url is needed to submit sql queries to the ksqlDB server.
+To submit SQL queries to ksqlDB server, the server url needs to be entered in settings.
 
 ![](./src/static/settings.gif)
 

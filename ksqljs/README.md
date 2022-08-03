@@ -40,7 +40,9 @@ Sample use cases:
 The client is available on Node package manager (npm) ([link](https://www.npmjs.com/package/ksqldb-js))
 
 ```bash
+
 npm install ksqldb-js
+
 ```
 
 ## <a name="usage"></a> Usage
@@ -52,7 +54,7 @@ const ksqldb = require("ksqldb-js");
 const client = new ksqldb({ ksqldbURL: "<url to ksqlDB server>" });
 ```
 
-To run tests initiate Docker containers included in yaml file:
+To run tests, initiate Docker containers included in yaml file:
 
 ```bash
 docker-compose up
