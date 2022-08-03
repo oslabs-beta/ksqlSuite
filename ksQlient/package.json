@@ -1,8 +1,8 @@
 {
-  "name": "ksqldb-js",
-  "version": "1.1.2",
+  "name": "ksQlient",
+  "version": "1.0.0",
   "description": "Javascript KsqlDB client for Node.js",
-  "main": "./ksqldb/ksqldb",
+  "main": "./ksQlient/ksqldb",
   "scripts": {
     "test": "jest --verbose --forceExit"
   },

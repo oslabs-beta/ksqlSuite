@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  Typography,
-  TextField,
-  Box,
-  Fade,
-  Button,
-  Autocomplete,
-  Stack,
-} from "@mui/material";
+import { Typography, TextField, Box, Fade, Button, Stack } from "@mui/material";
 import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 
 const client = new ApolloClient({
