@@ -1,13 +1,11 @@
 import React from "react";
-import { Typography, createTheme, Toolbar, AppBar, IconButton, Button } from "@mui/material";
+import { Typography, createTheme, Toolbar, AppBar, IconButton } from "@mui/material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import ArticleIcon from '@mui/icons-material/Article';
-import { useNavigate } from "react-router-dom";
 
-export const Header = ({ fetchMetrics, setFetchMetrics, showSettings, setShowSettings, mode, setMode }) => {
-  const navigate = useNavigate();
+export const Header = ({ showSettings, setShowSettings, mode, setMode }) => {
   const ksqLightTheme = createTheme({
     typography: {
       fontFamily: 'Raleway',
@@ -17,9 +15,6 @@ export const Header = ({ fetchMetrics, setFetchMetrics, showSettings, setShowSet
   const navGithub = () => {
     window.open(
       "https://github.com/oslabs-beta/ksqljs/", "_blank");
-  }
-  const navHome = () => {
-    navigate("/");
   }
 
   return (

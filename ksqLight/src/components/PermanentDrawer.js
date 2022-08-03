@@ -7,8 +7,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  ThemeProvider,
-  createTheme,
   Box,
 } from "@mui/material";
 import StackedLineChartIcon from "@mui/icons-material/StackedLineChart";

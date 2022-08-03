@@ -35,14 +35,16 @@
   "main": "public/main.js",
   "homepage": "./",
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently -k \"cross-env BROWSER=none npm run reactStart\" \"npm run electron:start\" \"node server/server.js\"",
+    "reactStart": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron:serve": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm run electron:start\" \"node server/server.js\"",
+    "electron:serve": "concurrently -k \"cross-env BROWSER=none npm run reactStart\" \"npm run electron:start\" \"node server/server.js\"",
     "electron:build": "",
     "electron:start": "wait-on tcp:3000 && electron .",
-    "devServer": "nodemon server/server.js"
+    "devServer": "nodemon server/server.js",
+    "dist": "electron-builder"
   },
   "eslintConfig": {
     "extends": [
@@ -65,9 +67,25 @@
   "devDependencies": {
     "autoprefixer": "^10.4.7",
     "chartjs-adapter-moment": "^1.0.0",
+    "electron-builder": "^23.3.3",
     "moment": "^2.29.4",
     "nodemon": "^2.0.19",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.4"
+  },
+  "build": {
+    "appid": "com.ksqlsuite.ksqlight",
+    "productName": "ksqLight",
+    "target": "NSIS",
+    "directory": {
+      "output": "build"
+    },
+    "fileAssociations": {
+      "icon": "/src/static/ksqlight_icon.ico"
+    },
+    "nsis": {
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false
+    }
   }
 }

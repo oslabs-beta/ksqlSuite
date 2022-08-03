@@ -30,8 +30,6 @@ export const QueryPage = ({ metricsState }) => {
               variant="outlined"
               label="ksqlDB Query"
               name="query"
-              // onChange={handleLocalMetrics}
-              // value={localMetricsState.prometheusURL}
             />
             <Button
               color="queryPage"
