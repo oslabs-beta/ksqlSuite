@@ -3,7 +3,7 @@
 <div align="center">
 
 <div>
-<img src="./ksqljs/static/light.png" alt="logo" width="230" style='padding-right:15px'/>
+<img src="./ksQlient/static/light.png" alt="logo" width="230" style='padding-right:15px'/>
 <img src="./ksqLight/src/static/ksqlight_raleway.png" alt="logo" width="245"/>
 </div>
 <!-- <a href="https://github.com/oslabs-beta/ksqljs"><img src="https://img.shields.io/badge/license-MIT-blue"/></a>
@@ -18,7 +18,7 @@
 
 Need to run stream processing workloads on ksqlDB in Node.JS? Our lightweight **Node.js client** can help.
 
-Check out [ksQlient](./ksqljs/)
+Check out [ksQlient](./ksQlient/)
 
 Need to visualize ksqlDB query metrics to diagnose bottleneck issues? Try out our **metric visualizer**.
 
