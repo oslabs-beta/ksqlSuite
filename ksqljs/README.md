@@ -13,6 +13,18 @@
    <p align="center"> <strong>A native Node.js client for ksqlDB</strong></p>
 </div>
 
+## <a name="about"></a> About the Project
+
+ksQlient is a lightweight Node.js client for ksqlDB, a database for streaming applications leveraging Kafka infrastructure under the hood.
+
+With our client, you can deploy stream-processing workloads on ksqlDB from within JS applications using simple, declarative SQL statements.
+
+Sample use cases:
+
+1. Build applications that respond immediately to events.
+2. Craft materialized views over streams.
+3. Receive real-time push updates, or pull current state on demand.
+
 ## Table of Contents
 
 - [About the project](#about)
@@ -22,20 +34,6 @@
 - [Developers](#developers)
 - [Contributions](#contributions)
 - [License](#license)
-
-## <a name="about"></a> About the Project
-
-Need to develop a streaming application in Node.JS? Our client can help.
-
-ksQlient is a lightweight Node.js client for ksqlDB, a database for streaming applications leveraging Kafka infrastructure under the hood.
-
-With our client, you can deploy stream-processing workloads from within JS applications using simple, declarative SQL statements.
-
-Sample use cases:
-
-1. Build applications that respond immediately to events.
-2. Craft materialized views over streams.
-3. Receive real-time push updates, or pull current state on demand.
 
 ## <a name="getting-started"></a> Getting Started
 
