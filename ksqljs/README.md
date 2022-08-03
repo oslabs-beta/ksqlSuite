@@ -1,7 +1,7 @@
 # ksQlient (formerly ksqlDB-JS)
 
 <div align="center">
-<img src="./static/name.png" alt="logo" width="500"/>
+<img src="./static/name.png" alt="logo" width="400"/>
 </div>
 
 <div align="center">
