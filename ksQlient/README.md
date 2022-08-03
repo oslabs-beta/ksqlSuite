@@ -41,7 +41,7 @@ The client is available on Node package manager (npm) ([link](https://www.npmjs.
 
 ```bash
 
-npm install ksqldb-js
+npm install ksQlient
 
 ```
 
@@ -50,7 +50,7 @@ npm install ksqldb-js
 Create a client in the application file:
 
 ```javascript
-const ksqldb = require("ksqldb-js");
+const ksqldb = require("ksQlient");
 const client = new ksqldb({ ksqldbURL: "<url to ksqlDB server>" });
 ```
 
