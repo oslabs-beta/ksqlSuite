@@ -39,7 +39,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron:serve": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm run electron:start\"",
+    "electron:serve": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm run electron:start\" \"node server/server.js\"",
     "electron:build": "",
     "electron:start": "wait-on tcp:3000 && electron .",
     "devServer": "nodemon server/server.js"
