@@ -175,7 +175,7 @@ client.pullFromTo(
 
 ## <a name="developers"></a> Use Case
 
-We have built a demo app to demonstrate how ksQlient can be used to create a streaming [application](https://github.com/stabRabbitDemo/app).
+We have built a [demo app](https://github.com/stabRabbitDemo/app) to showcase how ksQlient can be used to create a streaming application .
 
 ## <a name="developers"></a> Developers
 
