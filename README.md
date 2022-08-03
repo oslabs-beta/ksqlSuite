@@ -16,10 +16,10 @@
 
 ## About
 
-Need to run stream processing workloads on ksqlDB in Node.JS? Our lightweight client can help.
+Need to run stream processing workloads on ksqlDB in Node.JS? Our lightweight **Node.js client** can help.
 
 Check out [ksQlient](./ksqljs/)
 
-Need to visualize ksqlDB query metrics to diagnose bottleneck issues? Try out our metric visualizer.
+Need to visualize ksqlDB query metrics to diagnose bottleneck issues? Try out our **metric visualizer**.
 
 Check out [ksqLight](./ksqLight/)

@@ -6,7 +6,7 @@
 
 # About
 
-ksqLight is an open-source tool for monitoring your ksqlDB queries and messages in real-time. Its interactive dashboard visualizes ksqlDB query and messages metrics, to help in diagnosing stream processing bottlenecks and identifying network issues.
+ksqLight is an open-source tool for **monitoring your ksqlDB queries and messages in real-time**. Its interactive dashboard visualizes ksqlDB query and messages metrics, to help in diagnosing stream processing bottlenecks and identifying network issues.
 
 Under the hood, it uses Prometheus to pull the relevant metrics from ksqlDB server.
 

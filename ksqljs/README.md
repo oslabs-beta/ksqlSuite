@@ -15,7 +15,7 @@
 
 ## <a name="about"></a> About the Project
 
-ksQlient is a lightweight Node.js client for ksqlDB, a database for streaming applications leveraging Kafka infrastructure under the hood.
+ksQlient is a **lightweight Node.js client for ksqlDB**, a database for streaming applications leveraging Kafka infrastructure under the hood.
 
 With our client, you can deploy stream-processing workloads on ksqlDB from within JS applications using simple, declarative SQL statements.
 
