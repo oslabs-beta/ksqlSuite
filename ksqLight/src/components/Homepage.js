@@ -1,23 +1,83 @@
 import React from "react";
-import { useState } from "react";
-import { Typography, Grid, Toolbar } from "@mui/material";
-import { Chart } from "./Chart.js";
+import { Grid, CssBaseline, Box, CardContent } from "@mui/material";
+import LineChart from "./LineChart.js";
+import { QueryPage } from "./QueryPage.js";
 
-export const Homepage = () => {
-  const [content, setContent] = useState('Chart placeholder');
+export const Homepage = ({
+  showQueries,
+  showMessages,
+  showErrors,
+  metricsState,
+  showQuery,
+}) => {
+  const queriesCharts = [
+    ["runningQueries", "Running Queries"],
+    ["createdQueries", "Created Queries"],
+    ["numPersistentQueries", "Persistent Queries"],
+    ["numIdleQueries", "Idle Queries"],
+    ["rebalancingQueries", "Rebalancing Queries"],
+    ["numActiveQueries", "Active Queries"],
+    ["notRunningQueries", "Not Running Queries"],
+    ["pendingShutdownQueries", "Pending Shutdown Queries"],
+  ];
+
+  const messagesCharts = [
+    ["messagesConsumedTotal", "Messages Consumed"],
+    ["messagesProducedPerSec", "Messages Produced Per Second"],
+    ["messagesConsumedPerSec", "Messages Consumed Per Second"],
+    ["messagesConsumedMin", "Messages Consumed Min"],
+    ["messagesConsumedMax", "Messages Consumed Max"],
+    ["messagesConsumedAvg", "Messages Consumed Average"],
+  ];
+
+  const errorCharts = [
+    ["errorRate", "Error Rate"],
+    ["errorQueries", "Error Queries"],
+    ["pendingErrorQueries", "Pending Error Queries"],
+  ];
+
   return (
-    <div>
-      <Toolbar></Toolbar>
-      <Typography color="primary">Homepage</Typography>
-      <Grid container spacing={2} justifyContent="flex-start" alignItems="flex-start" sx={{ pl: 28 }}>
-        <Chart content={content}></Chart>
-        <Chart content={content}></Chart>
-        <Chart content={content}></Chart>
-        <Chart content={content}></Chart>
-        <Chart content={content}></Chart>
-        <Chart content={content}></Chart>
+    <Box>
+      <CssBaseline />
+      <Grid container spacing={4} sx={{}}>
+        {showQueries &&
+          queriesCharts.map(([query, description], index) => (
+            <LineChart
+              description={description}
+              metric={query}
+              metricsState={metricsState}
+              index={index}
+              key={index}
+            />
+          ))}
+        {showMessages &&
+          messagesCharts.map(([query, description], index) => (
+            <LineChart
+              description={description}
+              metric={query}
+              metricsState={metricsState}
+              index={index}
+              key={index}
+            />
+          ))}
+        {showErrors &&
+          errorCharts
+            .map(([query, description], index) => (
+              <LineChart
+                description={description}
+                metric={query}
+                metricsState={metricsState}
+                index={index}
+                key={index}
+              />
+            ))
+            .concat([
+              <Grid item xl={3} key={10}>
+                <CardContent sx={{ width: "300px" }}></CardContent>
+              </Grid>,
+            ])}
+        {showQuery && <QueryPage metricsState={metricsState} />}
       </Grid>
-    </div>
-
-  )
-}
+    </Box>
+  );
+};

@@ -1,51 +1,100 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ThemeProvider, Toolbar, createTheme } from "@mui/material";
-import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
-import MailIcon from '@mui/icons-material/Mail';
+import {
+  CssBaseline,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  ThemeProvider,
+  createTheme,
+  Box,
+} from "@mui/material";
+import StackedLineChartIcon from "@mui/icons-material/StackedLineChart";
+import MailIcon from "@mui/icons-material/Mail";
 
-export const PermanentDrawer = () => {
+export const PermanentDrawer = ({
+  setShowQueries,
+  setShowMessages,
+  setShowErrors,
+  setShowQuery,
+}) => {
   let navigate = useNavigate();
-  const theme = createTheme({
-    background: {
-      color: '#1e293b'
-    }
-  })
+
   const navQueryPage = () => {
     navigate("/queryPage");
-  }
+  };
+
+  const toggleCharts = (type) => {
+    if (type === "queries") {
+      setShowQueries(true);
+      setShowMessages(false);
+      setShowErrors(false);
+      setShowQuery(false);
+    } else if (type === "messages") {
+      setShowQueries(false);
+      setShowMessages(true);
+      setShowErrors(false);
+      setShowQuery(false);
+    } else if (type === "errors") {
+      setShowQueries(false);
+      setShowMessages(false);
+      setShowErrors(true);
+      setShowQuery(false);
+    } else if (type === "queryPage") {
+      setShowQuery(true);
+      setShowQueries(false);
+      setShowMessages(false);
+      setShowErrors(false);
+    }
+  };
 
   return (
-    <ThemeProvider theme={theme}>
-    <Drawer variant="permanent" anchor="left" open={true} PaperProps={{ sx: {backgroundColor: "#1e293b"}}}>
-      <Toolbar></Toolbar>
-      <List sx={{ color:'white' }}>
+    <Box
+      sx={{
+        width: "100%",
+        height: "auto", // changed this from auto
+        // marginBottom: "-2000px", /* any large number will do */
+        // paddingBottom: "2000px",
+        mx: 0,
+      }}
+    >
+      <CssBaseline />
+      <List>
         <ListItem>
-          <ListItemButton>
-            <ListItemIcon sx={{ color:'white' }}>
-              <StackedLineChartIcon/>
+          <ListItemButton onClick={() => toggleCharts("queries")}>
+            <ListItemIcon>
+              <StackedLineChartIcon />
             </ListItemIcon>
-            <ListItemText primary="Prometheus" />
+            <ListItemText primary="Queries" />
           </ListItemButton>
         </ListItem>
         <ListItem>
-          <ListItemButton>
-            <ListItemIcon sx={{ color:'white' }}>
-              <StackedLineChartIcon/>
+          <ListItemButton onClick={() => toggleCharts("messages")}>
+            <ListItemIcon>
+              <StackedLineChartIcon />
             </ListItemIcon>
-            <ListItemText primary="ksqlDB" />
+            <ListItemText primary="Messages" />
           </ListItemButton>
         </ListItem>
         <ListItem>
-          <ListItemButton onClick={navQueryPage}>
-            <ListItemIcon sx={{ color:'white' }}>
-              <MailIcon/>
+          <ListItemButton onClick={() => toggleCharts("errors")}>
+            <ListItemIcon>
+              <StackedLineChartIcon />
+            </ListItemIcon>
+            <ListItemText primary="Errors" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem>
+          <ListItemButton onClick={() => toggleCharts("queryPage")}>
+            <ListItemIcon>
+              <MailIcon />
             </ListItemIcon>
             <ListItemText primary="SQL Query" />
           </ListItemButton>
         </ListItem>
       </List>
-    </Drawer>
-    </ThemeProvider>
-  )
-}
+    </Box>
+  );
+};
