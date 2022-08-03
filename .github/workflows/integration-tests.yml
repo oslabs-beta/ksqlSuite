@@ -39,14 +39,14 @@ jobs:
           node-version: 16.x
 
       - name: Install dependencies
-        run: npm install --prefix "./ksqljs"
+        run: npm install --prefix "./ksQlient"
 
       - name: Sleep for 30 seconds
         run: sleep 30s
         shell: bash
 
       - name: Run tests
-        run: npm run test --prefix "./ksqljs"
+        run: npm run test --prefix "./ksQlient"
 
       - name: Stop containers
         if: always()
