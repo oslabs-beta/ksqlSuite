@@ -45,10 +45,6 @@ export const MetricCard = ({ type, index }) => {
     "cardColor.iconColor4",
   ];
 
-  const flipCard = () => {
-    // supposed to flip liveness card here
-  };
-
   useEffect(() => {
     client
       .query({
@@ -85,10 +81,7 @@ export const MetricCard = ({ type, index }) => {
       >
         <IconButton
           size="small"
-          // style={{ width: "2.9rem", height: "2.9rem" }}
-
           sx={{ borderRadius: "50%", color: iconColor[index] }}
-          onClick={() => console.log("")} // placeholder for flipping card
         >
           {index === 0 && <MonitorHeartIcon />}
           {index === 1 && <ErrorIcon />}

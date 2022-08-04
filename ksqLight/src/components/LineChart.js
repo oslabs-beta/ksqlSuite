@@ -1,5 +1,5 @@
 //-----------Import External Modules-----------
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Grid } from "@mui/material";
 import {
   ApolloClient,
@@ -82,7 +82,6 @@ export default function LineChart({
         datasets: [
           {
             data: initialData,
-            // data: [{x: new Date(), y: '0'}],
             // data: [],           // empty at the beginning,
             borderColor:
               index % 2 === 0

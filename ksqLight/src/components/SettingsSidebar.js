@@ -1,7 +1,7 @@
 //-----------Import External Modules-----------
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { TextField, Typography, MenuItem, Select, Drawer, IconButton, Grid, Button, Stack } from "@mui/material"
+import { TextField, Typography, Drawer, IconButton, Grid, Button, Stack } from "@mui/material"
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
   ApolloClient,
@@ -291,38 +291,6 @@ export const SettingsSidebar = ({ showSettings, setShowSettings, metricsState, s
                   </Grid>
                 </Grid>
               )}
-              {/* <Grid spacing={2} container justifyContent="flex-start" alignItems="center">
-                <Grid item xs={4}>
-                  <TextField
-                  variant="outlined"
-                  label="Days"
-                  name="duration-days"
-                  onChange={handleLocalMetrics}
-                  value={localMetricsState.duration.days}
-                  type="number"
-                />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                  variant="outlined"
-                  label="Hours"
-                  name="duration-hours"
-                  onChange={handleLocalMetrics}
-                  value={localMetricsState.duration.hours}
-                  type="number"
-                />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                  variant="outlined"
-                  label="Minutes"
-                  name="duration-minutes"
-                  onChange={handleLocalMetrics}
-                  value={localMetricsState.duration.minutes}
-                  type="number"
-                />
-                </Grid>
-              </Grid> */}
               <hr className="w-full invisible mb-2 mt-2"></hr>
               <Typography variant="h6">Refresh Rate</Typography>
               <hr className="w-full mb-3 mt-1"></hr>

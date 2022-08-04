@@ -5,7 +5,7 @@ import { Header } from "./components/Header.js";
 import { Homepage } from "./components/Homepage.js";
 import { SettingsSidebar } from "./components/SettingsSidebar.js";
 import { PermanentDrawer } from "./components/PermanentDrawer.js";
-import { QueryPage } from "./components/QueryPage.js";
+
 import {
   CssBaseline,
   ThemeProvider,
@@ -18,7 +18,6 @@ import { Welcomepage } from "./components/Welcomepage.js";
 
 // http://localhost:9090
 function App() {
-  const [fetchMetrics, setFetchMetrics] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [showQueries, setShowQueries] = useState(true);
   const [showMessages, setShowMessages] = useState(false);
@@ -54,10 +53,6 @@ function App() {
               main: "rgb(78, 67, 118, .9)",
             },
             cardColor: {
-              // background1: "rgb(209, 233, 252)",
-              // background2: "rgb(208, 242, 255)",
-              // background3: "rgb(255, 247, 205)",
-              // background4: "rgb(255, 231, 217)",
               background1: "#FFFFFF",
               background2: "#FFFFFF",
               background3: "#FFFFFF",
@@ -66,10 +61,6 @@ function App() {
               iconColor2: "#FFC300",
               iconColor3: "#540C97",
               iconColor4: "#C48EF6",
-              // textColor1: "#061B64",
-              // textColor2: "#04297A",
-              // textColor3: "#7A4F01",
-              // textColor4: "#7A0C2E",
             },
           }
         : {
@@ -120,8 +111,6 @@ function App() {
           }}
         >
           <Header
-            fetchMetrics={fetchMetrics}
-            setFetchMetrics={setFetchMetrics}
             showSettings={showSettings}
             setShowSettings={setShowSettings}
             mode={mode}
@@ -184,7 +173,6 @@ function App() {
                       />
                     }
                   />
-                  {/* <Route path="/queryPage" element={<QueryPage />} /> */}
                 </Routes>
               </Grid>
             </Grid>
@@ -196,5 +184,3 @@ function App() {
 }
 
 export default App;
-
-//PaperProps={{ style: { height: "90vh" } }} <- in Drawer
