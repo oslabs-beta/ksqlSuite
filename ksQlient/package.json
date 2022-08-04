@@ -14,7 +14,7 @@
   "author": "Michael Synder, Matthew Xing, Jonathan Luu, Gerry Bong, Javan Ang",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/oslabs-beta/ksqljs/ksqlSuite"
+    "url": "https://github.com/oslabs-beta/ksqlSuite/issues"
   },
   "homepage": "https://github.com/oslabs-beta/ksqlSuite#readme",
   "dependencies": {
