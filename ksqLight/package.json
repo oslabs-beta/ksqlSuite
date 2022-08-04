@@ -74,18 +74,17 @@
     "tailwindcss": "^3.1.4"
   },
   "build": {
-    "appid": "com.ksqlsuite.ksqlight",
+    "appId": "com.ksqlsuite.ksqlight",
     "productName": "ksqLight",
     "target": "NSIS",
-    "directory": {
-      "output": "build"
-    },
-    "fileAssociations": {
-      "icon": "/src/static/ksqlight_icon.ico"
+    "directories": {
+      "output": "build",
+      "buildResources":"resources"
     },
     "nsis": {
       "allowToChangeInstallationDirectory": true,
       "oneClick": false
-    }
+    },
+    "extends": null
   }
 }
