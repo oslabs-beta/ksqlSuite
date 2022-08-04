@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oslabs-beta/ksqljs.git"
+    "url": "git+https://github.com/oslabs-beta/ksqlSuite.git"
   },
   "keywords": [],
   "author": "Michael Synder, Matthew Xing, Jonathan Luu, Gerry Bong, Javan Ang",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/oslabs-beta/ksqljs/issues"
+    "url": "https://github.com/oslabs-beta/ksqljs/ksqlSuite"
   },
-  "homepage": "https://github.com/oslabs-beta/ksqljs#readme",
+  "homepage": "https://github.com/oslabs-beta/ksqlSuite#readme",
   "dependencies": {
     "axios": "^0.27.2"
   },
