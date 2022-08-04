@@ -1,10 +1,6 @@
 # ksQlient (formerly ksqlDB-JS)
 
 <div align="center">
-<img src="./static/name.png" alt="logo" width="400"/>
-</div>
-
-<div align="center">
 <a href="https://github.com/oslabs-beta/ksqlSuite"><img src="https://img.shields.io/badge/license-MIT-blue"/></a>
 <a href="https://github.com/oslabs-beta/ksqlSuite/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/oslabs-beta/ksqlSuite"></a>
 <a href="https://github.com/oslabs-beta/ksqlSuite/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/oslabs-beta/ksqlSuite"></a>
